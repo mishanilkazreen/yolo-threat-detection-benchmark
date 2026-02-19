@@ -1,0 +1,23 @@
+# Core dependencies
+ultralytics>=8.0.0
+PyYAML>=6.0
+numpy>=1.24.0
+pandas>=2.0.0
+matplotlib>=3.7.0
+
+# Testing dependencies
+hypothesis>=6.0.0
+pytest>=7.0.0
+pytest-cov>=4.0.0
+
+# Optional explainability dependencies
+# Uncomment if using LRP
+# lrp>=0.1.0
+
+# Uncomment if using SHAP
+# shap>=0.42.0
+
+# Additional utilities
+Pillow>=10.0.0
+opencv-python>=4.8.0
+tqdm>=4.65.0
