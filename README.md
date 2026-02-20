@@ -71,14 +71,35 @@ uv run pre-commit install --hook-type pre-push
 
 ### 5. Download dataset
 
-Create a `.env` file with your Roboflow credentials:
+#### Get your Roboflow credentials
 
-```text
-ROBOFLOW_API_KEY=your_api_key
-ROBOFLOW_WORKSPACE=your_workspace
-ROBOFLOW_PROJECT=your_project
-ROBOFLOW_VERSION=1
-```
+1. Go to [roboflow.com](https://roboflow.com) and sign in
+2. Navigate to your project
+3. Look at the URL in your browser — it will be in this format:
+
+   ```text
+   https://app.roboflow.com/{WORKSPACE}/{PROJECT}/...
+   ```
+
+   For example: `https://app.roboflow.com/example-workspace/example-project/1`
+   - `WORKSPACE` = `example-workspace`
+   - `PROJECT` = `example-project`
+
+4. Get your API key:
+   - Click your profile icon (top right)
+   - Go to "Settings" or visit [app.roboflow.com/settings](https://app.roboflow.com/settings)
+   - Scroll to the "API Key" section
+   - Copy your private API key
+
+5. Create a `.env` file in the project root with these values (you can copy `.env.example` as a starting point):
+
+   ```bash
+   cp .env.example .env
+   ```
+
+   Then edit `.env` with your actual values.
+
+#### Download the dataset
 
 Then run:
 
