@@ -19,21 +19,7 @@ A modular framework for evaluating multiple YOLO architectures (YOLOv8, YOLOv11,
 pip install -r requirements.txt
 ```
 
-### 2. Install PyTorch with CUDA Support
-
-For NVIDIA GPUs with CUDA 13.1:
-```bash
-pip3 install --pre torch torchvision --index-url https://download.pytorch.org/whl/nightly/cu130
-```
-
-Or use the interactive installer:
-```bash
-install_pytorch_cuda.bat
-```
-
-See `PYTORCH_SETUP.md` for other CUDA versions.
-
-### 3. Download Dataset
+### 2. Download Dataset
 
 ```bash
 python scripts/download_dataset.py
@@ -41,7 +27,7 @@ python scripts/download_dataset.py
 
 This downloads the weapon detection dataset from Roboflow (requires API key in `.env`).
 
-### 4. Validate Dataset
+### 3. Validate Dataset
 
 ```bash
 python scripts/validate_dataset.py
@@ -91,8 +77,6 @@ Model configs are in `config/models/`. Each config specifies:
 - Dataset path
 - Multi-run settings (seeds, number of runs)
 
-Device selection is automatic (CUDA if available, CPU otherwise). To override, add `device: "cpu"` or `device: "cuda"` to the training section.
-
 Dataset configs are in `config/data/`:
 - `weapon_detection_data.yaml` - Relative paths (for version control)
 - `weapon_detection_data.local.yaml` - Absolute paths (gitignored)
@@ -114,21 +98,9 @@ Or use pytest directly:
 python -m pytest tests/ -v
 ```
 
-## Device Selection
-
-The framework automatically selects the best available device:
-- CUDA GPU if available and functional
-- CPU fallback if CUDA fails or unavailable
-
-No configuration needed - it just works! To force a specific device, add `device: "cpu"` or `device: "cuda"` to the training section of your config.
-
 ## Results
 
 Training results are saved to:
 - `runs/detect/{model_name}/` - Training logs, plots, checkpoints
 - `outputs/{model_name}/` - Evaluation metrics (JSON)
 - `explanations/{model_name}/` - Explainability visualizations (future)
-
-## License
-
-MIT
