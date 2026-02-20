@@ -1,15 +1,6 @@
-# Multi-YOLO Evaluation Framework
+# Asbtract
 
-A modular framework for evaluating multiple YOLO architectures (YOLOv8, YOLOv11, YOLOv12, YOLO26) on weapon detection datasets with explainability analysis.
-
-## Features
-
-- Multi-architecture YOLO training and evaluation
-- Automated dataset validation
-- Reproducible experiments with seed management
-- Comprehensive metrics collection (mAP, precision, recall, inference time, model size)
-- CUDA auto-detection with CPU fallback
-- Property-based testing for correctness validation
+>The rapid proliferation of harmful visual content has introduced novel challenges for content moderation on online platforms such as Discord and Reddit, where hateful or harmful imagery can be disseminated at scale. Existing threat detection approaches for flagging such material have predominantly relied on YOLOv8 with limited explainability, leaving moderators without actionable insight into model decisions. This study addresses two open gaps in the literature: (1) the lack of comparative evaluation of post-v8 YOLO architectures for hateful content detection, and (2) the insufficient integration of advanced explainable AI (XAI) techniques beyond coarse Grad-CAM heatmaps. We benchmark YOLOv11, YOLOv12, and YOLO26 on a multiclass harmful-content dataset and systematically apply complementary XAI methods, including Layer-wise Relevance Propagation (LRP) and SHAP, alongside Grad-CAM to provide fine-grained, instance-level attribution maps. Our experimental pipeline evaluates detection accuracy (mAP@0.5, precision, recall, F1-score), inference latency, and explainability fidelity across all architectures. Preliminary results indicate that attention-enhanced backbones in YOLOv11 and YOLOv12 improve localisation of subtle hateful symbols, while YOLO26's NMS-free prediction head reduces post-processing overhead. The hybrid XAI framework yields richer explanations that enable moderators to understand why specific image regions are flagged, supporting transparent and accountable automated moderation. This work provides a practical, deployable framework for platform trust and safety teams seeking accurate, interpretable, and efficient AI-driven content moderation.
 
 ## Setup
 
