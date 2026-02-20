@@ -1,0 +1,16 @@
+# YOLOv8n Test Configuration (Quick Training)
+# Use this for testing the pipeline with minimal training time
+
+training:
+  epochs: 3  # Just 3 epochs for quick testing
+  patience: 10
+  image_size: 640
+  runs: 1
+  seeds: [42]
+
+model:
+  name: "yolov8n_test"
+  weights: "yolov8n.pt"
+
+data:
+  yaml_path: "config/data/weapon_detection_data.local.yaml"

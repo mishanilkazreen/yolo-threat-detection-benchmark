@@ -1,0 +1,15 @@
+# YOLO26n Training Configuration
+
+training:
+  epochs: 100
+  patience: 10
+  image_size: 640
+  runs: 1  # Number of runs for statistical analysis
+  seeds: [42]  # Fixed seeds for each run
+
+model:
+  name: "yolo26n"
+  weights: "yolo26n.pt"  # Pretrained weights (auto-downloaded if available)
+
+data:
+  yaml_path: "config/data/weapon_detection_data.local.yaml"

@@ -209,3 +209,37 @@ __marimo__/
 _XplainRescue-main/
 .kiro/
 setup.py
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb_checkpoints/
+
+# Downloaded datasets
+weapon_detection*/
+Weapon_Detection*/
+*dataset*/
+data/raw/
+data/downloaded/
+
+# YOLO pretrained weights
+*.pt
+!yolov8n.pt
+!yolov11n.pt
+!yolov12n.pt
+!yolo26n.pt
+yolo26n.pt
+yolov8n.pt
+
+# Training outputs
+runs/
+outputs/
+explanations/
+
+# Local configuration overrides
+*.local.yaml
+*.local.yml
+
+# IDE
+.idea/
+.github/
+.vscode/

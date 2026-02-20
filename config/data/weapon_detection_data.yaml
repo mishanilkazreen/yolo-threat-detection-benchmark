@@ -1,0 +1,30 @@
+# Weapon Detection Dataset Configuration
+# Downloaded from Roboflow: weapon_detection-xbxnv-9zqry
+# License: CC BY 4.0
+
+# Dataset path (update this to your local dataset location)
+# Example: "M:/_Research/yolo-improvement-detection-moderation-paper/Weapon_Detection-1"
+# Or use relative path: "./Weapon_Detection-1"
+path: "./Weapon_Detection-1"
+
+# Split directories (relative to path)
+train: train/images
+val: valid/images
+# Note: No separate test split - using validation set for both validation and testing
+
+# Number of classes
+nc: 2
+
+# Class names (list format as in original data.yaml)
+names:
+  - knife
+  - pistol
+
+# Dataset fraction (1.0 = use full dataset, 0.1 = use 10%)
+fraction: 1.0
+
+# Dataset statistics
+# Train: 4,085 images with labels
+# Valid: 979 images with labels
+# Total: 5,064 images
+# Classes: 2 (knife, pistol)
