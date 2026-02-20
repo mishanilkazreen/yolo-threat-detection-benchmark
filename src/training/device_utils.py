@@ -8,14 +8,14 @@ import torch
 def select_device(device_config: str = "auto") -> str:
     """
     Select the appropriate device for training.
-    
+
     Args:
         device_config: Device configuration string
             - "auto": Automatically select CUDA if available, otherwise CPU
             - "cuda": Force CUDA (will fail if not available)
             - "cpu": Force CPU
             - "0", "1", etc.: Specific CUDA device
-    
+
     Returns:
         Device string to use for training
     """
@@ -33,13 +33,19 @@ def select_device(device_config: str = "auto") -> str:
                 print("\nTo fix CUDA issues:")
                 print("1. Check your CUDA version: nvidia-smi")
                 print("2. Install matching PyTorch:")
-                print("   For CUDA 13.1: pip3 install --pre torch torchvision --index-url https://download.pytorch.org/whl/nightly/cu130")
-                print("   For CUDA 12.1: pip3 install torch torchvision --index-url https://download.pytorch.org/whl/cu121")
-                print("   For CUDA 11.8: pip3 install torch torchvision --index-url https://download.pytorch.org/whl/cu118")
+                print(
+                    "   For CUDA 13.1: pip3 install --pre torch torchvision --index-url https://download.pytorch.org/whl/nightly/cu130"
+                )
+                print(
+                    "   For CUDA 12.1: pip3 install torch torchvision --index-url https://download.pytorch.org/whl/cu121"
+                )
+                print(
+                    "   For CUDA 11.8: pip3 install torch torchvision --index-url https://download.pytorch.org/whl/cu118"
+                )
                 device = "cpu"
         else:
             device = "cpu"
             print("CUDA not available: Using CPU")
         return device
-    
+
     return device_config

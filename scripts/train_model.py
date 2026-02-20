@@ -5,8 +5,8 @@ Usage:
     python scripts/train_model.py config/models/yolov8n_test.yaml
 """
 
-import sys
 from pathlib import Path
+import sys
 
 # Add project root to path
 project_root = Path(__file__).parent.parent
@@ -21,20 +21,20 @@ def main():
         print("\nExample:")
         print("  python scripts/train_model.py config/models/yolov8n_test.yaml")
         sys.exit(1)
-    
+
     config_path = sys.argv[1]
-    
+
     if not Path(config_path).exists():
         print(f"Error: Configuration file not found: {config_path}")
         sys.exit(1)
-    
+
     print(f"Starting training with config: {config_path}")
     print("-" * 60)
-    
+
     # Run experiment
     runner = Experiment_Runner()
     results = runner.run_experiment(config_path, validate_dataset=True)
-    
+
     print("\n" + "=" * 60)
     print("Training Complete!")
     print("=" * 60)

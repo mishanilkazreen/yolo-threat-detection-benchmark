@@ -68,7 +68,14 @@ ignore = [
     "PLR0915", # too many statements
     "PLR2004", # magic value used in comparison
     "ARG002",  # unused method argument
+    "ARG004",  # unused static method argument
     "PLR0911", # too many return statements
+    "PLC0415", # import not at top level (allow lazy imports)
+    "PLW2901", # loop variable overwritten
+    "RUF012",  # mutable class attributes
+    "RUF043",  # regex metacharacters in match=
+    "B904",    # raise from in except (too noisy for existing code)
+    "PTH123",  # open() vs Path.open() (gradual migration)
 ]
 
 [tool.ruff.lint.per-file-ignores]
@@ -76,9 +83,17 @@ ignore = [
     "S101",    # use of assert
     "PLR2004", # magic values in tests
     "ARG001",  # unused function arguments (fixtures)
+    "B905",    # zip() without strict=
+    "PTH108",  # os.unlink vs Path.unlink
+    "RUF059",  # unpacked variable never used
 ]
 "scripts/**/*.py" = [
     "T201",    # print statements allowed in scripts
+    "E402",    # module level import not at top (sys.path manipulation)
+    "F841",    # unused variables in scripts
+]
+"src/training/runner.py" = [
+    "F841",    # unused variables (YOLO API returns)
 ]
 
 [tool.ruff.lint.isort]
@@ -112,6 +127,12 @@ module = [
     "hypothesis.*",
 ]
 ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = [
+    "src.training.evaluator",
+]
+ignore_errors = true
 
 [tool.pytest.ini_options]
 minversion = "7.0"

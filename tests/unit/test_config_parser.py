@@ -1,292 +1,282 @@
 """Unit tests for ConfigurationParser."""
 
-import pytest
 from pathlib import Path
 import tempfile
+
+import pytest
 import yaml
 
 from src.config.parser import (
-    ConfigurationParser,
     ConfigurationParseError,
-    Configuration,
-    TrainingConfig,
-    ModelConfig,
-    DataConfig
+    ConfigurationParser,
 )
 
 
 class TestConfigurationParser:
     """Tests for ConfigurationParser."""
-    
+
     def create_temp_config(self, config_dict):
         """Helper to create temporary config file."""
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.yaml', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".yaml", delete=False) as f:
             yaml.dump(config_dict, f)
             return f.name
-    
+
     def test_parse_valid_minimal_config(self):
         """Test parsing valid minimal configuration."""
         config_dict = {
-            'training': {
-                'epochs': 100,
-                'patience': 10,
-                'image_size': 640,
-                'device': 'cuda'
-            },
-            'model': {
-                'name': 'yolov8n',
-                'weights': 'yolov8n.pt'
-            },
-            'data': {
-                'yaml_path': 'config/data/dataset.yaml'
-            }
+            "training": {"epochs": 100, "patience": 10, "image_size": 640, "device": "cuda"},
+            "model": {"name": "yolov8n", "weights": "yolov8n.pt"},
+            "data": {"yaml_path": "config/data/dataset.yaml"},
         }
-        
+
         config_path = self.create_temp_config(config_dict)
         try:
             config = ConfigurationParser.parse(config_path)
-            
+
             assert config.training.epochs == 100
             assert config.training.patience == 10
             assert config.training.image_size == 640
-            assert config.training.device == 'cuda'
+            assert config.training.device == "cuda"
             assert config.training.runs == 1  # Default
             assert config.training.seeds is None  # Default
-            
-            assert config.model.name == 'yolov8n'
-            assert config.model.weights == 'yolov8n.pt'
-            
-            assert config.data.yaml_path == 'config/data/dataset.yaml'
+
+            assert config.model.name == "yolov8n"
+            assert config.model.weights == "yolov8n.pt"
+
+            assert config.data.yaml_path == "config/data/dataset.yaml"
         finally:
             Path(config_path).unlink()
-    
+
     def test_parse_valid_config_with_optional_fields(self):
         """Test parsing configuration with optional fields."""
         config_dict = {
-            'training': {
-                'epochs': 100,
-                'patience': 10,
-                'image_size': 640,
-                'device': 'cuda',
-                'runs': 3,
-                'seeds': [42, 123, 456]
+            "training": {
+                "epochs": 100,
+                "patience": 10,
+                "image_size": 640,
+                "device": "cuda",
+                "runs": 3,
+                "seeds": [42, 123, 456],
             },
-            'model': {
-                'name': 'yolov8n',
-                'weights': 'yolov8n.pt'
-            },
-            'data': {
-                'yaml_path': 'config/data/dataset.yaml'
-            }
+            "model": {"name": "yolov8n", "weights": "yolov8n.pt"},
+            "data": {"yaml_path": "config/data/dataset.yaml"},
         }
-        
+
         config_path = self.create_temp_config(config_dict)
         try:
             config = ConfigurationParser.parse(config_path)
-            
+
             assert config.training.runs == 3
             assert config.training.seeds == [42, 123, 456]
         finally:
             Path(config_path).unlink()
-    
+
     def test_parse_file_not_found(self):
         """Test parsing non-existent file raises error."""
         with pytest.raises(ConfigurationParseError, match="not found"):
             ConfigurationParser.parse("nonexistent.yaml")
-    
+
     def test_parse_empty_file(self):
         """Test parsing empty file raises error."""
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.yaml', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".yaml", delete=False) as f:
             config_path = f.name
-        
+
         try:
             with pytest.raises(ConfigurationParseError, match="empty"):
                 ConfigurationParser.parse(config_path)
         finally:
             Path(config_path).unlink()
-    
+
     def test_parse_invalid_yaml_syntax(self):
         """Test parsing file with invalid YAML syntax."""
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.yaml', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".yaml", delete=False) as f:
             f.write("invalid: yaml: syntax: here:")
             config_path = f.name
-        
+
         try:
             with pytest.raises(ConfigurationParseError, match="Invalid YAML"):
                 ConfigurationParser.parse(config_path)
         finally:
             Path(config_path).unlink()
-    
+
     def test_parse_missing_training_section(self):
         """Test parsing config missing training section."""
         config_dict = {
-            'model': {'name': 'yolov8n', 'weights': 'yolov8n.pt'},
-            'data': {'yaml_path': 'config/data/dataset.yaml'}
+            "model": {"name": "yolov8n", "weights": "yolov8n.pt"},
+            "data": {"yaml_path": "config/data/dataset.yaml"},
         }
-        
+
         config_path = self.create_temp_config(config_dict)
         try:
-            with pytest.raises(ConfigurationParseError, match="Missing required sections.*training"):
+            with pytest.raises(
+                ConfigurationParseError, match="Missing required sections.*training"
+            ):
                 ConfigurationParser.parse(config_path)
         finally:
             Path(config_path).unlink()
-    
+
     def test_parse_missing_model_section(self):
         """Test parsing config missing model section."""
         config_dict = {
-            'training': {'epochs': 100, 'patience': 10, 'image_size': 640, 'device': 'cuda'},
-            'data': {'yaml_path': 'config/data/dataset.yaml'}
+            "training": {"epochs": 100, "patience": 10, "image_size": 640, "device": "cuda"},
+            "data": {"yaml_path": "config/data/dataset.yaml"},
         }
-        
+
         config_path = self.create_temp_config(config_dict)
         try:
             with pytest.raises(ConfigurationParseError, match="Missing required sections.*model"):
                 ConfigurationParser.parse(config_path)
         finally:
             Path(config_path).unlink()
-    
+
     def test_parse_missing_data_section(self):
         """Test parsing config missing data section."""
         config_dict = {
-            'training': {'epochs': 100, 'patience': 10, 'image_size': 640, 'device': 'cuda'},
-            'model': {'name': 'yolov8n', 'weights': 'yolov8n.pt'}
+            "training": {"epochs": 100, "patience": 10, "image_size": 640, "device": "cuda"},
+            "model": {"name": "yolov8n", "weights": "yolov8n.pt"},
         }
-        
+
         config_path = self.create_temp_config(config_dict)
         try:
             with pytest.raises(ConfigurationParseError, match="Missing required sections.*data"):
                 ConfigurationParser.parse(config_path)
         finally:
             Path(config_path).unlink()
-    
+
     def test_parse_missing_training_field_epochs(self):
         """Test parsing config missing epochs field."""
         config_dict = {
-            'training': {'patience': 10, 'image_size': 640, 'device': 'cuda'},
-            'model': {'name': 'yolov8n', 'weights': 'yolov8n.pt'},
-            'data': {'yaml_path': 'config/data/dataset.yaml'}
+            "training": {"patience": 10, "image_size": 640, "device": "cuda"},
+            "model": {"name": "yolov8n", "weights": "yolov8n.pt"},
+            "data": {"yaml_path": "config/data/dataset.yaml"},
         }
-        
+
         config_path = self.create_temp_config(config_dict)
         try:
-            with pytest.raises(ConfigurationParseError, match="Missing required training fields.*epochs"):
+            with pytest.raises(
+                ConfigurationParseError, match="Missing required training fields.*epochs"
+            ):
                 ConfigurationParser.parse(config_path)
         finally:
             Path(config_path).unlink()
-    
+
     def test_parse_missing_model_field_name(self):
         """Test parsing config missing model name field."""
         config_dict = {
-            'training': {'epochs': 100, 'patience': 10, 'image_size': 640, 'device': 'cuda'},
-            'model': {'weights': 'yolov8n.pt'},
-            'data': {'yaml_path': 'config/data/dataset.yaml'}
+            "training": {"epochs": 100, "patience": 10, "image_size": 640, "device": "cuda"},
+            "model": {"weights": "yolov8n.pt"},
+            "data": {"yaml_path": "config/data/dataset.yaml"},
         }
-        
+
         config_path = self.create_temp_config(config_dict)
         try:
-            with pytest.raises(ConfigurationParseError, match="Missing required model fields.*name"):
+            with pytest.raises(
+                ConfigurationParseError, match="Missing required model fields.*name"
+            ):
                 ConfigurationParser.parse(config_path)
         finally:
             Path(config_path).unlink()
-    
+
     def test_parse_missing_data_field_yaml_path(self):
         """Test parsing config missing yaml_path field."""
         config_dict = {
-            'training': {'epochs': 100, 'patience': 10, 'image_size': 640, 'device': 'cuda'},
-            'model': {'name': 'yolov8n', 'weights': 'yolov8n.pt'},
-            'data': {}
+            "training": {"epochs": 100, "patience": 10, "image_size": 640, "device": "cuda"},
+            "model": {"name": "yolov8n", "weights": "yolov8n.pt"},
+            "data": {},
         }
-        
+
         config_path = self.create_temp_config(config_dict)
         try:
-            with pytest.raises(ConfigurationParseError, match="Missing required data fields.*yaml_path"):
+            with pytest.raises(
+                ConfigurationParseError, match="Missing required data fields.*yaml_path"
+            ):
                 ConfigurationParser.parse(config_path)
         finally:
             Path(config_path).unlink()
-    
+
     def test_parse_invalid_epochs_negative(self):
         """Test parsing config with negative epochs."""
         config_dict = {
-            'training': {'epochs': -10, 'patience': 10, 'image_size': 640, 'device': 'cuda'},
-            'model': {'name': 'yolov8n', 'weights': 'yolov8n.pt'},
-            'data': {'yaml_path': 'config/data/dataset.yaml'}
+            "training": {"epochs": -10, "patience": 10, "image_size": 640, "device": "cuda"},
+            "model": {"name": "yolov8n", "weights": "yolov8n.pt"},
+            "data": {"yaml_path": "config/data/dataset.yaml"},
         }
-        
+
         config_path = self.create_temp_config(config_dict)
         try:
             with pytest.raises(ConfigurationParseError, match="epochs must be positive"):
                 ConfigurationParser.parse(config_path)
         finally:
             Path(config_path).unlink()
-    
+
     def test_parse_invalid_epochs_non_numeric(self):
         """Test parsing config with non-numeric epochs."""
         config_dict = {
-            'training': {'epochs': 'abc', 'patience': 10, 'image_size': 640, 'device': 'cuda'},
-            'model': {'name': 'yolov8n', 'weights': 'yolov8n.pt'},
-            'data': {'yaml_path': 'config/data/dataset.yaml'}
+            "training": {"epochs": "abc", "patience": 10, "image_size": 640, "device": "cuda"},
+            "model": {"name": "yolov8n", "weights": "yolov8n.pt"},
+            "data": {"yaml_path": "config/data/dataset.yaml"},
         }
-        
+
         config_path = self.create_temp_config(config_dict)
         try:
             with pytest.raises(ConfigurationParseError, match="epochs must be an integer"):
                 ConfigurationParser.parse(config_path)
         finally:
             Path(config_path).unlink()
-    
+
     def test_parse_invalid_patience_negative(self):
         """Test parsing config with negative patience."""
         config_dict = {
-            'training': {'epochs': 100, 'patience': -5, 'image_size': 640, 'device': 'cuda'},
-            'model': {'name': 'yolov8n', 'weights': 'yolov8n.pt'},
-            'data': {'yaml_path': 'config/data/dataset.yaml'}
+            "training": {"epochs": 100, "patience": -5, "image_size": 640, "device": "cuda"},
+            "model": {"name": "yolov8n", "weights": "yolov8n.pt"},
+            "data": {"yaml_path": "config/data/dataset.yaml"},
         }
-        
+
         config_path = self.create_temp_config(config_dict)
         try:
             with pytest.raises(ConfigurationParseError, match="patience must be non-negative"):
                 ConfigurationParser.parse(config_path)
         finally:
             Path(config_path).unlink()
-    
+
     def test_parse_invalid_image_size_zero(self):
         """Test parsing config with zero image_size."""
         config_dict = {
-            'training': {'epochs': 100, 'patience': 10, 'image_size': 0, 'device': 'cuda'},
-            'model': {'name': 'yolov8n', 'weights': 'yolov8n.pt'},
-            'data': {'yaml_path': 'config/data/dataset.yaml'}
+            "training": {"epochs": 100, "patience": 10, "image_size": 0, "device": "cuda"},
+            "model": {"name": "yolov8n", "weights": "yolov8n.pt"},
+            "data": {"yaml_path": "config/data/dataset.yaml"},
         }
-        
+
         config_path = self.create_temp_config(config_dict)
         try:
             with pytest.raises(ConfigurationParseError, match="image_size must be positive"):
                 ConfigurationParser.parse(config_path)
         finally:
             Path(config_path).unlink()
-    
+
     def test_parse_empty_device(self):
         """Test parsing config with empty device string."""
         config_dict = {
-            'training': {'epochs': 100, 'patience': 10, 'image_size': 640, 'device': ''},
-            'model': {'name': 'yolov8n', 'weights': 'yolov8n.pt'},
-            'data': {'yaml_path': 'config/data/dataset.yaml'}
+            "training": {"epochs": 100, "patience": 10, "image_size": 640, "device": ""},
+            "model": {"name": "yolov8n", "weights": "yolov8n.pt"},
+            "data": {"yaml_path": "config/data/dataset.yaml"},
         }
-        
+
         config_path = self.create_temp_config(config_dict)
         try:
             with pytest.raises(ConfigurationParseError, match="device cannot be empty"):
                 ConfigurationParser.parse(config_path)
         finally:
             Path(config_path).unlink()
-    
+
     def test_parse_empty_model_name(self):
         """Test parsing config with empty model name."""
         config_dict = {
-            'training': {'epochs': 100, 'patience': 10, 'image_size': 640, 'device': 'cuda'},
-            'model': {'name': '', 'weights': 'yolov8n.pt'},
-            'data': {'yaml_path': 'config/data/dataset.yaml'}
+            "training": {"epochs": 100, "patience": 10, "image_size": 640, "device": "cuda"},
+            "model": {"name": "", "weights": "yolov8n.pt"},
+            "data": {"yaml_path": "config/data/dataset.yaml"},
         }
-        
+
         config_path = self.create_temp_config(config_dict)
         try:
             with pytest.raises(ConfigurationParseError, match="model name cannot be empty"):

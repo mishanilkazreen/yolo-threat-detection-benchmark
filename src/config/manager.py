@@ -1,154 +1,176 @@
 """Configuration manager for loading and validating configurations."""
 
 from pathlib import Path
-from typing import Union, Dict, Any, List, Optional
+from typing import Any
+
 import yaml
 
-from .parser import Configuration, ConfigurationParser, ConfigurationParseError
-from .path_utils import PathResolver
+from .parser import Configuration, ConfigurationParseError, ConfigurationParser
 
 
 class ExplainerConfig:
     """Explainer configuration container."""
-    
-    def __init__(self, data: Dict[str, Any]):
+
+    def __init__(self, data: dict[str, Any]):
         """Initialize explainer configuration from dictionary."""
         self.data = data
-        self.model_weights_path = data.get('model', {}).get('weights_path')
-        self.image_directory = data.get('images', {}).get('directory')
-        self.num_images = data.get('images', {}).get('num_images', 10)
-        self.target_class = data.get('images', {}).get('target_class')
-        self.confidence_threshold = data.get('explainability', {}).get('confidence_threshold', 0.5)
-        self.methods = data.get('explainability', {}).get('methods', [])
-        self.use_predicted_boxes = data.get('explainability', {}).get('use_predicted_boxes', True)
-        
+        self.model_weights_path = data.get("model", {}).get("weights_path")
+        self.image_directory = data.get("images", {}).get("directory")
+        self.num_images = data.get("images", {}).get("num_images", 10)
+        self.target_class = data.get("images", {}).get("target_class")
+        self.confidence_threshold = data.get("explainability", {}).get("confidence_threshold", 0.5)
+        self.methods = data.get("explainability", {}).get("methods", [])
+        self.use_predicted_boxes = data.get("explainability", {}).get("use_predicted_boxes", True)
+
         # Method-specific configurations
-        self.occlusion_config = data.get('occlusion', {})
-        self.gradcam_config = data.get('gradcam', {})
-        self.lrp_config = data.get('lrp', {})
-        self.shap_config = data.get('shap', {})
+        self.occlusion_config = data.get("occlusion", {})
+        self.gradcam_config = data.get("gradcam", {})
+        self.lrp_config = data.get("lrp", {})
+        self.shap_config = data.get("shap", {})
 
 
 class ConfigurationManager:
     """Manager for loading and validating training and explainer configurations."""
-    
-    SUPPORTED_ARCHITECTURES = ['yolov8n', 'yolov8s', 'yolov8m', 'yolov8l', 'yolov8x',
-                                'yolov11n', 'yolov11s', 'yolov11m', 'yolov11l', 'yolov11x',
-                                'yolov12n', 'yolov12s', 'yolov12m', 'yolov12l', 'yolov12x',
-                                'yolo26n', 'yolo26s', 'yolo26m', 'yolo26l', 'yolo26x']
-    
+
+    SUPPORTED_ARCHITECTURES = [
+        "yolov8n",
+        "yolov8s",
+        "yolov8m",
+        "yolov8l",
+        "yolov8x",
+        "yolov11n",
+        "yolov11s",
+        "yolov11m",
+        "yolov11l",
+        "yolov11x",
+        "yolov12n",
+        "yolov12s",
+        "yolov12m",
+        "yolov12l",
+        "yolov12x",
+        "yolo26n",
+        "yolo26s",
+        "yolo26m",
+        "yolo26l",
+        "yolo26x",
+    ]
+
     @staticmethod
-    def load_training_config(config_path: Union[str, Path]) -> Configuration:
+    def load_training_config(config_path: str | Path) -> Configuration:
         """
         Load and validate training configuration.
-        
+
         Args:
             config_path: Path to training configuration YAML file
-            
+
         Returns:
             Validated Configuration object
-            
+
         Raises:
             ConfigurationParseError: If configuration is invalid
         """
         config = ConfigurationParser.parse(config_path)
         ConfigurationManager._validate_training_config(config, config_path)
         return config
-    
+
     @staticmethod
-    def _validate_training_config(config: Configuration, config_path: Union[str, Path]) -> None:
+    def _validate_training_config(config: Configuration, config_path: str | Path) -> None:
         """
         Validate training configuration fields.
-        
+
         Args:
             config: Configuration object to validate
             config_path: Path to configuration file (for error messages)
-            
+
         Raises:
             ConfigurationParseError: If validation fails
         """
         # Validate required fields exist (already done by parser, but double-check)
         required_fields = {
-            'model.name': config.model.name,
-            'model.weights': config.model.weights,
-            'training.epochs': config.training.epochs,
-            'training.image_size': config.training.image_size,
-            'training.device': config.training.device,
-            'data.yaml_path': config.data.yaml_path
+            "model.name": config.model.name,
+            "model.weights": config.model.weights,
+            "training.epochs": config.training.epochs,
+            "training.image_size": config.training.image_size,
+            "training.device": config.training.device,
+            "data.yaml_path": config.data.yaml_path,
         }
-        
+
         missing = [field for field, value in required_fields.items() if not value]
         if missing:
             raise ConfigurationParseError(
                 f"Configuration {config_path} is missing or has empty required fields: {', '.join(missing)}"
             )
-        
+
         # Validate model architecture
         model_name_lower = config.model.name.lower()
-        if not any(arch in model_name_lower for arch in ['yolov8', 'yolov11', 'yolov12', 'yolo26']):
+        if not any(arch in model_name_lower for arch in ["yolov8", "yolov11", "yolov12", "yolo26"]):
             raise ConfigurationParseError(
                 f"Unsupported model architecture '{config.model.name}'. "
                 f"Must be one of: YOLOv8, YOLOv11, YOLOv12, YOLO26 (any size variant)"
             )
-        
+
         # Validate device
-        valid_devices = ['auto', 'cpu', 'cuda', 'mps']
+        valid_devices = ["auto", "cpu", "cuda", "mps"]
         device_lower = config.training.device.lower()
-        if device_lower not in valid_devices and not device_lower.startswith('cuda:'):
+        if device_lower not in valid_devices and not device_lower.startswith("cuda:"):
             raise ConfigurationParseError(
                 f"Invalid device '{config.training.device}'. "
                 f"Must be one of: {', '.join(valid_devices)}, or 'cuda:N' for specific GPU"
             )
-        
+
         # Validate multi-run configuration
-        if config.training.runs > 1:
-            if config.training.seeds is not None:
-                if len(config.training.seeds) != config.training.runs:
-                    raise ConfigurationParseError(
-                        f"Number of seeds ({len(config.training.seeds)}) must match "
-                        f"number of runs ({config.training.runs})"
-                    )
-    
+        if (
+            config.training.runs > 1
+            and config.training.seeds is not None
+            and len(config.training.seeds) != config.training.runs
+        ):
+            raise ConfigurationParseError(
+                f"Number of seeds ({len(config.training.seeds)}) must match "
+                f"number of runs ({config.training.runs})"
+            )
+
     @staticmethod
-    def load_explainer_config(config_path: Union[str, Path]) -> ExplainerConfig:
+    def load_explainer_config(config_path: str | Path) -> ExplainerConfig:
         """
         Load explainer configuration from YAML file.
-        
+
         Args:
             config_path: Path to explainer configuration YAML file
-            
+
         Returns:
             ExplainerConfig object
-            
+
         Raises:
             ConfigurationParseError: If configuration is invalid
         """
         try:
-            with open(config_path, 'r') as f:
+            with open(config_path) as f:
                 data = yaml.safe_load(f)
         except FileNotFoundError:
             raise ConfigurationParseError(f"Explainer configuration file not found: {config_path}")
         except yaml.YAMLError as e:
             raise ConfigurationParseError(f"Invalid YAML syntax in {config_path}: {e}")
         except Exception as e:
-            raise ConfigurationParseError(f"Failed to read explainer configuration {config_path}: {e}")
-        
+            raise ConfigurationParseError(
+                f"Failed to read explainer configuration {config_path}: {e}"
+            )
+
         if data is None:
             raise ConfigurationParseError(f"Explainer configuration file is empty: {config_path}")
-        
+
         explainer_config = ExplainerConfig(data)
         ConfigurationManager._validate_explainer_config(explainer_config, config_path)
         return explainer_config
-    
+
     @staticmethod
-    def _validate_explainer_config(config: ExplainerConfig, config_path: Union[str, Path]) -> None:
+    def _validate_explainer_config(config: ExplainerConfig, config_path: str | Path) -> None:
         """
         Validate explainer configuration fields.
-        
+
         Args:
             config: ExplainerConfig object to validate
             config_path: Path to configuration file (for error messages)
-            
+
         Raises:
             ConfigurationParseError: If validation fails
         """
@@ -157,79 +179,81 @@ class ConfigurationManager:
             raise ConfigurationParseError(
                 f"Explainer configuration {config_path} missing required field: model.weights_path"
             )
-        
+
         if not config.image_directory:
             raise ConfigurationParseError(
                 f"Explainer configuration {config_path} missing required field: images.directory"
             )
-        
+
         if config.num_images <= 0:
             raise ConfigurationParseError(
                 f"Explainer configuration {config_path}: num_images must be positive"
             )
-        
+
         if not config.methods:
             raise ConfigurationParseError(
                 f"Explainer configuration {config_path} missing required field: explainability.methods"
             )
-        
+
         # Validate methods
-        valid_methods = ['occlusion', 'gradcam', 'lrp', 'shap']
+        valid_methods = ["occlusion", "gradcam", "lrp", "shap"]
         invalid_methods = [m for m in config.methods if m not in valid_methods]
         if invalid_methods:
             raise ConfigurationParseError(
                 f"Explainer configuration {config_path} contains invalid methods: {', '.join(invalid_methods)}. "
                 f"Valid methods: {', '.join(valid_methods)}"
             )
-        
+
         # Validate confidence threshold
         if not (0.0 <= config.confidence_threshold <= 1.0):
             raise ConfigurationParseError(
                 f"Explainer configuration {config_path}: confidence_threshold must be between 0.0 and 1.0"
             )
-    
+
     @staticmethod
-    def discover_training_configs(config_dir: Union[str, Path] = "config/models") -> List[Path]:
+    def discover_training_configs(config_dir: str | Path = "config/models") -> list[Path]:
         """
         Discover all YAML configuration files in the specified directory.
-        
+
         Args:
             config_dir: Directory to search for configuration files
-            
+
         Returns:
             List of paths to configuration files
         """
         config_dir = Path(config_dir)
         if not config_dir.exists():
             return []
-        
+
         return sorted(config_dir.glob("*.yaml")) + sorted(config_dir.glob("*.yml"))
-    
+
     @staticmethod
-    def discover_explainer_configs(config_dir: Union[str, Path] = "config/explainers") -> List[Path]:
+    def discover_explainer_configs(
+        config_dir: str | Path = "config/explainers",
+    ) -> list[Path]:
         """
         Discover all explainer configuration files in the specified directory.
-        
+
         Args:
             config_dir: Directory to search for explainer configuration files
-            
+
         Returns:
             List of paths to explainer configuration files
         """
         config_dir = Path(config_dir)
         if not config_dir.exists():
             return []
-        
+
         return sorted(config_dir.glob("*.yaml")) + sorted(config_dir.glob("*.yml"))
-    
+
     @staticmethod
-    def get_config_name(config_path: Union[str, Path]) -> str:
+    def get_config_name(config_path: str | Path) -> str:
         """
         Extract configuration name from file path.
-        
+
         Args:
             config_path: Path to configuration file
-            
+
         Returns:
             Configuration name (filename without extension)
         """
