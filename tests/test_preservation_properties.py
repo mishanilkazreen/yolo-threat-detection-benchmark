@@ -184,7 +184,7 @@ class TestPreservationProperties:
         # Run 2-round training
         rounds = 2
         epochs_per_round = 2
-        checkpoints = []
+        checkpoints: list[str] = []
 
         for round_num in range(1, rounds + 1):
             # Initialize model
