@@ -48,7 +48,7 @@ repos:
     hooks:
       - id: pytest-check
         name: pytest-check
-        entry: pytest
+        entry: .venv/Scripts/pytest.exe
         language: system
         pass_filenames: false
         always_run: true
