@@ -20,6 +20,6 @@ model:
   weights: "yolov8n.yaml"  # Architecture only, no pretrained weights
 
 data:
-  yaml_path: "config/data/weapon_detection_data.local.yaml"
+  yaml_path: "config/data/weapon_detection_data.yaml"
   train_init_percentage: 0.2
   iou_threshold: 0.5
