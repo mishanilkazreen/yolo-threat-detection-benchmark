@@ -4,7 +4,6 @@ Tests for Experiment_Runner baseline wiring.
 Feature: one-shot-baseline
 """
 
-from pathlib import Path
 from unittest.mock import MagicMock, mock_open, patch
 
 import pytest
@@ -65,7 +64,7 @@ def _build_runner_with_mocked_internals() -> Experiment_Runner:
     runner._get_all_images = MagicMock(return_value=_DUMMY_IMAGES)
     runner._verify_split_ratio = MagicMock()
     runner._create_round_data_yaml = MagicMock()
-    runner._create_step_decay_callback = MagicMock(return_value=lambda trainer: None)
+    runner._create_step_decay_callback = MagicMock(return_value=lambda _: None)
     runner._cleanup_memory = MagicMock()
 
     # Replace the Metrics_Collector (created eagerly in __init__).
