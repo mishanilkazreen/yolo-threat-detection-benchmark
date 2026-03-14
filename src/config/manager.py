@@ -145,50 +145,52 @@ class ConfigurationManager:
             ConfigurationParseError: If validation fails
         """
         # Validate rounds (default: 5)
-        if hasattr(config.training, 'rounds'):
-            if config.training.rounds is not None:
-                if not isinstance(config.training.rounds, int) or config.training.rounds < 1:
-                    raise ConfigurationParseError(
-                        f"Configuration {config_path}: training.rounds must be a positive integer, "
-                        f"got {config.training.rounds}"
-                    )
+        if (
+            hasattr(config.training, 'rounds')
+            and config.training.rounds is not None
+            and (not isinstance(config.training.rounds, int) or config.training.rounds < 1)
+        ):
+            raise ConfigurationParseError(
+                f"Configuration {config_path}: training.rounds must be a positive integer, "
+                f"got {config.training.rounds}"
+            )
 
         # Validate epochs_per_round
-        if hasattr(config.training, 'epochs_per_round'):
-            if config.training.epochs_per_round is not None:
-                if not isinstance(config.training.epochs_per_round, int) or config.training.epochs_per_round < 1:
-                    raise ConfigurationParseError(
-                        f"Configuration {config_path}: training.epochs_per_round must be a positive integer, "
-                        f"got {config.training.epochs_per_round}"
-                    )
+        if (
+            hasattr(config.training, 'epochs_per_round')
+            and config.training.epochs_per_round is not None
+            and (not isinstance(config.training.epochs_per_round, int) or config.training.epochs_per_round < 1)
+        ):
+            raise ConfigurationParseError(
+                f"Configuration {config_path}: training.epochs_per_round must be a positive integer, "
+                f"got {config.training.epochs_per_round}"
+            )
 
         # Validate train_init_percentage (default: 0.2)
-        if hasattr(config.data, 'train_init_percentage'):
-            if config.data.train_init_percentage is not None:
-                if not isinstance(config.data.train_init_percentage, (int, float)):
-                    raise ConfigurationParseError(
-                        f"Configuration {config_path}: data.train_init_percentage must be a number, "
-                        f"got {type(config.data.train_init_percentage).__name__}"
-                    )
-                if not (0.0 < config.data.train_init_percentage <= 1.0):
-                    raise ConfigurationParseError(
-                        f"Configuration {config_path}: data.train_init_percentage must be in (0, 1], "
-                        f"got {config.data.train_init_percentage}"
-                    )
+        if hasattr(config.data, 'train_init_percentage') and config.data.train_init_percentage is not None:
+            if not isinstance(config.data.train_init_percentage, (int, float)):
+                raise ConfigurationParseError(
+                    f"Configuration {config_path}: data.train_init_percentage must be a number, "
+                    f"got {type(config.data.train_init_percentage).__name__}"
+                )
+            if not (0.0 < config.data.train_init_percentage <= 1.0):
+                raise ConfigurationParseError(
+                    f"Configuration {config_path}: data.train_init_percentage must be in (0, 1], "
+                    f"got {config.data.train_init_percentage}"
+                )
 
         # Validate iou_threshold (default: 0.5)
-        if hasattr(config.data, 'iou_threshold'):
-            if config.data.iou_threshold is not None:
-                if not isinstance(config.data.iou_threshold, (int, float)):
-                    raise ConfigurationParseError(
-                        f"Configuration {config_path}: data.iou_threshold must be a number, "
-                        f"got {type(config.data.iou_threshold).__name__}"
-                    )
-                if not (0.0 <= config.data.iou_threshold <= 1.0):
-                    raise ConfigurationParseError(
-                        f"Configuration {config_path}: data.iou_threshold must be in [0, 1], "
-                        f"got {config.data.iou_threshold}"
-                    )
+        if hasattr(config.data, 'iou_threshold') and config.data.iou_threshold is not None:
+            if not isinstance(config.data.iou_threshold, (int, float)):
+                raise ConfigurationParseError(
+                    f"Configuration {config_path}: data.iou_threshold must be a number, "
+                    f"got {type(config.data.iou_threshold).__name__}"
+                )
+            if not (0.0 <= config.data.iou_threshold <= 1.0):
+                raise ConfigurationParseError(
+                    f"Configuration {config_path}: data.iou_threshold must be in [0, 1], "
+                    f"got {config.data.iou_threshold}"
+                )
 
     @staticmethod
     def load_explainer_config(config_path: str | Path) -> ExplainerConfig:

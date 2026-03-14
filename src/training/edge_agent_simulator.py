@@ -7,7 +7,7 @@ Simulates edge agents performing inference on unlabeled data pool.
 import json
 import logging
 from pathlib import Path
-from typing import Dict, List, Any
+from typing import Any
 
 from ultralytics import YOLO
 
@@ -42,7 +42,7 @@ class Edge_Agent_Simulator:
         output_path: str,
         conf_threshold: float = 0.25,
         iou_threshold: float = 0.45
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """
         Simulate edge agents performing inference on unlabeled_pool.
 
@@ -84,7 +84,7 @@ class Edge_Agent_Simulator:
         model = YOLO(str(model_checkpoint_path))
 
         # Load unlabeled pool images
-        with open(unlabeled_pool_file, 'r') as f:
+        with open(unlabeled_pool_file) as f:
             unlabeled_images = [line.strip() for line in f if line.strip()]
 
         logger.info(f"Running inference on {len(unlabeled_images)} unlabeled images")
@@ -127,10 +127,7 @@ class Edge_Agent_Simulator:
                         # Fallback: convert from xyxy to xywh normalized
                         xyxy_data = boxes.xyxy
                         # Handle both Tensor and ndarray types
-                        if hasattr(xyxy_data, 'cpu'):
-                            xyxy = xyxy_data.cpu().numpy()
-                        else:
-                            xyxy = xyxy_data
+                        xyxy = xyxy_data.cpu().numpy() if hasattr(xyxy_data, 'cpu') else xyxy_data
                         img_h, img_w = result.orig_shape
                         xywhn = self._xyxy_to_xywhn(xyxy, img_w, img_h)
 
@@ -192,7 +189,7 @@ class Edge_Agent_Simulator:
 
         return xywhn
 
-    def get_detection_statistics(self, detections: List[Dict[str, Any]]) -> Dict[str, Any]:
+    def get_detection_statistics(self, detections: list[dict[str, Any]]) -> dict[str, Any]:
         """
         Get statistics for a set of detections.
 
@@ -214,9 +211,9 @@ class Edge_Agent_Simulator:
                 'avg_confidence': 0.0
             }
 
-        unique_images = set(d['image_id'] for d in detections)
+        unique_images = {d['image_id'] for d in detections}
 
-        detections_per_class: Dict[int, int] = {}
+        detections_per_class: dict[int, int] = {}
         total_confidence = 0.0
 
         for det in detections:
@@ -256,7 +253,6 @@ class Edge_Agent_Simulator:
             List of detections
         """
         from ultralytics import YOLO
-        import numpy as np
 
         # Load model
         logger.info(f"Loading model from {model_path}")
@@ -300,10 +296,7 @@ class Edge_Agent_Simulator:
                     else:
                         xyxy_data = boxes.xyxy
                         # Handle both Tensor and ndarray types
-                        if hasattr(xyxy_data, 'cpu'):
-                            xyxy = xyxy_data.cpu().numpy()
-                        else:
-                            xyxy = xyxy_data
+                        xyxy = xyxy_data.cpu().numpy() if hasattr(xyxy_data, 'cpu') else xyxy_data
                         img_h, img_w = result.orig_shape
                         xywhn = self._xyxy_to_xywhn(xyxy, img_w, img_h)
 

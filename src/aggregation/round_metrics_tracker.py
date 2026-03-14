@@ -8,7 +8,7 @@ import csv
 import json
 import logging
 from pathlib import Path
-from typing import Dict, List, Any, Optional
+from typing import Any
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -35,7 +35,7 @@ class Round_Metrics_Tracker:
     def track_round_metrics(
         self,
         round_num: int,
-        metrics: Dict[str, Any],
+        metrics: dict[str, Any],
         output_dir: str
     ) -> None:
         """
@@ -61,7 +61,7 @@ class Round_Metrics_Tracker:
         config_name: str,
         output_dir: str,
         num_rounds: int = 5
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Aggregate metrics across all rounds.
 
@@ -81,7 +81,7 @@ class Round_Metrics_Tracker:
             round_file = output_path / f"round_{round_num}_metrics.json"
 
             if round_file.exists():
-                with open(round_file, 'r') as f:
+                with open(round_file) as f:
                     round_metrics = json.load(f)
                     rounds_data.append(round_metrics)
             else:
@@ -110,7 +110,7 @@ class Round_Metrics_Tracker:
 
         return aggregated
 
-    def _export_to_csv(self, rounds_data: List[Dict[str, Any]], csv_path: Path) -> None:
+    def _export_to_csv(self, rounds_data: list[dict[str, Any]], csv_path: Path) -> None:
         """
         Export round-level metrics to CSV for plotting.
 
@@ -173,7 +173,7 @@ class Round_Metrics_Tracker:
 
     def generate_learning_curves(
         self,
-        configs_data: Dict[str, List[Dict[str, Any]]],
+        configs_data: dict[str, list[dict[str, Any]]],
         output_path: str,
         metric: str = 'mAP50'
     ) -> None:
@@ -214,7 +214,7 @@ class Round_Metrics_Tracker:
         self,
         config_name: str,
         round_num: int,
-        hfs_metrics: Dict[str, float],
+        hfs_metrics: dict[str, float],
         output_dir: str
     ) -> None:
         """
@@ -232,7 +232,7 @@ class Round_Metrics_Tracker:
         # Load existing HFS evolution data
         hfs_file = output_path / 'hfs_evolution.json'
         if hfs_file.exists():
-            with open(hfs_file, 'r') as f:
+            with open(hfs_file) as f:
                 hfs_data = json.load(f)
         else:
             hfs_data = {
@@ -255,7 +255,7 @@ class Round_Metrics_Tracker:
 
     def generate_hfs_evolution_plot(
         self,
-        configs_hfs_data: Dict[str, Dict[str, Any]],
+        configs_hfs_data: dict[str, dict[str, Any]],
         output_path: str
     ) -> None:
         """
@@ -293,8 +293,8 @@ class Round_Metrics_Tracker:
 
     def compute_hfs_map_correlation(
         self,
-        rounds_data: List[Dict[str, Any]],
-        hfs_data: Dict[str, Any]
+        rounds_data: list[dict[str, Any]],
+        hfs_data: dict[str, Any]
     ) -> float:
         """
         Compute correlation between HFS improvement and mAP@0.5 improvement across rounds.

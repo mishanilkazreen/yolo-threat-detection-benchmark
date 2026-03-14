@@ -1,4 +1,4 @@
-# YOLOv8n Test Configuration - fast smoke-test run
+# YOLOv8n Test Configuration — fast smoke-test run (tiny epochs/rounds)
 
 training:
   epochs_per_round: 1
@@ -12,12 +12,12 @@ training:
   runs: 1
   seeds: [42]
   device: "0"
-  run_baseline: false
+  run_baseline: false  # Skip baseline for quick test runs
   baseline_epochs: 1
 
 model:
   name: "yolov8n"
-  weights: "yolov8n.yaml"
+  weights: "yolov8n.yaml"  # Architecture only, no pretrained weights
 
 data:
   yaml_path: "config/data/weapon_detection_data.local.yaml"

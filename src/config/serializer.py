@@ -54,7 +54,7 @@ class ConfigurationSerializer:
     @staticmethod
     def _training_to_dict(training: TrainingConfig) -> dict[str, Any]:
         """Convert TrainingConfig to dictionary."""
-        result = {
+        result: dict[str, Any] = {
             "epochs": training.epochs,
             "patience": training.patience,
             "image_size": training.image_size,

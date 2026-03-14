@@ -136,7 +136,7 @@ class Metrics_Collector:
             # Calculate F1 score per class if precision and recall are available
             if hasattr(results.box, "p") and hasattr(results.box, "r"):
                 f1_per_class = []
-                for p, r in zip(results.box.p, results.box.r):
+                for p, r in zip(results.box.p, results.box.r, strict=False):
                     f1_per_class.append(self._compute_f1(float(p), float(r)))
                 per_class_metrics["f1_score_per_class"] = f1_per_class
 
@@ -268,7 +268,7 @@ class Metrics_Collector:
             # Calculate F1 score per class if precision and recall are available
             if hasattr(results.box, "p") and hasattr(results.box, "r"):
                 f1_per_class = []
-                for p, r in zip(results.box.p, results.box.r):
+                for p, r in zip(results.box.p, results.box.r, strict=False):
                     f1_per_class.append(self._compute_f1(float(p), float(r)))
                 per_class_metrics["f1_score_per_class"] = f1_per_class
 
@@ -356,7 +356,7 @@ class Metrics_Collector:
             # Calculate F1 score per class if precision and recall are available
             if hasattr(results.box, "p") and hasattr(results.box, "r"):
                 f1_per_class = []
-                for p, r in zip(results.box.p, results.box.r):
+                for p, r in zip(results.box.p, results.box.r, strict=False):
                     f1_per_class.append(self._compute_f1(float(p), float(r)))
                 per_class_metrics["f1_score_per_class"] = f1_per_class
 

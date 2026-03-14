@@ -3,7 +3,6 @@
 import json
 import logging
 from pathlib import Path
-from typing import Any
 
 import numpy as np
 
@@ -102,7 +101,7 @@ class Heatmap_Focus_Scorer:
 
         hfs_scores = []
 
-        for heatmap, bbox, (width, height) in zip(heatmaps, bboxes, image_sizes):
+        for heatmap, bbox, (width, height) in zip(heatmaps, bboxes, image_sizes, strict=False):
             hfs = self.compute_hfs(heatmap, bbox, width, height)
             hfs_scores.append(hfs)
 
@@ -140,10 +139,7 @@ class Heatmap_Focus_Scorer:
             "method": method,
             "mean_hfs": mean_hfs,
             "num_images": len(individual_hfs),
-            "individual_hfs": {
-                image_id: hfs
-                for image_id, hfs in zip(image_ids, individual_hfs)
-            },
+            "individual_hfs": dict(zip(image_ids, individual_hfs, strict=False)),
             "statistics": {
                 "min": float(np.min(individual_hfs)) if individual_hfs else 0.0,
                 "max": float(np.max(individual_hfs)) if individual_hfs else 0.0,
@@ -152,7 +148,7 @@ class Heatmap_Focus_Scorer:
             }
         }
 
-        metrics_file = output_path / f"hfs_metrics.json"
+        metrics_file = output_path / "hfs_metrics.json"
 
         with open(metrics_file, "w") as f:
             json.dump(metrics, f, indent=2)

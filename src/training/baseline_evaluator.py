@@ -232,7 +232,7 @@ class Baseline_Evaluator:
         valid_image_ids = []
         valid_bboxes = []
 
-        for img_path, bbox in zip(image_paths, bboxes):
+        for img_path, bbox in zip(image_paths, bboxes, strict=False):
             path = Path(img_path)
             if not path.exists():
                 self.logger.warning(f"Image not found, skipping HFS: {img_path}")
@@ -275,7 +275,7 @@ class Baseline_Evaluator:
 
         # Compute individual HFS scores
         individual_hfs_scores = []
-        for heatmap, bbox, (w, h) in zip(heatmaps, valid_bboxes, image_sizes):
+        for heatmap, bbox, (w, h) in zip(heatmaps, valid_bboxes, image_sizes, strict=False):
             score = self.hfs_scorer.compute_hfs(heatmap, bbox, w, h)
             individual_hfs_scores.append(score)
 
@@ -285,10 +285,7 @@ class Baseline_Evaluator:
             "method": "gradcam",
             "mean_hfs": mean_hfs,
             "num_images": len(individual_hfs_scores),
-            "individual_hfs": {
-                img_id: score
-                for img_id, score in zip(valid_image_ids, individual_hfs_scores)
-            },
+            "individual_hfs": dict(zip(valid_image_ids, individual_hfs_scores, strict=False)),
             "statistics": {
                 "min": float(np.min(individual_hfs_scores)),
                 "max": float(np.max(individual_hfs_scores)),

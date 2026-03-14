@@ -1,12 +1,12 @@
 """Baseline trainer for one-shot full-partition training."""
 
 import logging
-import time
 from pathlib import Path
+import time
 from typing import Any
 
-import yaml
 from ultralytics import YOLO
+import yaml
 
 from ..config.parser import Configuration
 
@@ -216,6 +216,6 @@ class Baseline_Trainer:
                 return str(path)
 
         raise FileNotFoundError(
-            f"Best checkpoint not found after baseline training. Checked:\n"
+            "Best checkpoint not found after baseline training. Checked:\n"
             + "\n".join(f"  - {p}" for p in possible_paths)
         )

@@ -3,11 +3,11 @@
 import gc
 import json
 import logging
-import numpy as np
 from pathlib import Path
 import time
 from typing import Any
 
+import numpy as np
 import torch
 from ultralytics import YOLO
 import yaml
@@ -489,7 +489,7 @@ class Experiment_Runner:
 
             if best_checkpoint_path is None:
                 raise FileNotFoundError(
-                    f"Best checkpoint not found. Checked locations:\n" +
+                    "Best checkpoint not found. Checked locations:\n" +
                     "\n".join([f"  - {p}" for p in possible_checkpoint_paths])
                 )
 
@@ -507,7 +507,7 @@ class Experiment_Runner:
                 verified_samples_added = 0
                 if prev_validation_file.exists():
                     try:
-                        with open(prev_validation_file, "r") as f:
+                        with open(prev_validation_file) as f:
                             prev_validation = json.load(f)
                             verified_samples_added = len(prev_validation.get("verified_samples", []))
                     except Exception as e:
@@ -523,7 +523,7 @@ class Experiment_Runner:
                 prev_validation_file = Path(output_dir) / f"round_{round_num - 1}_validations.json"
                 if prev_validation_file.exists():
                     try:
-                        with open(prev_validation_file, "r") as f:
+                        with open(prev_validation_file) as f:
                             prev_validation = json.load(f)
                             rejected_count = prev_validation.get("rejected_count")
                             undetected_count = prev_validation.get("undetected_count")
@@ -547,7 +547,7 @@ class Experiment_Runner:
 
             # If not the last round, run edge-cloud simulation
             if round_num < rounds and len(unlabeled_pool) > 0:
-                self.logger.info(f"Running edge agent simulation on unlabeled pool...")
+                self.logger.info("Running edge agent simulation on unlabeled pool...")
 
                 # Run inference on unlabeled pool
                 detections = self.edge_agent_simulator.simulate_inference(
@@ -656,7 +656,7 @@ class Experiment_Runner:
         if getattr(config.training, 'run_baseline', False):
             baseline_output_dir = f"outputs/{config_name}_baseline"
             self.logger.info(f"{'=' * 60}")
-            self.logger.info(f"Running one-shot baseline training")
+            self.logger.info("Running one-shot baseline training")
             self.logger.info(f"Baseline output directory: {baseline_output_dir}")
             self.logger.info(f"{'=' * 60}")
 
@@ -732,7 +732,7 @@ class Experiment_Runner:
                 baseline_metrics=baseline_flat,
             )
 
-            self.logger.info(f"Baseline comparison complete. Reports saved to outputs/")
+            self.logger.info("Baseline comparison complete. Reports saved to outputs/")
 
         return final_test_metrics
 
@@ -903,7 +903,6 @@ class Experiment_Runner:
         output_path = Path(f"outputs/{config_name}/aggregated_results.json")
         output_path.parent.mkdir(parents=True, exist_ok=True)
 
-        import json
 
         with open(output_path, "w") as f:
             json.dump(aggregated, f, indent=2)

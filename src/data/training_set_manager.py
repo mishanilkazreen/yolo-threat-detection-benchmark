@@ -7,7 +7,6 @@ while preserving original ground-truth annotations.
 
 import json
 import logging
-import shutil
 from pathlib import Path
 from typing import Any
 
@@ -68,7 +67,7 @@ class Training_Set_Manager:
         if not current_train_path.exists():
             raise FileNotFoundError(f"Current training set not found: {current_train_path}")
 
-        with open(current_train_path, 'r') as f:
+        with open(current_train_path) as f:
             current_train_images = [line.strip() for line in f if line.strip()]
 
         # Load unlabeled pool
@@ -76,7 +75,7 @@ class Training_Set_Manager:
         if not unlabeled_pool_path.exists():
             raise FileNotFoundError(f"Unlabeled pool not found: {unlabeled_pool_path}")
 
-        with open(unlabeled_pool_path, 'r') as f:
+        with open(unlabeled_pool_path) as f:
             unlabeled_pool_images = [line.strip() for line in f if line.strip()]
 
         # Verify verified samples are in unlabeled pool
@@ -162,7 +161,7 @@ class Training_Set_Manager:
 
         # Load existing log if it exists
         if log_file.exists():
-            with open(log_file, 'r') as f:
+            with open(log_file) as f:
                 log_data = json.load(f)
         else:
             log_data = {'rounds': []}
@@ -246,7 +245,7 @@ class Training_Set_Manager:
         if not train_path.exists():
             raise FileNotFoundError(f"Training set file not found: {train_path}")
 
-        with open(train_path, 'r') as f:
+        with open(train_path) as f:
             images = [line.strip() for line in f if line.strip()]
 
         num_annotations = 0
@@ -256,7 +255,7 @@ class Training_Set_Manager:
             label_file = labels_dir / Path(img_file).with_suffix('.txt').name
 
             if label_file.exists():
-                with open(label_file, 'r') as f:
+                with open(label_file) as f:
                     for line in f:
                         line = line.strip()
                         if line:

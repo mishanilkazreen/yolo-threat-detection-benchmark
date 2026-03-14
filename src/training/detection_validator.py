@@ -7,7 +7,7 @@ Validates edge agent detections against ground truth using IoU and class matchin
 import json
 import logging
 from pathlib import Path
-from typing import Dict, List, Any, Tuple, Optional
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -35,11 +35,11 @@ class Detection_Validator:
 
     def validate_detections(
         self,
-        detections: List[Dict[str, Any]],
+        detections: list[dict[str, Any]],
         ground_truth_dir: str,
-        unlabeled_pool: Optional[List[str]] = None,
-        output_path: Optional[str] = None
-    ) -> Dict[str, Any]:
+        unlabeled_pool: list[str] | None = None,
+        output_path: str | None = None
+    ) -> dict[str, Any]:
         """
         Validate edge agent detections against ground truth.
 
@@ -81,7 +81,7 @@ class Detection_Validator:
         verified_image_ids = set()
 
         # Group detections by image
-        detections_by_image: Dict[str, List[Dict[str, Any]]] = {}
+        detections_by_image: dict[str, list[dict[str, Any]]] = {}
         for det in detections:
             img_id = det['image_id']
             if img_id not in detections_by_image:
@@ -152,7 +152,7 @@ class Detection_Validator:
         logger.info(f"Undetected images: {undetected_count}")
 
         results = {
-            'verified_samples': sorted(list(verified_image_ids)),
+            'verified_samples': sorted(verified_image_ids),
             'verified_detections': verified_detections,
             'rejected_detections': rejected_detections,
             'undetected_images': undetected_images,
@@ -176,7 +176,7 @@ class Detection_Validator:
 
         return results
 
-    def _load_ground_truth(self, gt_file: Path) -> List[Dict[str, Any]]:
+    def _load_ground_truth(self, gt_file: Path) -> list[dict[str, Any]]:
         """
         Load ground truth annotations from YOLO format file.
 
@@ -192,7 +192,7 @@ class Detection_Validator:
         """
         annotations = []
 
-        with open(gt_file, 'r') as f:
+        with open(gt_file) as f:
             for line in f:
                 line = line.strip()
                 if not line:
@@ -212,9 +212,9 @@ class Detection_Validator:
 
     def _validate_single_detection(
         self,
-        detection: Dict[str, Any],
-        gt_annotations: List[Dict[str, Any]]
-    ) -> Tuple[bool, Dict[str, Any]]:
+        detection: dict[str, Any],
+        gt_annotations: list[dict[str, Any]]
+    ) -> tuple[bool, dict[str, Any]]:
         """
         Validate a single detection against ground truth annotations.
 
@@ -257,17 +257,14 @@ class Detection_Validator:
                 'iou': best_iou
             }
         else:
-            if best_match is None:
-                reason = 'no_class_match'
-            else:
-                reason = 'low_iou'
+            reason = 'no_class_match' if best_match is None else 'low_iou'
 
             return False, {
                 'reason': reason,
                 'best_iou': best_iou
             }
 
-    def _compute_iou(self, bbox1: List[float], bbox2: List[float]) -> float:
+    def _compute_iou(self, bbox1: list[float], bbox2: list[float]) -> float:
         """
         Compute IoU between two bounding boxes in normalized xywh format.
 
@@ -311,7 +308,7 @@ class Detection_Validator:
         iou = inter_area / union_area
         return iou
 
-    def get_validation_summary(self, validation_results: Dict[str, Any]) -> str:
+    def get_validation_summary(self, validation_results: dict[str, Any]) -> str:
         """
         Get a human-readable summary of validation results.
 

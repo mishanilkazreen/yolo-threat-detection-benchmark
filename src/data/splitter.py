@@ -5,12 +5,12 @@ Creates deterministic train_init, unlabeled_pool, val_fixed, and test_fixed spli
 for the incremental training framework.
 """
 
+from collections import defaultdict
 import json
 import logging
-import random
 from pathlib import Path
-from typing import Dict, List, Any, Tuple
-from collections import defaultdict
+import random
+from typing import Any
 
 import numpy as np
 import yaml
@@ -44,7 +44,7 @@ class Dataset_Splitter:
         data_yaml_path: str,
         train_init_percentage: float = 0.2,
         output_dir: str = "config/data"
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Create deterministic train_init, unlabeled_pool, val_fixed, test_fixed splits.
 
@@ -71,7 +71,7 @@ class Dataset_Splitter:
         if not data_yaml_file.exists():
             raise FileNotFoundError(f"Data YAML not found: {data_yaml_file}")
 
-        with open(data_yaml_file, 'r') as f:
+        with open(data_yaml_file) as f:
             data_config = yaml.safe_load(f)
 
         # Get dataset paths
@@ -176,7 +176,7 @@ class Dataset_Splitter:
             'metadata_file': str(metadata_file)
         }
 
-    def _get_image_files(self, image_dir: Path) -> List[str]:
+    def _get_image_files(self, image_dir: Path) -> list[str]:
         """
         Get all image files from a directory.
 
@@ -210,7 +210,7 @@ class Dataset_Splitter:
         labels_dir = Path(str(image_dir).replace('images', 'labels'))
         return labels_dir
 
-    def _get_class_distribution(self, images: List[str], labels_dir: Path) -> List[int]:
+    def _get_class_distribution(self, images: list[str], labels_dir: Path) -> list[int]:
         """
         Get class distribution for a set of images.
 
@@ -228,7 +228,7 @@ class Dataset_Splitter:
             label_file = labels_dir / Path(img_file).with_suffix('.txt').name
 
             if label_file.exists():
-                with open(label_file, 'r') as f:
+                with open(label_file) as f:
                     for line in f:
                         line = line.strip()
                         if line:
@@ -248,9 +248,9 @@ class Dataset_Splitter:
 
     def _verify_no_duplicates(
         self,
-        train_images: List[str],
-        val_images: List[str],
-        test_images: List[str]
+        train_images: list[str],
+        val_images: list[str],
+        test_images: list[str]
     ) -> None:
         """
         Verify that no image appears in multiple splits.

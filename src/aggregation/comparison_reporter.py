@@ -6,7 +6,6 @@ import logging
 from pathlib import Path
 from typing import Any
 
-
 # Metric columns in display order
 COMPARISON_COLUMNS = [
     ("mAP@0.5 (test)", "mAP50"),
