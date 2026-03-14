@@ -323,6 +323,6 @@ class TestYolov8nConfig:
         assert config.model.weights == "yolov8n.yaml"
 
         # Data section
-        assert config.data.yaml_path == "config/data/weapon_detection_data.local.yaml"
+        assert config.data.yaml_path == "config/data/weapon_detection_data.yaml"
         assert config.data.train_init_percentage == 0.2
         assert config.data.iou_threshold == 0.5
