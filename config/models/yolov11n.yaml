@@ -1,11 +1,14 @@
 # YOLOv11n Training Configuration
 
 training:
-  epochs: 100
+  epochs: 100  # Total epochs across all rounds
+  epochs_per_round: 20  # Epochs per round (5 rounds × 20 epochs = 100 total)
+  rounds: 5  # Number of incremental training rounds
   patience: 10
   image_size: 640
   runs: 1  # Number of runs for statistical analysis
   seeds: [42]  # Fixed seeds for each run
+  device: "0"  # GPU device
 
 model:
   name: "yolov11n"
@@ -13,3 +16,5 @@ model:
 
 data:
   yaml_path: "config/data/weapon_detection_data.local.yaml"
+  train_init_percentage: 0.2  # Start with 20% of training data in Round 1
+  iou_threshold: 0.5  # IoU threshold for detection validation

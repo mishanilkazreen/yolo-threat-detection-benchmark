@@ -154,7 +154,7 @@ class TestConfigurationParser:
         config_path = self.create_temp_config(config_dict)
         try:
             with pytest.raises(
-                ConfigurationParseError, match="Missing required training fields.*epochs"
+                ConfigurationParseError, match="Either 'epochs' or 'epochs_per_round' must be specified"
             ):
                 ConfigurationParser.parse(config_path)
         finally:
@@ -283,3 +283,45 @@ class TestConfigurationParser:
                 ConfigurationParser.parse(config_path)
         finally:
             Path(config_path).unlink()
+
+
+class TestYolov8nConfig:
+    """Tests for yolov8n.yaml config correctness (Bug 1.3 fix)."""
+
+    YOLOV8N_PATH = "config/models/yolov8n.yaml"
+
+    def test_run_baseline_is_true(self):
+        """Task 3.2 — yolov8n.yaml must have run_baseline == True."""
+        config = ConfigurationParser.parse(self.YOLOV8N_PATH)
+        assert config.training.run_baseline is True
+
+    def test_baseline_epochs_is_50(self):
+        """Task 3.2 — yolov8n.yaml must have baseline_epochs == 50."""
+        config = ConfigurationParser.parse(self.YOLOV8N_PATH)
+        assert config.training.baseline_epochs == 50
+
+    def test_pre_existing_fields_preserved(self):
+        """Task 3.3 — All pre-existing fields in yolov8n.yaml retain their original values."""
+        config = ConfigurationParser.parse(self.YOLOV8N_PATH)
+
+        # Training section pre-existing fields
+        assert config.training.epochs_per_round == 10
+        assert config.training.rounds == 5
+        assert config.training.patience == 10
+        assert config.training.image_size == 640
+        assert config.training.batch_size == 16
+        assert config.training.optimizer == "AdamW"
+        assert config.training.lr0 == 0.001
+        assert config.training.lrf == 0.1
+        assert config.training.runs == 1
+        assert config.training.seeds == [42]
+        assert config.training.device == "0"
+
+        # Model section
+        assert config.model.name == "yolov8n"
+        assert config.model.weights == "yolov8n.yaml"
+
+        # Data section
+        assert config.data.yaml_path == "config/data/weapon_detection_data.local.yaml"
+        assert config.data.train_init_percentage == 0.2
+        assert config.data.iou_threshold == 0.5

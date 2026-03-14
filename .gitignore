@@ -206,9 +206,11 @@ marimo/_static/
 marimo/_lsp/
 __marimo__/
 
+# Local Directories
 _XplainRescue-main/
-.kiro/
+.kiro
 setup.py
+.claude
 
 # Jupyter Notebook
 .ipynb_checkpoints
@@ -223,12 +225,6 @@ data/downloaded/
 
 # YOLO pretrained weights
 *.pt
-!yolov8n.pt
-!yolov11n.pt
-!yolov12n.pt
-!yolo26n.pt
-yolo26n.pt
-yolov8n.pt
 
 # Training outputs
 runs/
