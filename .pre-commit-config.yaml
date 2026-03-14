@@ -49,11 +49,8 @@ repos:
       - id: pytest-check
         name: pytest-check
         entry: pytest
-        language: python
+        language: system
         pass_filenames: false
         always_run: true
-        args: ["-x", "--tb=short", "-q", "tests/unit"]
+        args: ["-x", "--tb=short", "-q"]
         stages: [pre-push]
-        additional_dependencies:
-          - pytest
-          - hypothesis
