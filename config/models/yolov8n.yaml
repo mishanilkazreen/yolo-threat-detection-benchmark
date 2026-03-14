@@ -20,7 +20,7 @@ model:
   weights: "yolov8n.yaml"  # Architecture only, NO pretrained weights (random init)
 
 data:
-  yaml_path: "config/data/weapon_detection_data.local.yaml"
+  yaml_path: "config/data/weapon_detection_data.yaml"
   train_init_percentage: 0.2  # Start with 20% of training data in Round 1
   iou_threshold: 0.5  # IoU threshold for detection validation
   # Note: Dataset uses pre-existing train/val/test splits from Roboflow download.
