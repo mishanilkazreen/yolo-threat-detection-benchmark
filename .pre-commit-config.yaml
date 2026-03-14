@@ -56,3 +56,4 @@ repos:
         stages: [pre-push]
         additional_dependencies:
           - pytest
+          - hypothesis
