@@ -1,16 +1,25 @@
-# YOLOv8n Test Configuration (Quick Training)
-# Use this for testing the pipeline with minimal training time
+# YOLOv8n Test Configuration — fast smoke-test run (tiny epochs/rounds)
 
 training:
-  epochs: 3  # Just 3 epochs for quick testing
+  epochs_per_round: 1
+  rounds: 2
   patience: 10
   image_size: 640
+  batch_size: 16
+  optimizer: "AdamW"
+  lr0: 0.001
+  lrf: 0.1
   runs: 1
   seeds: [42]
+  device: "0"
+  run_baseline: false  # Skip baseline for quick test runs
+  baseline_epochs: 1
 
 model:
-  name: "yolov8n_test"
-  weights: "yolov8n.pt"
+  name: "yolov8n"
+  weights: "yolov8n.yaml"  # Architecture only, no pretrained weights
 
 data:
-  yaml_path: "config/data/weapon_detection_data.local.yaml"
+  yaml_path: "config/data/weapon_detection_data.yaml"
+  train_init_percentage: 0.2
+  iou_threshold: 0.5

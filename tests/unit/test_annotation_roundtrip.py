@@ -1,6 +1,6 @@
 """Property tests for annotation parsing/serialization round-trip."""
 
-from hypothesis import given
+from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
 import pytest
 
@@ -42,6 +42,7 @@ class TestAnnotationRoundTrip:
         self.serializer = Annotation_Serializer()
 
     @given(annotation=annotation_strategy())
+    @settings(suppress_health_check=[HealthCheck.too_slow])
     def test_single_annotation_roundtrip(self, annotation):
         """
         Property 53: Annotation Round-Trip

@@ -54,7 +54,7 @@ class ConfigurationSerializer:
     @staticmethod
     def _training_to_dict(training: TrainingConfig) -> dict[str, Any]:
         """Convert TrainingConfig to dictionary."""
-        result = {
+        result: dict[str, Any] = {
             "epochs": training.epochs,
             "patience": training.patience,
             "image_size": training.image_size,
@@ -67,6 +67,12 @@ class ConfigurationSerializer:
 
         if training.seeds is not None:
             result["seeds"] = training.seeds
+
+        if training.run_baseline:
+            result["run_baseline"] = training.run_baseline
+
+        if training.baseline_epochs != 50:
+            result["baseline_epochs"] = training.baseline_epochs
 
         return result
 

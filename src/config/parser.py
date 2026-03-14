@@ -11,12 +11,23 @@ import yaml
 class TrainingConfig:
     """Training configuration parameters."""
 
-    epochs: int
-    patience: int
-    image_size: int
+    epochs: int | None = None  # Optional if epochs_per_round is provided
+    patience: int = 10
+    image_size: int = 640
     device: str = "auto"  # Default to auto-detection
     runs: int = 1
     seeds: list[int] | None = None
+    # Incremental training fields
+    rounds: int | None = None
+    epochs_per_round: int | None = None
+    # Hyperparameters
+    batch_size: int | None = None
+    optimizer: str | None = None
+    lr0: float | None = None
+    lrf: float | None = None
+    # Baseline fields
+    run_baseline: bool = False
+    baseline_epochs: int = 50
 
 
 @dataclass
@@ -32,6 +43,11 @@ class DataConfig:
     """Data configuration parameters."""
 
     yaml_path: str
+    # Incremental training fields
+    train_init_percentage: float | None = None
+    iou_threshold: float | None = None
+    # Note: Dataset uses pre-existing train/val/test splits from Roboflow download.
+    # train_init_percentage controls the initial training set size within the training split.
 
 
 @dataclass
@@ -127,20 +143,29 @@ class ConfigurationParser:
     @staticmethod
     def _parse_training(data: dict[str, Any], source: str | Path) -> TrainingConfig:
         """Parse training configuration section."""
-        required_fields = ["epochs", "patience", "image_size"]
+        # epochs is optional if epochs_per_round is provided
+        epochs_per_round = data.get("epochs_per_round")
+        epochs = data.get("epochs")
+
+        if epochs is None and epochs_per_round is None:
+            raise ConfigurationParseError("Either 'epochs' or 'epochs_per_round' must be specified")
+
+        # Required fields (epochs is NOT required if epochs_per_round is provided)
+        required_fields = ["patience", "image_size"]
         missing_fields = [f for f in required_fields if f not in data]
         if missing_fields:
             raise ConfigurationParseError(
                 f"Missing required training fields: {', '.join(missing_fields)}"
             )
 
-        # Validate types and values
-        try:
-            epochs = int(data["epochs"])
-            if epochs <= 0:
-                raise ConfigurationParseError("epochs must be positive")
-        except (ValueError, TypeError):
-            raise ConfigurationParseError(f"epochs must be an integer, got: {data['epochs']}")
+        # Validate epochs if provided
+        if epochs is not None:
+            try:
+                epochs = int(epochs)
+                if epochs <= 0:
+                    raise ConfigurationParseError("epochs must be positive")
+            except (ValueError, TypeError):
+                raise ConfigurationParseError(f"epochs must be an integer, got: {data['epochs']}")
 
         try:
             patience = int(data["patience"])
@@ -174,6 +199,58 @@ class ConfigurationParser:
                 raise ConfigurationParseError("seeds must be a list")
             seeds = [int(s) for s in seeds]
 
+        # Incremental training optional fields
+        rounds = data.get("rounds")
+        if rounds is not None:
+            rounds = int(rounds)
+            if rounds <= 0:
+                raise ConfigurationParseError("rounds must be positive")
+
+        if epochs_per_round is not None:
+            epochs_per_round = int(epochs_per_round)
+            if epochs_per_round <= 0:
+                raise ConfigurationParseError("epochs_per_round must be positive")
+
+        # Hyperparameters
+        batch_size = data.get("batch_size")
+        if batch_size is not None:
+            batch_size = int(batch_size)
+            if batch_size <= 0:
+                raise ConfigurationParseError("batch_size must be positive")
+
+        optimizer = data.get("optimizer")
+        if optimizer is not None:
+            optimizer = str(optimizer)
+
+        lr0 = data.get("lr0")
+        if lr0 is not None:
+            lr0 = float(lr0)
+            if lr0 <= 0:
+                raise ConfigurationParseError("lr0 must be positive")
+
+        lrf = data.get("lrf")
+        if lrf is not None:
+            lrf = float(lrf)
+            if lrf <= 0:
+                raise ConfigurationParseError("lrf must be positive")
+
+        # Baseline fields
+        run_baseline = data.get("run_baseline", False)
+        if not isinstance(run_baseline, bool):
+            raise ConfigurationParseError(
+                f"run_baseline must be a boolean, got: {type(run_baseline).__name__}"
+            )
+
+        baseline_epochs = data.get("baseline_epochs", 50)
+        try:
+            baseline_epochs = int(baseline_epochs)
+            if baseline_epochs <= 0:
+                raise ConfigurationParseError("baseline_epochs must be a positive integer")
+        except (ValueError, TypeError):
+            raise ConfigurationParseError(
+                f"baseline_epochs must be a positive integer, got: {data['baseline_epochs']}"
+            )
+
         return TrainingConfig(
             epochs=epochs,
             patience=patience,
@@ -181,6 +258,14 @@ class ConfigurationParser:
             device=device,
             runs=runs,
             seeds=seeds,
+            rounds=rounds,
+            epochs_per_round=epochs_per_round,
+            batch_size=batch_size,
+            optimizer=optimizer,
+            lr0=lr0,
+            lrf=lrf,
+            run_baseline=run_baseline,
+            baseline_epochs=baseline_epochs,
         )
 
     @staticmethod
@@ -217,4 +302,21 @@ class ConfigurationParser:
         if not yaml_path:
             raise ConfigurationParseError("data yaml_path cannot be empty")
 
-        return DataConfig(yaml_path=yaml_path)
+        # Incremental training optional fields
+        train_init_percentage = data.get("train_init_percentage")
+        if train_init_percentage is not None:
+            train_init_percentage = float(train_init_percentage)
+            if not (0.0 < train_init_percentage <= 1.0):
+                raise ConfigurationParseError("train_init_percentage must be in (0, 1]")
+
+        iou_threshold = data.get("iou_threshold")
+        if iou_threshold is not None:
+            iou_threshold = float(iou_threshold)
+            if not (0.0 <= iou_threshold <= 1.0):
+                raise ConfigurationParseError("iou_threshold must be in [0, 1]")
+
+        return DataConfig(
+            yaml_path=yaml_path,
+            train_init_percentage=train_init_percentage,
+            iou_threshold=iou_threshold,
+        )
