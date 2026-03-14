@@ -656,9 +656,17 @@ class Experiment_Runner:
         # Type assertion: best_checkpoint_path is guaranteed to be str here
         assert best_checkpoint_path is not None
 
+        if not round_data_yamls:
+            raise ValueError(
+                "No round data YAMLs were created during training; cannot perform final evaluation."
+            )
+
+        # Use the highest round index for which a data.yaml was actually created
+        last_round_with_yaml = max(round_data_yamls.keys())
+
         final_test_metrics = self.metrics_collector.evaluate_final_test(
             checkpoint_path=best_checkpoint_path,
-            data_yaml=round_data_yamls[rounds],  # Use last round's data.yaml
+            data_yaml=round_data_yamls[last_round_with_yaml],
             output_dir=output_dir,
             config_name=config_name,
             random_seed=seed,
