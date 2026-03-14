@@ -13,40 +13,39 @@ def test_full_integration():
     print("Testing Full Integration")
     print("=" * 60 + "\n")
 
-    try:
-        # Import all components
-        from src.aggregation.aggregator import Results_Aggregator
-        from src.aggregation.round_metrics_tracker import Round_Metrics_Tracker
-        from src.data.splitter import Dataset_Splitter
-        from src.data.training_set_manager import Training_Set_Manager
-        from src.explainability.hfs_scorer import Heatmap_Focus_Scorer
-        from src.training.detection_validator import Detection_Validator
-        from src.training.edge_agent_simulator import Edge_Agent_Simulator
-        from src.training.evaluator import Metrics_Collector
-        from src.training.runner import Experiment_Runner
+    # Import all components
+    from src.aggregation.aggregator import Results_Aggregator
+    from src.aggregation.round_metrics_tracker import Round_Metrics_Tracker
+    from src.data.splitter import Dataset_Splitter
+    from src.data.training_set_manager import Training_Set_Manager
+    from src.explainability.hfs_scorer import Heatmap_Focus_Scorer
+    from src.training.detection_validator import Detection_Validator
+    from src.training.edge_agent_simulator import Edge_Agent_Simulator
+    from src.training.evaluator import Metrics_Collector
+    from src.training.runner import Experiment_Runner
 
-        print("✓ All components imported successfully\n")
+    print("✓ All components imported successfully\n")
 
-        print("-" * 60)
-        print("Testing Component Wiring")
-        print("-" * 60 + "\n")
+    print("-" * 60)
+    print("Testing Component Wiring")
+    print("-" * 60 + "\n")
 
-        # Test Experiment_Runner has all lazy-loaded components
-        runner = Experiment_Runner()
+    # Test Experiment_Runner has all lazy-loaded components
+    runner = Experiment_Runner()
 
-        # Verify lazy loading works
-        assert hasattr(runner, "splitter"), "Missing splitter property"
-        assert hasattr(runner, "training_set_manager"), "Missing training_set_manager property"
-        assert hasattr(runner, "edge_agent_simulator"), "Missing edge_agent_simulator property"
-        assert hasattr(runner, "detection_validator"), "Missing detection_validator property"
-        assert hasattr(runner, "round_metrics_tracker"), "Missing round_metrics_tracker property"
-        print("✓ Experiment_Runner has all lazy-loaded properties")
+    # Verify lazy loading works
+    assert hasattr(runner, "splitter"), "Missing splitter property"
+    assert hasattr(runner, "training_set_manager"), "Missing training_set_manager property"
+    assert hasattr(runner, "edge_agent_simulator"), "Missing edge_agent_simulator property"
+    assert hasattr(runner, "detection_validator"), "Missing detection_validator property"
+    assert hasattr(runner, "round_metrics_tracker"), "Missing round_metrics_tracker property"
+    print("✓ Experiment_Runner has all lazy-loaded properties")
 
-        # Verify methods exist
-        assert hasattr(runner, "_run_incremental_training"), (
-            "Missing _run_incremental_training method"
-        )
-        assert hasattr(runner, "_run_standard_training"), "Missing _run_standard_training method"
+    # Verify methods exist
+    assert hasattr(runner, "_run_incremental_training"), (
+        "Missing _run_incremental_training method"
+    )
+    assert hasattr(runner, "_run_standard_training"), "Missing _run_standard_training method"
         assert hasattr(runner, "_create_round_data_yaml"), "Missing _create_round_data_yaml method"
         print("✓ Experiment_Runner has all required methods")
 
@@ -175,12 +174,6 @@ def test_full_integration():
 
         return True
 
-    except Exception as e:
-        print(f"\n✗ Integration test failed: {e}")
-        import traceback
-
-        traceback.print_exc()
-        return False
 
 
 if __name__ == "__main__":
