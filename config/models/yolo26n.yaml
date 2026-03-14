@@ -15,6 +15,6 @@ model:
   weights: "yolo26n.pt"  # Pretrained weights (auto-downloaded if available)
 
 data:
-  yaml_path: "config/data/weapon_detection_data.local.yaml"
+  yaml_path: "config/data/weapon_detection_data.yaml"
   train_init_percentage: 0.2  # Start with 20% of training data in Round 1
   iou_threshold: 0.5  # IoU threshold for detection validation
