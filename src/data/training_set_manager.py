@@ -37,7 +37,7 @@ class Training_Set_Manager:
         ground_truth_dir: str | Path,
         output_train_path: str | Path,
         round_num: int | None = None,
-        output_dir: str = "outputs"
+        output_dir: str = "outputs",
     ) -> dict[str, Any]:
         """
         Progressively add verified samples to training set using original ground truth.
@@ -102,21 +102,29 @@ class Training_Set_Manager:
         output_train_path = Path(output_train_path)
         output_train_path.parent.mkdir(parents=True, exist_ok=True)
 
-        with open(output_train_path, 'w') as f:
+        with open(output_train_path, "w") as f:
             for img in expanded_train_images:
                 f.write(f"{img}\n")
 
         logger.info(f"Saved expanded training set to {output_train_path}")
-        logger.info(f"Training set size: {len(current_train_images)} -> {len(expanded_train_images)}")
+        logger.info(
+            f"Training set size: {len(current_train_images)} -> {len(expanded_train_images)}"
+        )
 
         # Save updated unlabeled pool
-        updated_pool_path = unlabeled_pool_path.parent / f"unlabeled_pool_round_{round_num + 1}.txt" if round_num else unlabeled_pool_path
-        with open(updated_pool_path, 'w') as f:
+        updated_pool_path = (
+            unlabeled_pool_path.parent / f"unlabeled_pool_round_{round_num + 1}.txt"
+            if round_num
+            else unlabeled_pool_path
+        )
+        with open(updated_pool_path, "w") as f:
             for img in updated_unlabeled_pool:
                 f.write(f"{img}\n")
 
         logger.info(f"Saved updated unlabeled pool to {updated_pool_path}")
-        logger.info(f"Unlabeled pool size: {len(unlabeled_pool_images)} -> {len(updated_unlabeled_pool)}")
+        logger.info(
+            f"Unlabeled pool size: {len(unlabeled_pool_images)} -> {len(updated_unlabeled_pool)}"
+        )
 
         # Log training set size per round
         if round_num is not None:
@@ -125,15 +133,15 @@ class Training_Set_Manager:
                 training_set_size=len(expanded_train_images),
                 samples_added=len(verified_samples),
                 unlabeled_remaining=len(updated_unlabeled_pool),
-                output_dir=output_dir
+                output_dir=output_dir,
             )
 
         return {
-            'training_set_size': len(expanded_train_images),
-            'samples_added': len(verified_samples),
-            'unlabeled_remaining': len(updated_unlabeled_pool),
-            'expanded_train_path': str(output_train_path),
-            'updated_unlabeled_pool_path': str(updated_pool_path)
+            "training_set_size": len(expanded_train_images),
+            "samples_added": len(verified_samples),
+            "unlabeled_remaining": len(updated_unlabeled_pool),
+            "expanded_train_path": str(output_train_path),
+            "updated_unlabeled_pool_path": str(updated_pool_path),
         }
 
     def _log_training_set_size(
@@ -142,7 +150,7 @@ class Training_Set_Manager:
         training_set_size: int,
         samples_added: int,
         unlabeled_remaining: int,
-        output_dir: str
+        output_dir: str,
     ) -> None:
         """
         Log training set size per round to JSON file.
@@ -157,36 +165,33 @@ class Training_Set_Manager:
         output_path = Path(output_dir)
         output_path.mkdir(parents=True, exist_ok=True)
 
-        log_file = output_path / 'training_set_evolution.json'
+        log_file = output_path / "training_set_evolution.json"
 
         # Load existing log if it exists
         if log_file.exists():
             with open(log_file) as f:
                 log_data = json.load(f)
         else:
-            log_data = {'rounds': []}
+            log_data = {"rounds": []}
 
         # Add current round data
         round_data = {
-            'round': round_num,
-            'training_set_size': training_set_size,
-            'samples_added': samples_added,
-            'unlabeled_remaining': unlabeled_remaining
+            "round": round_num,
+            "training_set_size": training_set_size,
+            "samples_added": samples_added,
+            "unlabeled_remaining": unlabeled_remaining,
         }
 
-        log_data['rounds'].append(round_data)
+        log_data["rounds"].append(round_data)
 
         # Save updated log
-        with open(log_file, 'w') as f:
+        with open(log_file, "w") as f:
             json.dump(log_data, f, indent=2)
 
         logger.info(f"Logged training set size for round {round_num} to {log_file}")
 
     def verify_ground_truth_preservation(
-        self,
-        verified_samples: list[str],
-        ground_truth_dir: str | Path,
-        image_dir: str
+        self, verified_samples: list[str], ground_truth_dir: str | Path, image_dir: str
     ) -> bool:
         """
         Verify that original ground-truth annotations exist for verified samples.
@@ -207,7 +212,7 @@ class Training_Set_Manager:
 
         for img_file in verified_samples:
             # Get corresponding label file
-            label_file = ground_truth_dir / Path(img_file).with_suffix('.txt').name
+            label_file = ground_truth_dir / Path(img_file).with_suffix(".txt").name
 
             if not label_file.exists():
                 missing_annotations.append(img_file)
@@ -218,13 +223,13 @@ class Training_Set_Manager:
                 f"Examples: {missing_annotations[:5]}"
             )
 
-        logger.info(f"Verified ground truth annotations exist for all {len(verified_samples)} verified samples")
+        logger.info(
+            f"Verified ground truth annotations exist for all {len(verified_samples)} verified samples"
+        )
         return True
 
     def get_training_set_statistics(
-        self,
-        train_path: str | Path,
-        labels_dir: str | Path
+        self, train_path: str | Path, labels_dir: str | Path
     ) -> dict[str, Any]:
         """
         Get statistics for a training set.
@@ -252,7 +257,7 @@ class Training_Set_Manager:
         class_counts: dict[int, int] = {}
 
         for img_file in images:
-            label_file = labels_dir / Path(img_file).with_suffix('.txt').name
+            label_file = labels_dir / Path(img_file).with_suffix(".txt").name
 
             if label_file.exists():
                 with open(label_file) as f:
@@ -273,9 +278,9 @@ class Training_Set_Manager:
             class_distribution = []
 
         return {
-            'num_images': len(images),
-            'num_annotations': num_annotations,
-            'class_distribution': class_distribution
+            "num_images": len(images),
+            "num_annotations": num_annotations,
+            "class_distribution": class_distribution,
         }
 
     def add_verified_samples(
@@ -284,7 +289,7 @@ class Training_Set_Manager:
         verified_images: list[str],
         unlabeled_pool: list[str],
         output_dir: str,
-        round_num: int
+        round_num: int,
     ) -> None:
         """
         Add verified samples to training set (in-memory version for runner).
@@ -330,7 +335,7 @@ class Training_Set_Manager:
             training_set_size=len(current_training_set),
             samples_added=len(verified_images),
             unlabeled_remaining=len(unlabeled_pool),
-            output_dir=output_dir
+            output_dir=output_dir,
         )
 
     def remove_from_pool(
@@ -376,4 +381,3 @@ class Training_Set_Manager:
             unlabeled_remaining=len(unlabeled_pool),
             output_dir=output_dir,
         )
-

@@ -20,7 +20,7 @@ class Heatmap_Focus_Scorer:
         heatmap: np.ndarray,
         bbox: tuple[float, float, float, float],
         image_width: int,
-        image_height: int
+        image_height: int,
     ) -> float:
         """
         Compute HFS for a single image.
@@ -56,6 +56,7 @@ class Heatmap_Focus_Scorer:
         if heatmap.shape[0] != image_height or heatmap.shape[1] != image_width:
             # Resize heatmap to match image dimensions
             from scipy.ndimage import zoom
+
             scale_y = image_height / heatmap.shape[0]
             scale_x = image_width / heatmap.shape[1]
             heatmap = zoom(heatmap, (scale_y, scale_x), order=1)
@@ -79,7 +80,7 @@ class Heatmap_Focus_Scorer:
         self,
         heatmaps: list[np.ndarray],
         bboxes: list[tuple[float, float, float, float]],
-        image_sizes: list[tuple[int, int]]
+        image_sizes: list[tuple[int, int]],
     ) -> float:
         """
         Compute mean HFS across multiple images.
@@ -118,7 +119,7 @@ class Heatmap_Focus_Scorer:
         individual_hfs: list[float],
         image_ids: list[str],
         output_dir: str,
-        method: str = "gradcam"
+        method: str = "gradcam",
     ) -> None:
         """
         Save HFS metrics to JSON file.
@@ -145,7 +146,7 @@ class Heatmap_Focus_Scorer:
                 "max": float(np.max(individual_hfs)) if individual_hfs else 0.0,
                 "std": float(np.std(individual_hfs)) if individual_hfs else 0.0,
                 "median": float(np.median(individual_hfs)) if individual_hfs else 0.0,
-            }
+            },
         }
 
         metrics_file = output_path / "hfs_metrics.json"
@@ -160,7 +161,7 @@ class Heatmap_Focus_Scorer:
         occlusion_heatmap: np.ndarray,
         bbox: tuple[float, float, float, float],
         image_width: int,
-        image_height: int
+        image_height: int,
     ) -> float:
         """
         Compute HFS for occlusion-based heatmaps.
@@ -181,9 +182,7 @@ class Heatmap_Focus_Scorer:
         return self.compute_hfs(occlusion_heatmap, bbox, image_width, image_height)
 
     def load_ground_truth_bboxes(
-        self,
-        image_paths: list[str],
-        base_path: Path
+        self, image_paths: list[str], base_path: Path
     ) -> list[tuple[float, float, float, float]]:
         """
         Load ground-truth bounding boxes for images.
@@ -200,8 +199,10 @@ class Heatmap_Focus_Scorer:
         for image_path in image_paths:
             # Get corresponding label file (YOLO stores labels under labels/, not images/)
             # Handle both Unix (/) and Windows (\) path separators
-            _path_str = str(image_path).replace('\\images\\', '\\labels\\').replace('/images/', '/labels/')
-            label_path = Path(_path_str).with_suffix('.txt')
+            _path_str = (
+                str(image_path).replace("\\images\\", "\\labels\\").replace("/images/", "/labels/")
+            )
+            label_path = Path(_path_str).with_suffix(".txt")
 
             if not label_path.exists():
                 self.logger.warning(f"Label file not found: {label_path}")

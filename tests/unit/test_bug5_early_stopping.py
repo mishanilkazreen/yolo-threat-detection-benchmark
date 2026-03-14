@@ -9,16 +9,16 @@ Task 3.3 — Preservation test: _run_standard_training() still passes
 Validates: Requirements 2.3, 3.3
 """
 
+import contextlib
 from types import SimpleNamespace
-from unittest.mock import MagicMock, patch, call
-import pytest
+from unittest.mock import MagicMock, patch
 
 from src.training.runner import Experiment_Runner
-
 
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
 
 def _make_config(patience=5):
     """Build a minimal config object with a configurable patience value."""
@@ -86,6 +86,7 @@ def _make_runner_with_mocks():
 # Task 3.2 — Exploratory test: incremental loop uses patience=0
 # ---------------------------------------------------------------------------
 
+
 def test_incremental_loop_uses_patience_zero(tmp_path):
     """
     The model.train() call inside the incremental loop must be called with
@@ -98,9 +99,7 @@ def test_incremental_loop_uses_patience_zero(tmp_path):
     runner = _make_runner_with_mocks()
 
     data_yaml = tmp_path / "data.yaml"
-    data_yaml.write_text(
-        "path: .\ntrain: images/train\nval: images/val\nnames:\n  0: weapon\n"
-    )
+    data_yaml.write_text("path: .\ntrain: images/train\nval: images/val\nnames:\n  0: weapon\n")
     config.data.yaml_path = str(data_yaml)
 
     (tmp_path / "images" / "train").mkdir(parents=True)
@@ -121,30 +120,39 @@ def test_incremental_loop_uses_patience_zero(tmp_path):
     with (
         patch("src.training.runner.YOLO", return_value=mock_yolo_instance),
         patch("src.training.runner.Path.exists", return_value=True),
-        patch.object(runner, "_get_all_images", side_effect=[
-            [str(tmp_path / f"img{i}.jpg") for i in range(10)],  # train_images
-            [],  # val_fixed
-            [],  # test_fixed
-        ]),
+        patch.object(
+            runner,
+            "_get_all_images",
+            side_effect=[
+                [str(tmp_path / f"img{i}.jpg") for i in range(10)],  # train_images
+                [],  # val_fixed
+                [],  # test_fixed
+            ],
+        ),
         patch.object(runner, "_create_round_data_yaml"),
-        patch("yaml.safe_load", return_value={
-            "path": str(tmp_path),
-            "train": "images/train",
-            "val": "images/val",
-        }),
-        patch("builtins.open", MagicMock(
-            return_value=MagicMock(
-                __enter__=MagicMock(return_value=MagicMock(read=MagicMock(return_value=""))),
-                __exit__=MagicMock(return_value=False),
-            )
-        )),
+        patch(
+            "yaml.safe_load",
+            return_value={
+                "path": str(tmp_path),
+                "train": "images/train",
+                "val": "images/val",
+            },
+        ),
+        patch(
+            "builtins.open",
+            MagicMock(
+                return_value=MagicMock(
+                    __enter__=MagicMock(return_value=MagicMock(read=MagicMock(return_value=""))),
+                    __exit__=MagicMock(return_value=False),
+                )
+            ),
+        ),
         patch("json.dump"),
         patch("json.load", return_value={}),
+        contextlib.suppress(Exception),
     ):
-        try:
-            runner._run_incremental_training(config, "test_bug5", seed=42, run_id=None)
-        except Exception:
-            pass  # We only care about the kwargs captured before any checkpoint error
+        # We only care about the kwargs captured before any checkpoint error
+        runner._run_incremental_training(config, "test_bug5", seed=42, run_id=None)
 
     assert len(captured_train_kwargs) >= 1, "model.train() was never called"
     incremental_call = captured_train_kwargs[0]
@@ -156,6 +164,7 @@ def test_incremental_loop_uses_patience_zero(tmp_path):
 # ---------------------------------------------------------------------------
 # Task 3.3 — Preservation test: standard training still uses config patience
 # ---------------------------------------------------------------------------
+
 
 def test_standard_training_preserves_config_patience(tmp_path):
     """
@@ -172,9 +181,7 @@ def test_standard_training_preserves_config_patience(tmp_path):
     runner = _make_runner_with_mocks()
 
     data_yaml = tmp_path / "data.yaml"
-    data_yaml.write_text(
-        "path: .\ntrain: images/train\nval: images/val\nnames:\n  0: weapon\n"
-    )
+    data_yaml.write_text("path: .\ntrain: images/train\nval: images/val\nnames:\n  0: weapon\n")
     config.data.yaml_path = str(data_yaml)
 
     captured_train_kwargs = []
@@ -196,24 +203,29 @@ def test_standard_training_preserves_config_patience(tmp_path):
     with (
         patch("src.training.runner.YOLO", return_value=mock_yolo_instance),
         patch("src.training.runner.Path.exists", return_value=True),
-        patch("yaml.safe_load", return_value={
-            "path": str(tmp_path),
-            "train": "images/train",
-            "val": "images/val",
-        }),
-        patch("builtins.open", MagicMock(
-            return_value=MagicMock(
-                __enter__=MagicMock(return_value=MagicMock(read=MagicMock(return_value=""))),
-                __exit__=MagicMock(return_value=False),
-            )
-        )),
+        patch(
+            "yaml.safe_load",
+            return_value={
+                "path": str(tmp_path),
+                "train": "images/train",
+                "val": "images/val",
+            },
+        ),
+        patch(
+            "builtins.open",
+            MagicMock(
+                return_value=MagicMock(
+                    __enter__=MagicMock(return_value=MagicMock(read=MagicMock(return_value=""))),
+                    __exit__=MagicMock(return_value=False),
+                )
+            ),
+        ),
         patch("json.dump"),
         patch("json.load", return_value={}),
+        contextlib.suppress(Exception),
     ):
-        try:
-            runner._run_standard_training(config, "test_bug5_standard", seed=42, run_id=None)
-        except Exception:
-            pass  # We only care about the kwargs captured before any evaluation error
+        # We only care about the kwargs captured before any evaluation error
+        runner._run_standard_training(config, "test_bug5_standard", seed=42, run_id=None)
 
     assert len(captured_train_kwargs) >= 1, "model.train() was never called in standard training"
     standard_call = captured_train_kwargs[0]

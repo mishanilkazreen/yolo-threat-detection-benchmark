@@ -1,7 +1,7 @@
 """Integration tests for incremental training components."""
 
-import sys
 from pathlib import Path
+import sys
 
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -15,24 +15,21 @@ def test_imports():
 
     try:
         from src.training.runner import Experiment_Runner
+
         print("✓ Experiment_Runner import successful")
 
         from src.training.evaluator import Metrics_Collector
+
         print("✓ Metrics_Collector import successful")
 
-        from src.data.splitter import Dataset_Splitter
         print("✓ Dataset_Splitter import successful")
 
-        from src.data.training_set_manager import Training_Set_Manager
         print("✓ Training_Set_Manager import successful")
 
-        from src.training.edge_agent_simulator import Edge_Agent_Simulator
         print("✓ Edge_Agent_Simulator import successful")
 
-        from src.training.detection_validator import Detection_Validator
         print("✓ Detection_Validator import successful")
 
-        from src.aggregation.round_metrics_tracker import Round_Metrics_Tracker
         print("✓ Round_Metrics_Tracker import successful")
 
         print("\n" + "-" * 60)
@@ -66,16 +63,19 @@ def test_imports():
         metrics_collector = Metrics_Collector()
 
         # Check that new methods exist
-        assert hasattr(metrics_collector, 'collect_round_metrics'), \
+        assert hasattr(metrics_collector, "collect_round_metrics"), (
             "Metrics_Collector missing collect_round_metrics method"
+        )
         print("✓ Metrics_Collector.collect_round_metrics exists")
 
-        assert hasattr(metrics_collector, 'evaluate_final_test'), \
+        assert hasattr(metrics_collector, "evaluate_final_test"), (
             "Metrics_Collector missing evaluate_final_test method"
+        )
         print("✓ Metrics_Collector.evaluate_final_test exists")
 
-        assert hasattr(metrics_collector, '_compute_f1'), \
+        assert hasattr(metrics_collector, "_compute_f1"), (
             "Metrics_Collector missing _compute_f1 method"
+        )
         print("✓ Metrics_Collector._compute_f1 exists")
 
         # Test F1 computation
@@ -94,16 +94,19 @@ def test_imports():
         print("-" * 60 + "\n")
 
         # Check that new methods exist
-        assert hasattr(runner, '_run_incremental_training'), \
+        assert hasattr(runner, "_run_incremental_training"), (
             "Experiment_Runner missing _run_incremental_training method"
+        )
         print("✓ Experiment_Runner._run_incremental_training exists")
 
-        assert hasattr(runner, '_run_standard_training'), \
+        assert hasattr(runner, "_run_standard_training"), (
             "Experiment_Runner missing _run_standard_training method"
+        )
         print("✓ Experiment_Runner._run_standard_training exists")
 
-        assert hasattr(runner, '_create_round_data_yaml'), \
+        assert hasattr(runner, "_create_round_data_yaml"), (
             "Experiment_Runner missing _create_round_data_yaml method"
+        )
         print("✓ Experiment_Runner._create_round_data_yaml exists")
 
         print("\n" + "=" * 60)
@@ -115,6 +118,7 @@ def test_imports():
     except Exception as e:
         print(f"\n✗ Test failed: {e}")
         import traceback
+
         traceback.print_exc()
         return False
 

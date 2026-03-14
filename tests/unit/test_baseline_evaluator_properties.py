@@ -14,9 +14,9 @@ import json
 from pathlib import Path
 from unittest.mock import patch
 
-import pytest
 from hypothesis import given, settings
 from hypothesis import strategies as st
+import pytest
 
 from src.config.parser import Configuration, DataConfig, ModelConfig, TrainingConfig
 from src.training.baseline_evaluator import Baseline_Evaluator
@@ -28,12 +28,16 @@ from src.training.baseline_evaluator import Baseline_Evaluator
 _model_names = st.sampled_from(["yolov8n", "yolov8s", "yolov8m", "yolov11n"])
 _weight_names = st.sampled_from(["yolov8n.yaml", "yolov8s.yaml", "yolov8n.pt"])
 _seeds = st.integers(min_value=0, max_value=2**31 - 1)
-_training_times = st.floats(min_value=1.0, max_value=100_000.0, allow_nan=False, allow_infinity=False)
+_training_times = st.floats(
+    min_value=1.0, max_value=100_000.0, allow_nan=False, allow_infinity=False
+)
 _training_set_sizes = st.integers(min_value=1, max_value=100_000)
 _epochs = st.integers(min_value=1, max_value=1000)
 _iou_thresholds = st.floats(min_value=0.1, max_value=0.95, allow_nan=False)
 _map_values = st.floats(min_value=0.0, max_value=1.0, allow_nan=False)
-_per_class = st.lists(st.floats(min_value=0.0, max_value=1.0, allow_nan=False), min_size=0, max_size=10)
+_per_class = st.lists(
+    st.floats(min_value=0.0, max_value=1.0, allow_nan=False), min_size=0, max_size=10
+)
 
 
 @st.composite
@@ -76,7 +80,9 @@ def valid_baseline_run_strategy(draw):
         "mAP50-95": map50_95,
         "precision": precision,
         "recall": recall,
-        "f1_score": 2 * precision * recall / (precision + recall) if (precision + recall) > 0 else 0.0,
+        "f1_score": 2 * precision * recall / (precision + recall)
+        if (precision + recall) > 0
+        else 0.0,
         "mAP50_per_class": per_class,
     }
 
@@ -195,7 +201,9 @@ class TestProperty6BaselineOutputMetadata:
 
             # All required top-level fields must be present
             for field in REQUIRED_TOP_LEVEL_FIELDS:
-                assert field in saved, f"Missing required field in final_test_metrics.json: '{field}'"
+                assert field in saved, (
+                    f"Missing required field in final_test_metrics.json: '{field}'"
+                )
 
             # All required test_metrics sub-fields must be present
             for field in REQUIRED_TEST_METRIC_FIELDS:

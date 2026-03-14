@@ -5,16 +5,16 @@ Task 1.2 — Exploratory test: non-default iou_threshold is applied (fails on un
 Task 1.3 — Preservation test: default iou_threshold (0.5) is preserved when not configured.
 """
 
+import contextlib
 from types import SimpleNamespace
-from unittest.mock import MagicMock, patch, call
-import pytest
+from unittest.mock import MagicMock, patch
 
 from src.training.runner import Experiment_Runner
-
 
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
 
 def _make_config(iou_threshold=None):
     """Build a minimal config object for _run_incremental_training()."""
@@ -39,7 +39,9 @@ def _make_config(iou_threshold=None):
         lrf=0.1,
         run_baseline=False,
     )
-    return SimpleNamespace(data=data, training=training, model=SimpleNamespace(name="yolov8n", weights="yolov8n.pt"))
+    return SimpleNamespace(
+        data=data, training=training, model=SimpleNamespace(name="yolov8n", weights="yolov8n.pt")
+    )
 
 
 def _make_runner_with_mocks():
@@ -79,6 +81,7 @@ def _make_runner_with_mocks():
 # Task 1.2 — Exploratory test (fails on unfixed code, passes after fix)
 # ---------------------------------------------------------------------------
 
+
 def test_iou_threshold_forwarded_to_validator(tmp_path):
     """
     When config.data.iou_threshold = 0.3, the detection_validator.iou_threshold
@@ -91,9 +94,7 @@ def test_iou_threshold_forwarded_to_validator(tmp_path):
 
     # Provide a minimal fake data.yaml
     data_yaml = tmp_path / "data.yaml"
-    data_yaml.write_text(
-        "path: .\ntrain: images/train\nval: images/val\nnames:\n  0: weapon\n"
-    )
+    data_yaml.write_text("path: .\ntrain: images/train\nval: images/val\nnames:\n  0: weapon\n")
     config.data.yaml_path = str(data_yaml)
 
     # Create fake image directories so the runner doesn't crash on path resolution
@@ -127,24 +128,38 @@ def test_iou_threshold_forwarded_to_validator(tmp_path):
     with (
         patch("src.training.runner.YOLO", return_value=mock_yolo_instance),
         patch("src.training.runner.Path.exists", return_value=True),
-        patch.object(runner, "_get_all_images", side_effect=[
-            [str(tmp_path / "images/train/img1.jpg")] * 10,  # train_images
-            [],  # val_fixed
-            [],  # test_fixed
-        ]),
+        patch.object(
+            runner,
+            "_get_all_images",
+            side_effect=[
+                [str(tmp_path / "images/train/img1.jpg")] * 10,  # train_images
+                [],  # val_fixed
+                [],  # test_fixed
+            ],
+        ),
         patch.object(runner, "_create_round_data_yaml"),
-        patch("builtins.open", MagicMock(return_value=MagicMock(
-            __enter__=MagicMock(return_value=MagicMock(
-                read=MagicMock(return_value=""),
-                __iter__=MagicMock(return_value=iter([])),
-            )),
-            __exit__=MagicMock(return_value=False),
-        ))),
-        patch("yaml.safe_load", return_value={
-            "path": str(tmp_path),
-            "train": "images/train",
-            "val": "images/val",
-        }),
+        patch(
+            "builtins.open",
+            MagicMock(
+                return_value=MagicMock(
+                    __enter__=MagicMock(
+                        return_value=MagicMock(
+                            read=MagicMock(return_value=""),
+                            __iter__=MagicMock(return_value=iter([])),
+                        )
+                    ),
+                    __exit__=MagicMock(return_value=False),
+                )
+            ),
+        ),
+        patch(
+            "yaml.safe_load",
+            return_value={
+                "path": str(tmp_path),
+                "train": "images/train",
+                "val": "images/val",
+            },
+        ),
         patch("json.dump"),
         patch("json.load", return_value={}),
     ):
@@ -153,18 +168,23 @@ def test_iou_threshold_forwarded_to_validator(tmp_path):
 
         # Simulate that edge agent returns one detection so validate_detections is called
         runner._edge_agent_simulator.simulate_inference.return_value = [
-            {"image_id": "img1.jpg", "pred_class": 0, "bbox": [0.5, 0.5, 0.1, 0.1], "confidence": 0.9}
+            {
+                "image_id": "img1.jpg",
+                "pred_class": 0,
+                "bbox": [0.5, 0.5, 0.1, 0.1],
+                "confidence": 0.9,
+            }
         ]
 
         # Patch the checkpoint path so round 1 "succeeds"
-        with patch.object(
-            runner, "_run_incremental_training",
-            wraps=runner._run_incremental_training
+        with (
+            patch.object(
+                runner, "_run_incremental_training", wraps=runner._run_incremental_training
+            ),
+            contextlib.suppress(Exception),
         ):
-            try:
-                runner._run_incremental_training(config, "test_config", seed=42, run_id=None)
-            except Exception:
-                pass  # We only care that validate_detections was called with the right threshold
+            # We only care that validate_detections was called with the right threshold
+            runner._run_incremental_training(config, "test_config", seed=42, run_id=None)
 
     assert "iou_threshold" in captured_iou, "validate_detections was never called"
     assert captured_iou["iou_threshold"] == 0.3, (
@@ -175,6 +195,7 @@ def test_iou_threshold_forwarded_to_validator(tmp_path):
 # ---------------------------------------------------------------------------
 # Task 1.3 — Preservation test: default iou_threshold = 0.5
 # ---------------------------------------------------------------------------
+
 
 def test_default_iou_threshold_is_0_5():
     """
@@ -195,6 +216,7 @@ def test_validator_default_iou_threshold():
     Validates: Requirements 3.1 (preservation)
     """
     from src.training.detection_validator import Detection_Validator
+
     validator = Detection_Validator()
     assert validator.iou_threshold == 0.5
 

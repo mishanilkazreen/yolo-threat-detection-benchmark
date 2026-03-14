@@ -43,7 +43,7 @@ class Dataset_Splitter:
         self,
         data_yaml_path: str,
         train_init_percentage: float = 0.2,
-        output_dir: str = "config/data"
+        output_dir: str = "config/data",
     ) -> dict[str, Any]:
         """
         Create deterministic train_init, unlabeled_pool, val_fixed, test_fixed splits.
@@ -75,13 +75,13 @@ class Dataset_Splitter:
             data_config = yaml.safe_load(f)
 
         # Get dataset paths
-        dataset_root = Path(data_config.get('path', ''))
-        train_dir = dataset_root / data_config.get('train', 'images/train')
-        val_dir = dataset_root / data_config.get('val', 'images/val')
-        test_dir = dataset_root / data_config.get('test', 'images/test')
+        dataset_root = Path(data_config.get("path", ""))
+        train_dir = dataset_root / data_config.get("train", "images/train")
+        val_dir = dataset_root / data_config.get("val", "images/val")
+        test_dir = dataset_root / data_config.get("test", "images/test")
 
         # Verify directories exist
-        for split_name, split_dir in [('train', train_dir), ('val', val_dir), ('test', test_dir)]:
+        for split_name, split_dir in [("train", train_dir), ("val", val_dir), ("test", test_dir)]:
             if not split_dir.exists():
                 raise FileNotFoundError(f"{split_name} directory not found: {split_dir}")
 
@@ -103,8 +103,10 @@ class Dataset_Splitter:
         train_init_images = train_images[:train_init_size]
         unlabeled_pool_images = train_images[train_init_size:]
 
-        logger.info(f"Split training data: {len(train_init_images)} train_init, "
-                   f"{len(unlabeled_pool_images)} unlabeled_pool")
+        logger.info(
+            f"Split training data: {len(train_init_images)} train_init, "
+            f"{len(unlabeled_pool_images)} unlabeled_pool"
+        )
 
         # Get class distributions
         labels_dir = self._get_labels_dir(train_dir)
@@ -123,16 +125,16 @@ class Dataset_Splitter:
 
         # Save split files
         splits = {
-            'train_init': train_init_images,
-            'unlabeled_pool': unlabeled_pool_images,
-            'val_fixed': val_images,
-            'test_fixed': test_images
+            "train_init": train_init_images,
+            "unlabeled_pool": unlabeled_pool_images,
+            "val_fixed": val_images,
+            "test_fixed": test_images,
         }
 
         split_files = {}
         for split_name, images in splits.items():
             split_file = output_path / f"{split_name}.txt"
-            with open(split_file, 'w') as f:
+            with open(split_file, "w") as f:
                 for img in images:
                     f.write(f"{img}\n")
             split_files[split_name] = str(split_file)
@@ -140,40 +142,34 @@ class Dataset_Splitter:
 
         # Create split metadata
         metadata = {
-            'timestamp': self._get_timestamp(),
-            'random_seed': self.random_seed,
-            'train_init_percentage': train_init_percentage,
-            'data_yaml_path': str(data_yaml_path),
-            'splits': {
-                'train_init': {
-                    'num_images': len(train_init_images),
-                    'class_distribution': train_init_dist
+            "timestamp": self._get_timestamp(),
+            "random_seed": self.random_seed,
+            "train_init_percentage": train_init_percentage,
+            "data_yaml_path": str(data_yaml_path),
+            "splits": {
+                "train_init": {
+                    "num_images": len(train_init_images),
+                    "class_distribution": train_init_dist,
                 },
-                'unlabeled_pool': {
-                    'num_images': len(unlabeled_pool_images),
-                    'class_distribution': unlabeled_pool_dist
+                "unlabeled_pool": {
+                    "num_images": len(unlabeled_pool_images),
+                    "class_distribution": unlabeled_pool_dist,
                 },
-                'val_fixed': {
-                    'num_images': len(val_images),
-                    'class_distribution': val_dist
-                },
-                'test_fixed': {
-                    'num_images': len(test_images),
-                    'class_distribution': test_dist
-                }
-            }
+                "val_fixed": {"num_images": len(val_images), "class_distribution": val_dist},
+                "test_fixed": {"num_images": len(test_images), "class_distribution": test_dist},
+            },
         }
 
         # Save metadata
-        metadata_file = output_path / 'split_metadata.json'
-        with open(metadata_file, 'w') as f:
+        metadata_file = output_path / "split_metadata.json"
+        with open(metadata_file, "w") as f:
             json.dump(metadata, f, indent=2)
         logger.info(f"Saved split metadata to {metadata_file}")
 
         return {
-            'split_files': split_files,
-            'metadata': metadata,
-            'metadata_file': str(metadata_file)
+            "split_files": split_files,
+            "metadata": metadata,
+            "metadata_file": str(metadata_file),
         }
 
     def _get_image_files(self, image_dir: Path) -> list[str]:
@@ -186,12 +182,14 @@ class Dataset_Splitter:
         Returns:
             List of image file paths (relative to image_dir)
         """
-        image_extensions = {'.jpg', '.jpeg', '.png', '.bmp', '.tif', '.tiff'}
+        image_extensions = {".jpg", ".jpeg", ".png", ".bmp", ".tif", ".tiff"}
         images = []
 
         for ext in image_extensions:
-            images.extend([str(p.relative_to(image_dir)) for p in image_dir.glob(f'*{ext}')])
-            images.extend([str(p.relative_to(image_dir)) for p in image_dir.glob(f'*{ext.upper()}')])
+            images.extend([str(p.relative_to(image_dir)) for p in image_dir.glob(f"*{ext}")])
+            images.extend(
+                [str(p.relative_to(image_dir)) for p in image_dir.glob(f"*{ext.upper()}")]
+            )
 
         return sorted(images)
 
@@ -207,7 +205,7 @@ class Dataset_Splitter:
         """
         # Assume labels are in parallel directory structure
         # e.g., images/train -> labels/train
-        labels_dir = Path(str(image_dir).replace('images', 'labels'))
+        labels_dir = Path(str(image_dir).replace("images", "labels"))
         return labels_dir
 
     def _get_class_distribution(self, images: list[str], labels_dir: Path) -> list[int]:
@@ -225,7 +223,7 @@ class Dataset_Splitter:
 
         for img_file in images:
             # Get corresponding label file
-            label_file = labels_dir / Path(img_file).with_suffix('.txt').name
+            label_file = labels_dir / Path(img_file).with_suffix(".txt").name
 
             if label_file.exists():
                 with open(label_file) as f:
@@ -247,10 +245,7 @@ class Dataset_Splitter:
         return distribution
 
     def _verify_no_duplicates(
-        self,
-        train_images: list[str],
-        val_images: list[str],
-        test_images: list[str]
+        self, train_images: list[str], val_images: list[str], test_images: list[str]
     ) -> None:
         """
         Verify that no image appears in multiple splits.
@@ -286,6 +281,7 @@ class Dataset_Splitter:
     def _get_timestamp(self) -> str:
         """Get current timestamp in ISO format."""
         from datetime import datetime
+
         return datetime.now().isoformat()
 
     def split_dataset(
@@ -293,7 +289,7 @@ class Dataset_Splitter:
         train_dir: str,
         train_init_percentage: float = 0.2,
         output_dir: str = "outputs",
-        random_seed: int | None = None
+        random_seed: int | None = None,
     ) -> dict[str, list[str]]:
         """
         Split dataset into train_init, unlabeled_pool, val_fixed, test_fixed.

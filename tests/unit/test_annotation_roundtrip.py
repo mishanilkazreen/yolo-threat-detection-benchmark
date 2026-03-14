@@ -1,6 +1,6 @@
 """Property tests for annotation parsing/serialization round-trip."""
 
-from hypothesis import given, settings, HealthCheck
+from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
 import pytest
 

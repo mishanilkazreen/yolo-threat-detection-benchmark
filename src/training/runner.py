@@ -45,6 +45,7 @@ class Experiment_Runner:
         """Lazy load Dataset_Splitter."""
         if self._splitter is None:
             from ..data.splitter import Dataset_Splitter
+
             self._splitter = Dataset_Splitter()
         return self._splitter
 
@@ -53,6 +54,7 @@ class Experiment_Runner:
         """Lazy load Training_Set_Manager."""
         if self._training_set_manager is None:
             from ..data.training_set_manager import Training_Set_Manager
+
             self._training_set_manager = Training_Set_Manager()
         return self._training_set_manager
 
@@ -61,6 +63,7 @@ class Experiment_Runner:
         """Lazy load Edge_Agent_Simulator."""
         if self._edge_agent_simulator is None:
             from .edge_agent_simulator import Edge_Agent_Simulator
+
             self._edge_agent_simulator = Edge_Agent_Simulator()
         return self._edge_agent_simulator
 
@@ -69,6 +72,7 @@ class Experiment_Runner:
         """Lazy load Detection_Validator."""
         if self._detection_validator is None:
             from .detection_validator import Detection_Validator
+
             self._detection_validator = Detection_Validator()
         return self._detection_validator
 
@@ -77,6 +81,7 @@ class Experiment_Runner:
         """Lazy load Round_Metrics_Tracker."""
         if self._round_metrics_tracker is None:
             from ..aggregation.round_metrics_tracker import Round_Metrics_Tracker
+
             self._round_metrics_tracker = Round_Metrics_Tracker()
         return self._round_metrics_tracker
 
@@ -112,23 +117,23 @@ class Experiment_Runner:
         Returns:
             Callback function compatible with Ultralytics YOLO
         """
+
         def on_train_epoch_start(trainer):
             """Apply step decay to learning rate at the start of each epoch."""
             epoch = trainer.epoch
 
             # Calculate expected LR based on step decay formula
             decay_steps = epoch // step_interval
-            expected_lr = lr0 * (lrf ** decay_steps)
+            expected_lr = lr0 * (lrf**decay_steps)
 
             # Update optimizer learning rates
             for param_group in trainer.optimizer.param_groups:
-                param_group['lr'] = expected_lr
+                param_group["lr"] = expected_lr
 
             # Log at step boundaries
             if epoch % step_interval == 0 and epoch > 0:
                 self.logger.info(
-                    f"Applying step decay: LR *= {lrf} at epoch {epoch} "
-                    f"(new LR: {expected_lr:.6f})"
+                    f"Applying step decay: LR *= {lrf} at epoch {epoch} (new LR: {expected_lr:.6f})"
                 )
 
         return on_train_epoch_start
@@ -175,7 +180,11 @@ class Experiment_Runner:
         self.seed_manager.set_seed(seed)
 
         # Check if incremental training is enabled
-        if hasattr(config.training, 'rounds') and config.training.rounds and config.training.rounds > 1:
+        if (
+            hasattr(config.training, "rounds")
+            and config.training.rounds
+            and config.training.rounds > 1
+        ):
             return self._run_incremental_training(config, config_name, seed, run_id)
         else:
             return self._run_standard_training(config, config_name, seed, run_id)
@@ -197,8 +206,8 @@ class Experiment_Runner:
         model = YOLO(config.model.weights)
 
         # Get hyperparameters
-        lr0 = getattr(config.training, 'lr0', 0.001)
-        lrf = getattr(config.training, 'lrf', 0.1)
+        lr0 = getattr(config.training, "lr0", 0.001)
+        lrf = getattr(config.training, "lrf", 0.1)
 
         # Create and add step decay LR scheduler callback
         step_decay_callback = self._create_step_decay_callback(lr0, lrf, step_interval=5)
@@ -283,11 +292,13 @@ class Experiment_Runner:
             Dictionary of final metrics
         """
         self.logger.info(f"Starting incremental training: {config.training.rounds} rounds")
-        self.logger.info("ARCHITECTURE: Fine-tuning on ONLY newly verified samples per round (not cumulative)")
+        self.logger.info(
+            "ARCHITECTURE: Fine-tuning on ONLY newly verified samples per round (not cumulative)"
+        )
 
         # Get incremental training parameters
         rounds = config.training.rounds
-        epochs_per_round = getattr(config.training, 'epochs_per_round', None)
+        epochs_per_round = getattr(config.training, "epochs_per_round", None)
 
         # If epochs_per_round not set, calculate from total epochs
         if epochs_per_round is None:
@@ -296,14 +307,14 @@ class Experiment_Runner:
             else:
                 raise ValueError("Either epochs_per_round or epochs must be specified")
 
-        train_init_percentage = getattr(config.data, 'train_init_percentage', 0.2)
-        iou_threshold = getattr(config.data, 'iou_threshold', 0.5)
+        train_init_percentage = getattr(config.data, "train_init_percentage", 0.2)
+        iou_threshold = getattr(config.data, "iou_threshold", 0.5)
 
         # Get hyperparameters
-        batch_size = getattr(config.training, 'batch_size', 16)
-        optimizer = getattr(config.training, 'optimizer', 'AdamW')
-        lr0 = getattr(config.training, 'lr0', 0.001)
-        lrf = getattr(config.training, 'lrf', 0.1)
+        batch_size = getattr(config.training, "batch_size", 16)
+        optimizer = getattr(config.training, "optimizer", "AdamW")
+        lr0 = getattr(config.training, "lr0", 0.001)
+        lrf = getattr(config.training, "lrf", 0.1)
 
         # Create output directories
         output_dir = f"outputs/{config_name}"
@@ -319,10 +330,14 @@ class Experiment_Runner:
         base_path = Path(data_config.get("path", "."))
         train_path = base_path / data_config["train"]
         val_path = base_path / data_config.get("val", "valid/images")
-        test_path = base_path / data_config.get("test", "test/images") if "test" in data_config else None
+        test_path = (
+            base_path / data_config.get("test", "test/images") if "test" in data_config else None
+        )
 
         # Step 1: Split dataset into train_init, unlabeled_pool, val_fixed, test_fixed
-        self.logger.info(f"Splitting dataset (train_init={train_init_percentage*100}%, seed={seed})...")
+        self.logger.info(
+            f"Splitting dataset (train_init={train_init_percentage * 100}%, seed={seed})..."
+        )
 
         # Get all training images
         train_images = self._get_all_images(train_path)
@@ -360,6 +375,7 @@ class Experiment_Runner:
         metadata_file = Path(output_dir) / "split_metadata.json"
         with open(metadata_file, "w") as f:
             import json
+
             json.dump(metadata, f, indent=2)
 
         self.logger.info(f"Split metadata saved to {metadata_file}")
@@ -425,29 +441,35 @@ class Experiment_Runner:
                 training_images=current_training_images,
                 val_images=splits["val_fixed"],
                 test_images=splits["test_fixed"],
-                base_path=base_path
+                base_path=base_path,
             )
 
             # Initialize model
             if round_num == 1:
                 # Round 1: Start from architecture weights (random init)
-                self.logger.info(f"Initializing model from architecture weights: {config.model.weights}")
+                self.logger.info(
+                    f"Initializing model from architecture weights: {config.model.weights}"
+                )
                 model = YOLO(config.model.weights)
             else:
                 # Round N > 1: Initialize from best checkpoint of Round N-1
-                self.logger.info(f"Initializing model from Round {round_num-1} best checkpoint")
+                self.logger.info(f"Initializing model from Round {round_num - 1} best checkpoint")
                 if best_checkpoint_path is None:
-                    raise ValueError(f"No checkpoint found from Round {round_num-1}")
+                    raise ValueError(f"No checkpoint found from Round {round_num - 1}")
                 model = YOLO(best_checkpoint_path)
 
             # Create and add step decay LR scheduler callback
             step_decay_callback = self._create_step_decay_callback(lr0, lrf, step_interval=5)
             model.add_callback("on_train_epoch_start", step_decay_callback)
             if round_num == 1:
-                self.logger.info(f"Added step decay LR scheduler: lr0={lr0}, lrf={lrf}, step_interval=5")
+                self.logger.info(
+                    f"Added step decay LR scheduler: lr0={lr0}, lrf={lrf}, step_interval=5"
+                )
 
             # Train model for this round
-            self.logger.info(f"Training Round {round_num} (epochs={epochs_per_round}, device={device})...")
+            self.logger.info(
+                f"Training Round {round_num} (epochs={epochs_per_round}, device={device})..."
+            )
             self.logger.info(f"  Optimizer: {optimizer}, LR: {lr0}, Batch: {batch_size}")
             round_train_start = time.time()
 
@@ -470,7 +492,9 @@ class Experiment_Runner:
 
             round_training_time = time.time() - round_train_start
             total_training_time += round_training_time
-            self.logger.info(f"Round {round_num} training completed in {round_training_time:.2f} seconds")
+            self.logger.info(
+                f"Round {round_num} training completed in {round_training_time:.2f} seconds"
+            )
 
             # Find best checkpoint for this round
             # YOLO may create nested directory structure, check both possible locations
@@ -489,8 +513,8 @@ class Experiment_Runner:
 
             if best_checkpoint_path is None:
                 raise FileNotFoundError(
-                    "Best checkpoint not found. Checked locations:\n" +
-                    "\n".join([f"  - {p}" for p in possible_checkpoint_paths])
+                    "Best checkpoint not found. Checked locations:\n"
+                    + "\n".join([f"  - {p}" for p in possible_checkpoint_paths])
                 )
 
             # Evaluate on val_fixed
@@ -509,9 +533,13 @@ class Experiment_Runner:
                     try:
                         with open(prev_validation_file) as f:
                             prev_validation = json.load(f)
-                            verified_samples_added = len(prev_validation.get("verified_samples", []))
+                            verified_samples_added = len(
+                                prev_validation.get("verified_samples", [])
+                            )
                     except Exception as e:
-                        self.logger.warning(f"Could not load previous validation results for verified count: {e}")
+                        self.logger.warning(
+                            f"Could not load previous validation results for verified count: {e}"
+                        )
 
             # Load pool statistics from previous round's validation (if available)
             rejected_count = None
@@ -540,7 +568,7 @@ class Experiment_Runner:
                 training_time=round_training_time,
                 rejected_count=rejected_count,
                 undetected_count=undetected_count,
-                remaining_pool_size=remaining_pool_size
+                remaining_pool_size=remaining_pool_size,
             )
 
             all_round_metrics.append(round_metrics)
@@ -556,7 +584,7 @@ class Experiment_Runner:
                     base_path=base_path,
                     output_dir=output_dir,
                     round_num=round_num,
-                    device=device
+                    device=device,
                 )
 
                 self.logger.info(f"Edge agents generated {len(detections)} detections")
@@ -573,7 +601,7 @@ class Experiment_Runner:
                     detections=detections,
                     ground_truth_dir=ground_truth_dir,
                     unlabeled_pool=unlabeled_pool,
-                    output_path=str(output_path)
+                    output_path=str(output_path),
                 )
 
                 verified_images = validation_results["verified_samples"]
@@ -593,11 +621,13 @@ class Experiment_Runner:
                         verified_images=verified_images,
                         unlabeled_pool=unlabeled_pool,
                         output_dir=output_dir,
-                        round_num=round_num + 1
+                        round_num=round_num + 1,
                     )
                     current_training_images = verified_images.copy()
 
-                    self.logger.info(f"Next round will fine-tune on {len(current_training_images)} newly verified images")
+                    self.logger.info(
+                        f"Next round will fine-tune on {len(current_training_images)} newly verified images"
+                    )
                 else:
                     self.logger.warning(
                         f"No verified samples found in Round {round_num}. "
@@ -608,7 +638,7 @@ class Experiment_Runner:
             # Clean up memory after each round to prevent accumulation
             # Delete model object to free GPU/CPU memory
             del model
-            if 'results' in locals():
+            if "results" in locals():
                 del results
 
             # Aggressive memory cleanup
@@ -632,28 +662,24 @@ class Experiment_Runner:
             output_dir=output_dir,
             config_name=config_name,
             random_seed=seed,
-            total_training_time=total_training_time
+            total_training_time=total_training_time,
         )
 
         # Aggregate round-level metrics
         self.logger.info("Aggregating round-level metrics...")
         self.round_metrics_tracker.aggregate_round_metrics(
-            round_metrics_list=all_round_metrics,
-            output_dir=output_dir,
-            config_name=config_name
+            round_metrics_list=all_round_metrics, output_dir=output_dir, config_name=config_name
         )
 
         # Generate learning curves
         configs_data = {config_name: all_round_metrics}
         output_path = Path(output_dir) / "learning_curves.png"
         self.round_metrics_tracker.generate_learning_curves(
-            configs_data=configs_data,
-            output_path=str(output_path),
-            metric='mAP50'
+            configs_data=configs_data, output_path=str(output_path), metric="mAP50"
         )
 
         # Run one-shot baseline if configured
-        if getattr(config.training, 'run_baseline', False):
+        if getattr(config.training, "run_baseline", False):
             baseline_output_dir = f"outputs/{config_name}_baseline"
             self.logger.info(f"{'=' * 60}")
             self.logger.info("Running one-shot baseline training")
@@ -721,7 +747,9 @@ class Experiment_Runner:
                 "mAP50-95": incremental_metrics_inner.get("mAP50-95", float("nan")),
                 "f1_score": incremental_metrics_inner.get("f1_score", float("nan")),
                 "hfs": incremental_hfs,
-                "training_time_seconds": final_test_metrics.get("total_training_time_seconds", float("nan")),
+                "training_time_seconds": final_test_metrics.get(
+                    "total_training_time_seconds", float("nan")
+                ),
             }
 
             # Generate comparison report
@@ -757,20 +785,19 @@ class Experiment_Runner:
         """
         total = train_count + val_count + test_count
         if total == 0:
-            self.logger.warning("_verify_split_ratio: total image count is 0, skipping ratio check.")
+            self.logger.warning(
+                "_verify_split_ratio: total image count is 0, skipping ratio check."
+            )
             return
 
         actual_train = train_count / total
-        actual_val   = val_count   / total
-        actual_test  = test_count  / total
+        actual_val = val_count / total
+        actual_test = test_count / total
 
         expected = {"train": 0.70, "valid": 0.20, "test": 0.10}
-        actuals  = {"train": actual_train, "valid": actual_val, "test": actual_test}
+        actuals = {"train": actual_train, "valid": actual_val, "test": actual_test}
 
-        deviations = {
-            split: abs(actuals[split] - expected[split])
-            for split in expected
-        }
+        deviations = {split: abs(actuals[split] - expected[split]) for split in expected}
 
         if any(dev > tolerance for dev in deviations.values()):
             self.logger.warning(
@@ -787,77 +814,76 @@ class Experiment_Runner:
         if not image_dir.exists():
             return []
 
-        image_extensions = {'.jpg', '.jpeg', '.png', '.bmp', '.tiff', '.tif'}
+        image_extensions = {".jpg", ".jpeg", ".png", ".bmp", ".tiff", ".tif"}
         images = []
 
         for ext in image_extensions:
-            images.extend([p.name for p in image_dir.glob(f'*{ext}')])
-            images.extend([p.name for p in image_dir.glob(f'*{ext.upper()}')])
+            images.extend([p.name for p in image_dir.glob(f"*{ext}")])
+            images.extend([p.name for p in image_dir.glob(f"*{ext.upper()}")])
 
         return sorted(images)
 
     def _create_round_data_yaml(
-            self,
-            original_data_yaml: str,
-            round_data_yaml: str,
-            training_images: list,
-            val_images: list,
-            test_images: list,
-            base_path: Path
-        ) -> None:
-            """Create data.yaml for a specific round with updated training set."""
+        self,
+        original_data_yaml: str,
+        round_data_yaml: str,
+        training_images: list,
+        val_images: list,
+        test_images: list,
+        base_path: Path,
+    ) -> None:
+        """Create data.yaml for a specific round with updated training set."""
 
-            # Load original data.yaml
-            with open(original_data_yaml) as f:
-                data_config = yaml.safe_load(f)
+        # Load original data.yaml
+        with open(original_data_yaml) as f:
+            data_config = yaml.safe_load(f)
 
-            # Create temporary directories for this round's splits
-            round_dir = Path(round_data_yaml).parent / "round_splits" / Path(round_data_yaml).stem
-            round_dir.mkdir(parents=True, exist_ok=True)
+        # Create temporary directories for this round's splits
+        round_dir = Path(round_data_yaml).parent / "round_splits" / Path(round_data_yaml).stem
+        round_dir.mkdir(parents=True, exist_ok=True)
 
-            train_list = round_dir / "train.txt"
-            val_list = round_dir / "val.txt"
-            test_list = round_dir / "test.txt"
+        train_list = round_dir / "train.txt"
+        val_list = round_dir / "val.txt"
+        test_list = round_dir / "test.txt"
 
-            # Write image lists (full paths constructed from filenames)
-            train_image_dir = base_path / "train" / "images"
-            val_image_dir = base_path / "valid" / "images"
+        # Write image lists (full paths constructed from filenames)
+        train_image_dir = base_path / "train" / "images"
+        val_image_dir = base_path / "valid" / "images"
 
-            with open(train_list, 'w') as f:
+        with open(train_list, "w") as f:
+            full_paths = [str((train_image_dir / img).absolute()) for img in training_images]
+            f.write("\n".join(full_paths))
+
+        with open(val_list, "w") as f:
+            if val_images:
+                full_paths = [str((val_image_dir / img).absolute()) for img in val_images]
+                f.write("\n".join(full_paths))
+            else:
+                # If no val images, use train images for validation
                 full_paths = [str((train_image_dir / img).absolute()) for img in training_images]
-                f.write('\n'.join(full_paths))
+                f.write("\n".join(full_paths))
 
-            with open(val_list, 'w') as f:
-                if val_images:
-                    full_paths = [str((val_image_dir / img).absolute()) for img in val_images]
-                    f.write('\n'.join(full_paths))
-                else:
-                    # If no val images, use train images for validation
-                    full_paths = [str((train_image_dir / img).absolute()) for img in training_images]
-                    f.write('\n'.join(full_paths))
+        with open(test_list, "w") as f:
+            if test_images:
+                # Test images would be in test/images if they existed
+                test_image_dir = base_path / "test" / "images"
+                full_paths = [str((test_image_dir / img).absolute()) for img in test_images]
+                f.write("\n".join(full_paths))
+            else:
+                # If no test images, use train images for testing
+                full_paths = [str((train_image_dir / img).absolute()) for img in training_images]
+                f.write("\n".join(full_paths))
 
-            with open(test_list, 'w') as f:
-                if test_images:
-                    # Test images would be in test/images if they existed
-                    test_image_dir = base_path / "test" / "images"
-                    full_paths = [str((test_image_dir / img).absolute()) for img in test_images]
-                    f.write('\n'.join(full_paths))
-                else:
-                    # If no test images, use train images for testing
-                    full_paths = [str((train_image_dir / img).absolute()) for img in training_images]
-                    f.write('\n'.join(full_paths))
+        # Update data config with absolute paths
+        data_config["train"] = str(train_list.absolute())
+        data_config["val"] = str(val_list.absolute())
+        data_config["test"] = str(test_list.absolute())
 
-            # Update data config with absolute paths
-            data_config['train'] = str(train_list.absolute())
-            data_config['val'] = str(val_list.absolute())
-            data_config['test'] = str(test_list.absolute())
+        # Save round-specific data.yaml
+        with open(round_data_yaml, "w") as f:
+            yaml.dump(data_config, f, default_flow_style=False)
 
-            # Save round-specific data.yaml
-            with open(round_data_yaml, 'w') as f:
-                yaml.dump(data_config, f, default_flow_style=False)
-
-            self.logger.debug(f"Created round data.yaml at {round_data_yaml}")
-
+        self.logger.debug(f"Created round data.yaml at {round_data_yaml}")
 
     def _run_multi_run_experiment(self, config: Any, config_name: str) -> dict[str, Any]:
         """Run multiple training runs with different seeds."""
@@ -902,7 +928,6 @@ class Experiment_Runner:
         # Save aggregated results
         output_path = Path(f"outputs/{config_name}/aggregated_results.json")
         output_path.parent.mkdir(parents=True, exist_ok=True)
-
 
         with open(output_path, "w") as f:
             json.dump(aggregated, f, indent=2)

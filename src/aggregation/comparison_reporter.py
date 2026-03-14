@@ -48,9 +48,7 @@ class Comparison_Reporter:
         self._save_markdown(table, out / f"{stem}.md", config_name)
         self._save_csv(table, out / f"{stem}.csv")
 
-        self.logger.info(
-            "Comparison saved: %s/%s.{md,csv}", output_dir, stem
-        )
+        self.logger.info("Comparison saved: %s/%s.{md,csv}", output_dir, stem)
 
     def generate_all_comparisons(
         self,
@@ -82,7 +80,9 @@ class Comparison_Reporter:
             incremental_dir = outputs_path / config_name
 
             baseline_metrics = self._load_metrics(baseline_dir, config_name, is_baseline=True)
-            incremental_metrics = self._load_metrics(incremental_dir, config_name, is_baseline=False)
+            incremental_metrics = self._load_metrics(
+                incremental_dir, config_name, is_baseline=False
+            )
 
             if baseline_metrics is None or incremental_metrics is None:
                 continue
@@ -176,6 +176,7 @@ class Comparison_Reporter:
             return value
         if isinstance(value, float):
             import math
+
             if math.isnan(value):
                 return "nan"
             return f"{value:.4f}"
@@ -197,9 +198,7 @@ class Comparison_Reporter:
         hfs_file = config_dir / "hfs_metrics.json"
 
         if not test_file.exists():
-            self.logger.warning(
-                "Missing final_test_metrics.json in %s — skipping", config_dir
-            )
+            self.logger.warning("Missing final_test_metrics.json in %s — skipping", config_dir)
             return None
 
         try:

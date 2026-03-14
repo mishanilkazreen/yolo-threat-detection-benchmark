@@ -133,7 +133,9 @@ class ConfigurationManager:
         ConfigurationManager._validate_incremental_training_fields(config, config_path)
 
     @staticmethod
-    def _validate_incremental_training_fields(config: Configuration, config_path: str | Path) -> None:
+    def _validate_incremental_training_fields(
+        config: Configuration, config_path: str | Path
+    ) -> None:
         """
         Validate incremental training configuration fields.
 
@@ -146,7 +148,7 @@ class ConfigurationManager:
         """
         # Validate rounds (default: 5)
         if (
-            hasattr(config.training, 'rounds')
+            hasattr(config.training, "rounds")
             and config.training.rounds is not None
             and (not isinstance(config.training.rounds, int) or config.training.rounds < 1)
         ):
@@ -157,9 +159,12 @@ class ConfigurationManager:
 
         # Validate epochs_per_round
         if (
-            hasattr(config.training, 'epochs_per_round')
+            hasattr(config.training, "epochs_per_round")
             and config.training.epochs_per_round is not None
-            and (not isinstance(config.training.epochs_per_round, int) or config.training.epochs_per_round < 1)
+            and (
+                not isinstance(config.training.epochs_per_round, int)
+                or config.training.epochs_per_round < 1
+            )
         ):
             raise ConfigurationParseError(
                 f"Configuration {config_path}: training.epochs_per_round must be a positive integer, "
@@ -167,7 +172,10 @@ class ConfigurationManager:
             )
 
         # Validate train_init_percentage (default: 0.2)
-        if hasattr(config.data, 'train_init_percentage') and config.data.train_init_percentage is not None:
+        if (
+            hasattr(config.data, "train_init_percentage")
+            and config.data.train_init_percentage is not None
+        ):
             if not isinstance(config.data.train_init_percentage, (int, float)):
                 raise ConfigurationParseError(
                     f"Configuration {config_path}: data.train_init_percentage must be a number, "
@@ -180,7 +188,7 @@ class ConfigurationManager:
                 )
 
         # Validate iou_threshold (default: 0.5)
-        if hasattr(config.data, 'iou_threshold') and config.data.iou_threshold is not None:
+        if hasattr(config.data, "iou_threshold") and config.data.iou_threshold is not None:
             if not isinstance(config.data.iou_threshold, (int, float)):
                 raise ConfigurationParseError(
                     f"Configuration {config_path}: data.iou_threshold must be a number, "

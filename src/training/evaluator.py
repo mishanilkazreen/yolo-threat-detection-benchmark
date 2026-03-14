@@ -129,8 +129,12 @@ class Metrics_Collector:
             per_class_metrics = {
                 "mAP50_per_class": [float(x) for x in results.box.ap50],
                 "mAP50-95_per_class": [float(x) for x in results.box.ap],
-                "precision_per_class": [float(x) for x in results.box.p] if hasattr(results.box, "p") else [],
-                "recall_per_class": [float(x) for x in results.box.r] if hasattr(results.box, "r") else [],
+                "precision_per_class": [float(x) for x in results.box.p]
+                if hasattr(results.box, "p")
+                else [],
+                "recall_per_class": [float(x) for x in results.box.r]
+                if hasattr(results.box, "r")
+                else [],
             }
 
             # Calculate F1 score per class if precision and recall are available
@@ -196,7 +200,7 @@ class Metrics_Collector:
         training_time: float,
         rejected_count: int | None = None,
         undetected_count: int | None = None,
-        remaining_pool_size: int | None = None
+        remaining_pool_size: int | None = None,
     ) -> dict[str, Any]:
         """
         Collect metrics for a specific training round.
@@ -243,9 +247,9 @@ class Metrics_Collector:
                 "recall": float(results.box.mr) if hasattr(results.box, "mr") else 0.0,
                 "f1_score": self._compute_f1(
                     float(results.box.mp) if hasattr(results.box, "mp") else 0.0,
-                    float(results.box.mr) if hasattr(results.box, "mr") else 0.0
+                    float(results.box.mr) if hasattr(results.box, "mr") else 0.0,
                 ),
-            }
+            },
         }
 
         # Add pool statistics if provided
@@ -261,8 +265,12 @@ class Metrics_Collector:
             per_class_metrics = {
                 "mAP50_per_class": [float(x) for x in results.box.ap50],
                 "mAP50-95_per_class": [float(x) for x in results.box.ap],
-                "precision_per_class": [float(x) for x in results.box.p] if hasattr(results.box, "p") else [],
-                "recall_per_class": [float(x) for x in results.box.r] if hasattr(results.box, "r") else [],
+                "precision_per_class": [float(x) for x in results.box.p]
+                if hasattr(results.box, "p")
+                else [],
+                "recall_per_class": [float(x) for x in results.box.r]
+                if hasattr(results.box, "r")
+                else [],
             }
 
             # Calculate F1 score per class if precision and recall are available
@@ -292,7 +300,7 @@ class Metrics_Collector:
         output_dir: str,
         config_name: str,
         random_seed: int,
-        total_training_time: float
+        total_training_time: float,
     ) -> dict[str, Any]:
         """
         Evaluate final model (Round 5 best checkpoint) on test_fixed.
@@ -316,7 +324,7 @@ class Metrics_Collector:
         # Run validation on test set
         self.logger.info("Running test evaluation...")
         test_start = time.time()
-        results = model.val(data=data_yaml, split='test', verbose=False)
+        results = model.val(data=data_yaml, split="test", verbose=False)
         test_time = time.time() - test_start
 
         # Get model info
@@ -339,9 +347,9 @@ class Metrics_Collector:
                 "recall": float(results.box.mr) if hasattr(results.box, "mr") else 0.0,
                 "f1_score": self._compute_f1(
                     float(results.box.mp) if hasattr(results.box, "mp") else 0.0,
-                    float(results.box.mr) if hasattr(results.box, "mr") else 0.0
+                    float(results.box.mr) if hasattr(results.box, "mr") else 0.0,
                 ),
-            }
+            },
         }
 
         # Add per-class metrics if available
@@ -349,8 +357,12 @@ class Metrics_Collector:
             per_class_metrics = {
                 "mAP50_per_class": [float(x) for x in results.box.ap50],
                 "mAP50-95_per_class": [float(x) for x in results.box.ap],
-                "precision_per_class": [float(x) for x in results.box.p] if hasattr(results.box, "p") else [],
-                "recall_per_class": [float(x) for x in results.box.r] if hasattr(results.box, "r") else [],
+                "precision_per_class": [float(x) for x in results.box.p]
+                if hasattr(results.box, "p")
+                else [],
+                "recall_per_class": [float(x) for x in results.box.r]
+                if hasattr(results.box, "r")
+                else [],
             }
 
             # Calculate F1 score per class if precision and recall are available

@@ -41,7 +41,7 @@ class Edge_Agent_Simulator:
         image_dir: str,
         output_path: str,
         conf_threshold: float = 0.25,
-        iou_threshold: float = 0.45
+        iou_threshold: float = 0.45,
     ) -> list[dict[str, Any]]:
         """
         Simulate edge agents performing inference on unlabeled_pool.
@@ -105,7 +105,7 @@ class Edge_Agent_Simulator:
                 conf=conf_threshold,
                 iou=iou_threshold,
                 device=self.device,
-                verbose=False
+                verbose=False,
             )
 
             # Extract detections
@@ -116,10 +116,10 @@ class Edge_Agent_Simulator:
                     boxes = result.boxes
 
                     # Get normalized coordinates (xywhn format)
-                    if hasattr(boxes, 'xywhn'):
+                    if hasattr(boxes, "xywhn"):
                         xywhn_data = boxes.xywhn
                         # Handle both Tensor and ndarray types
-                        if hasattr(xywhn_data, 'cpu'):
+                        if hasattr(xywhn_data, "cpu"):
                             xywhn = xywhn_data.cpu().numpy()
                         else:
                             xywhn = xywhn_data
@@ -127,40 +127,42 @@ class Edge_Agent_Simulator:
                         # Fallback: convert from xyxy to xywh normalized
                         xyxy_data = boxes.xyxy
                         # Handle both Tensor and ndarray types
-                        xyxy = xyxy_data.cpu().numpy() if hasattr(xyxy_data, 'cpu') else xyxy_data
+                        xyxy = xyxy_data.cpu().numpy() if hasattr(xyxy_data, "cpu") else xyxy_data
                         img_h, img_w = result.orig_shape
                         xywhn = self._xyxy_to_xywhn(xyxy, img_w, img_h)
 
                     classes_data = boxes.cls
                     # Handle both Tensor and ndarray types
-                    if hasattr(classes_data, 'cpu'):
+                    if hasattr(classes_data, "cpu"):
                         classes = classes_data.cpu().numpy()
                     else:
                         classes = classes_data
 
                     confidences_data = boxes.conf
                     # Handle both Tensor and ndarray types
-                    if hasattr(confidences_data, 'cpu'):
+                    if hasattr(confidences_data, "cpu"):
                         confidences = confidences_data.cpu().numpy()
                     else:
                         confidences = confidences_data
 
                     for i in range(len(boxes)):
                         detection = {
-                            'image_id': img_file,
-                            'pred_class': int(classes[i]),
-                            'bbox': xywhn[i].tolist(),  # [x_center, y_center, width, height]
-                            'confidence': float(confidences[i])
+                            "image_id": img_file,
+                            "pred_class": int(classes[i]),
+                            "bbox": xywhn[i].tolist(),  # [x_center, y_center, width, height]
+                            "confidence": float(confidences[i]),
                         }
                         all_detections.append(detection)
 
-        logger.info(f"Extracted {len(all_detections)} detections from {len(unlabeled_images)} images")
+        logger.info(
+            f"Extracted {len(all_detections)} detections from {len(unlabeled_images)} images"
+        )
 
         # Save detections to JSON
         output_path_obj = Path(output_path)
         output_path_obj.parent.mkdir(parents=True, exist_ok=True)
 
-        with open(output_path_obj, 'w') as f:
+        with open(output_path_obj, "w") as f:
             json.dump(all_detections, f, indent=2)
 
         logger.info(f"Saved detections to {output_path_obj}")
@@ -205,29 +207,28 @@ class Edge_Agent_Simulator:
         """
         if not detections:
             return {
-                'total_detections': 0,
-                'images_with_detections': 0,
-                'detections_per_class': {},
-                'avg_confidence': 0.0
+                "total_detections": 0,
+                "images_with_detections": 0,
+                "detections_per_class": {},
+                "avg_confidence": 0.0,
             }
 
-        unique_images = {d['image_id'] for d in detections}
+        unique_images = {d["image_id"] for d in detections}
 
         detections_per_class: dict[int, int] = {}
         total_confidence = 0.0
 
         for det in detections:
-            class_id = det['pred_class']
+            class_id = det["pred_class"]
             detections_per_class[class_id] = detections_per_class.get(class_id, 0) + 1
-            total_confidence += det['confidence']
+            total_confidence += det["confidence"]
 
         return {
-            'total_detections': len(detections),
-            'images_with_detections': len(unique_images),
-            'detections_per_class': detections_per_class,
-            'avg_confidence': total_confidence / len(detections)
+            "total_detections": len(detections),
+            "images_with_detections": len(unique_images),
+            "detections_per_class": detections_per_class,
+            "avg_confidence": total_confidence / len(detections),
         }
-
 
     def simulate_inference(
         self,
@@ -236,7 +237,7 @@ class Edge_Agent_Simulator:
         base_path: Path,
         output_dir: str,
         round_num: int,
-        device: str = "cuda"
+        device: str = "cuda",
     ) -> list[dict[str, Any]]:
         """
         Simulate inference on unlabeled pool (simplified interface for runner).
@@ -271,11 +272,7 @@ class Edge_Agent_Simulator:
 
             # Run inference
             results = model.predict(
-                source=str(full_path),
-                conf=0.25,
-                iou=0.45,
-                device=device,
-                verbose=False
+                source=str(full_path), conf=0.25, iou=0.45, device=device, verbose=False
             )
 
             # Extract detections
@@ -286,51 +283,53 @@ class Edge_Agent_Simulator:
                     boxes = result.boxes
 
                     # Get normalized coordinates
-                    if hasattr(boxes, 'xywhn'):
+                    if hasattr(boxes, "xywhn"):
                         xywhn_data = boxes.xywhn
                         # Handle both Tensor and ndarray types
-                        if hasattr(xywhn_data, 'cpu'):
+                        if hasattr(xywhn_data, "cpu"):
                             xywhn = xywhn_data.cpu().numpy()
                         else:
                             xywhn = xywhn_data
                     else:
                         xyxy_data = boxes.xyxy
                         # Handle both Tensor and ndarray types
-                        xyxy = xyxy_data.cpu().numpy() if hasattr(xyxy_data, 'cpu') else xyxy_data
+                        xyxy = xyxy_data.cpu().numpy() if hasattr(xyxy_data, "cpu") else xyxy_data
                         img_h, img_w = result.orig_shape
                         xywhn = self._xyxy_to_xywhn(xyxy, img_w, img_h)
 
                     classes_data = boxes.cls
                     # Handle both Tensor and ndarray types
-                    if hasattr(classes_data, 'cpu'):
+                    if hasattr(classes_data, "cpu"):
                         classes = classes_data.cpu().numpy()
                     else:
                         classes = classes_data
 
                     confidences_data = boxes.conf
                     # Handle both Tensor and ndarray types
-                    if hasattr(confidences_data, 'cpu'):
+                    if hasattr(confidences_data, "cpu"):
                         confidences = confidences_data.cpu().numpy()
                     else:
                         confidences = confidences_data
 
                     for i in range(len(boxes)):
                         detection = {
-                            'image_id': full_path.name,  # Use just the filename
-                            'pred_class': int(classes[i]),
-                            'bbox': xywhn[i].tolist(),
-                            'confidence': float(confidences[i])
+                            "image_id": full_path.name,  # Use just the filename
+                            "pred_class": int(classes[i]),
+                            "bbox": xywhn[i].tolist(),
+                            "confidence": float(confidences[i]),
                         }
                         all_detections.append(detection)
 
-        logger.info(f"Extracted {len(all_detections)} detections from {len(unlabeled_images)} images")
+        logger.info(
+            f"Extracted {len(all_detections)} detections from {len(unlabeled_images)} images"
+        )
 
         # Save detections to JSON
         output_path = Path(output_dir)
         output_path.mkdir(parents=True, exist_ok=True)
 
         detections_file = output_path / f"round_{round_num}_detections.json"
-        with open(detections_file, 'w') as f:
+        with open(detections_file, "w") as f:
             json.dump(all_detections, f, indent=2)
 
         logger.info(f"Saved detections to {detections_file}")

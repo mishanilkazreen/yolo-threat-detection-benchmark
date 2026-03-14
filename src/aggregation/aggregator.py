@@ -18,7 +18,9 @@ class Results_Aggregator:
     def __init__(self):
         self.logger = logging.getLogger(__name__)
 
-    def collect_round_metrics(self, outputs_dir: str = "outputs") -> dict[str, list[dict[str, Any]]]:
+    def collect_round_metrics(
+        self, outputs_dir: str = "outputs"
+    ) -> dict[str, list[dict[str, Any]]]:
         """
         Collect round-level metrics from all model configurations.
 
@@ -97,9 +99,7 @@ class Results_Aggregator:
         return final_metrics
 
     def generate_round_comparison_table(
-        self,
-        round_metrics: dict[str, list[dict[str, Any]]],
-        output_dir: str = "outputs"
+        self, round_metrics: dict[str, list[dict[str, Any]]], output_dir: str = "outputs"
     ) -> None:
         """
         Generate per-round comparative table.
@@ -151,9 +151,7 @@ class Results_Aggregator:
         self.logger.info(f"Round comparison table saved to {md_file}")
 
     def generate_final_comparison_table(
-        self,
-        final_metrics: dict[str, dict[str, Any]],
-        output_dir: str = "outputs"
+        self, final_metrics: dict[str, dict[str, Any]], output_dir: str = "outputs"
     ) -> None:
         """
         Generate final performance comparative table.
@@ -205,9 +203,7 @@ class Results_Aggregator:
         self.logger.info(f"Final comparison table saved to {md_file}")
 
     def generate_learning_curves(
-        self,
-        round_metrics: dict[str, list[dict[str, Any]]],
-        output_dir: str = "outputs"
+        self, round_metrics: dict[str, list[dict[str, Any]]], output_dir: str = "outputs"
     ) -> None:
         """
         Generate learning curves (mAP@0.5 vs round) for all models.
@@ -228,7 +224,7 @@ class Results_Aggregator:
             map50_values = [r["metrics"]["mAP50"] for r in rounds]
 
             # Plot learning curve
-            plt.plot(round_nums, map50_values, marker='o', label=config_name, linewidth=2)
+            plt.plot(round_nums, map50_values, marker="o", label=config_name, linewidth=2)
 
         plt.xlabel("Round", fontsize=12)
         plt.ylabel("mAP@0.5", fontsize=12)
@@ -242,7 +238,7 @@ class Results_Aggregator:
         output_path.mkdir(parents=True, exist_ok=True)
 
         plot_file = output_path / "learning_curves.png"
-        plt.savefig(plot_file, dpi=300, bbox_inches='tight')
+        plt.savefig(plot_file, dpi=300, bbox_inches="tight")
         plt.close()
 
         self.logger.info(f"Learning curves saved to {plot_file}")
@@ -277,8 +273,7 @@ class Results_Aggregator:
         self.logger.info("Results aggregation complete")
 
     def compute_multi_run_statistics(
-        self,
-        round_metrics: dict[str, list[list[dict[str, Any]]]]
+        self, round_metrics: dict[str, list[list[dict[str, Any]]]]
     ) -> dict[str, list[dict[str, Any]]]:
         """
         Compute mean and standard deviation across multiple runs.
@@ -332,9 +327,7 @@ class Results_Aggregator:
         return aggregated
 
     def generate_learning_curves_with_error_bars(
-        self,
-        round_metrics: dict[str, list[list[dict[str, Any]]]],
-        output_dir: str = "outputs"
+        self, round_metrics: dict[str, list[list[dict[str, Any]]]], output_dir: str = "outputs"
     ) -> None:
         """
         Generate learning curves with error bars for multi-run experiments.
@@ -361,13 +354,18 @@ class Results_Aggregator:
                 std_values = [r["metrics"]["mAP50_std"] for r in rounds]
 
                 plt.errorbar(
-                    round_nums, mean_values, yerr=std_values,
-                    marker='o', label=config_name, linewidth=2, capsize=5
+                    round_nums,
+                    mean_values,
+                    yerr=std_values,
+                    marker="o",
+                    label=config_name,
+                    linewidth=2,
+                    capsize=5,
                 )
             else:
                 # Single run
                 map50_values = [r["metrics"]["mAP50"] for r in rounds]
-                plt.plot(round_nums, map50_values, marker='o', label=config_name, linewidth=2)
+                plt.plot(round_nums, map50_values, marker="o", label=config_name, linewidth=2)
 
         plt.xlabel("Round", fontsize=12)
         plt.ylabel("mAP@0.5", fontsize=12)
@@ -381,7 +379,7 @@ class Results_Aggregator:
         output_path.mkdir(parents=True, exist_ok=True)
 
         plot_file = output_path / "learning_curves_with_error_bars.png"
-        plt.savefig(plot_file, dpi=300, bbox_inches='tight')
+        plt.savefig(plot_file, dpi=300, bbox_inches="tight")
         plt.close()
 
         self.logger.info(f"Learning curves with error bars saved to {plot_file}")

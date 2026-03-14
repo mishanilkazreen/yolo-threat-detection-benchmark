@@ -6,16 +6,13 @@ Feature: one-shot-baseline
 
 from unittest.mock import MagicMock
 
-import pytest
-from hypothesis import HealthCheck, given, settings
+from hypothesis import given, settings
 from hypothesis import strategies as st
-
-from src.training.runner import Experiment_Runner
-
 
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
 
 def _make_config(run_baseline: bool = False):
     """Build a minimal mock config object."""
@@ -47,6 +44,7 @@ def _make_config(run_baseline: bool = False):
 # Validates: Requirements 5.3
 # ---------------------------------------------------------------------------
 
+
 class TestRunBaselineFalseSkipsBaseline:
     """
     **Property 4: run_baseline=false Skips Baseline Execution**
@@ -58,9 +56,7 @@ class TestRunBaselineFalseSkipsBaseline:
 
     @given(run_baseline=st.just(False))
     @settings(max_examples=10)
-    def test_run_baseline_false_does_not_trigger_baseline(
-        self, run_baseline: bool
-    ):
+    def test_run_baseline_false_does_not_trigger_baseline(self, run_baseline: bool):
         """
         **Property 4: run_baseline=false Skips Baseline Execution**
         **Validates: Requirements 5.3**
@@ -81,9 +77,7 @@ class TestRunBaselineFalseSkipsBaseline:
 
     @given(run_baseline=st.booleans())
     @settings(max_examples=20)
-    def test_guard_condition_matches_run_baseline_flag(
-        self, run_baseline: bool
-    ):
+    def test_guard_condition_matches_run_baseline_flag(self, run_baseline: bool):
         """
         **Property 4: run_baseline=false Skips Baseline Execution**
         **Validates: Requirements 5.3**
@@ -98,9 +92,7 @@ class TestRunBaselineFalseSkipsBaseline:
 
     @given(run_baseline=st.just(True))
     @settings(max_examples=5)
-    def test_run_baseline_true_would_call_baseline_trainer(
-        self, run_baseline: bool
-    ):
+    def test_run_baseline_true_would_call_baseline_trainer(self, run_baseline: bool):
         """
         Complementary check: when run_baseline=True, the guard condition is entered.
         **Validates: Requirements 5.2**
@@ -114,6 +106,4 @@ class TestRunBaselineFalseSkipsBaseline:
         if getattr(config.training, "run_baseline", False):
             baseline_would_run = True
 
-        assert baseline_would_run, (
-            "Baseline training should be triggered when run_baseline=True"
-        )
+        assert baseline_would_run, "Baseline training should be triggered when run_baseline=True"

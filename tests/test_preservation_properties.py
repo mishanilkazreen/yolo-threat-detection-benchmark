@@ -12,15 +12,13 @@ These tests verify that:
 - Configuration parser validation works correctly
 """
 
-import json
-import tempfile
 from pathlib import Path
 
 import numpy as np
-import pytest
-import yaml
 from PIL import Image
+import pytest
 from ultralytics import YOLO
+import yaml
 
 from src.config.parser import ConfigurationParser
 
@@ -58,18 +56,15 @@ class TestPreservationProperties:
                 "lrf": 0.1,
                 "runs": 1,
                 "seeds": [42],
-                "device": "cpu"
+                "device": "cpu",
             },
-            "model": {
-                "name": "yolov8n",
-                "weights": "yolov8n.yaml"
-            },
+            "model": {"name": "yolov8n", "weights": "yolov8n.yaml"},
             "data": {
                 "yaml_path": "data.yaml",
                 "train_init_percentage": 0.2,
-                "iou_threshold": 0.5
+                "iou_threshold": 0.5,
                 # Note: train_split, val_split, test_split removed in Task 3.2
-            }
+            },
         }
 
         config_file.write_text(yaml.dump(config_data))
@@ -107,19 +102,15 @@ class TestPreservationProperties:
                 # Missing patience
                 "image_size": 640,
             },
-            "model": {
-                "name": "yolov8n",
-                "weights": "yolov8n.yaml"
-            },
-            "data": {
-                "yaml_path": "data.yaml"
-            }
+            "model": {"name": "yolov8n", "weights": "yolov8n.yaml"},
+            "data": {"yaml_path": "data.yaml"},
         }
 
         invalid_config_file.write_text(yaml.dump(invalid_config_data))
 
         # Should raise ConfigurationParseError
         from src.config.parser import ConfigurationParseError
+
         with pytest.raises(ConfigurationParseError):
             ConfigurationParser.parse(invalid_config_file)
 
@@ -131,13 +122,8 @@ class TestPreservationProperties:
                 "patience": 10,
                 "image_size": 640,
             },
-            "model": {
-                "name": "yolov8n",
-                "weights": "yolov8n.yaml"
-            },
-            "data": {
-                "yaml_path": "data.yaml"
-            }
+            "model": {"name": "yolov8n", "weights": "yolov8n.yaml"},
+            "data": {"yaml_path": "data.yaml"},
         }
 
         invalid_type_config_file.write_text(yaml.dump(invalid_type_config_data))
@@ -183,13 +169,17 @@ class TestPreservationProperties:
 
         # Create data.yaml
         data_yaml = dataset_dir / "data.yaml"
-        data_yaml.write_text(yaml.dump({
-            "path": str(dataset_dir),
-            "train": "train/images",
-            "val": "valid/images",
-            "names": {0: "weapon"},
-            "nc": 1
-        }))
+        data_yaml.write_text(
+            yaml.dump(
+                {
+                    "path": str(dataset_dir),
+                    "train": "train/images",
+                    "val": "valid/images",
+                    "names": {0: "weapon"},
+                    "nc": 1,
+                }
+            )
+        )
 
         # Run 2-round training
         rounds = 2
@@ -198,11 +188,7 @@ class TestPreservationProperties:
 
         for round_num in range(1, rounds + 1):
             # Initialize model
-            if round_num == 1:
-                model = YOLO("yolov8n.yaml")
-            else:
-                # Load from previous checkpoint
-                model = YOLO(checkpoints[-1])
+            model = YOLO("yolov8n.yaml") if round_num == 1 else YOLO(checkpoints[-1])
 
             # Train
             model.train(

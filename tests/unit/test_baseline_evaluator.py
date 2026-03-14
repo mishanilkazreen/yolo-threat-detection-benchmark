@@ -1,13 +1,8 @@
 """Unit tests for Baseline_Evaluator."""
 
 import json
-import tempfile
 from pathlib import Path
-from typing import Any
-from unittest.mock import MagicMock, patch
-
-import numpy as np
-import pytest
+from unittest.mock import patch
 
 from src.config.parser import Configuration, DataConfig, ModelConfig, TrainingConfig
 from src.training.baseline_evaluator import Baseline_Evaluator
@@ -64,7 +59,7 @@ def _run_evaluate(evaluator, config, config_name, output_dir, gradcam_dir, **kwa
                     return gradcam_dir
             return original_path(*args)
 
-    setattr(mod, "Path", PatchedPath)
+    mod.Path = PatchedPath
     try:
         result = evaluator.evaluate(
             config_name=config_name,
@@ -72,7 +67,7 @@ def _run_evaluate(evaluator, config, config_name, output_dir, gradcam_dir, **kwa
             **kwargs,
         )
     finally:
-        setattr(mod, "Path", original_path)
+        mod.Path = original_path
 
     return result
 
@@ -117,7 +112,11 @@ class TestBaselineEvaluatorOutputStructure:
             patch.object(evaluator, "_compute_hfs", return_value=self._default_hfs_result()),
         ):
             _run_evaluate(
-                evaluator, config, "yolov8n", output_dir, gradcam_dir,
+                evaluator,
+                config,
+                "yolov8n",
+                output_dir,
+                gradcam_dir,
                 checkpoint_path="fake.pt",
                 val_data_yaml="val.yaml",
                 test_data_yaml="test.yaml",
@@ -136,9 +135,17 @@ class TestBaselineEvaluatorOutputStructure:
             saved = json.load(f)
 
         required_fields = [
-            "config_name", "model", "weights", "random_seed", "epochs",
-            "training_set_size", "training_time_seconds", "training_time_minutes",
-            "iou_threshold", "test_metrics", "per_class_test_metrics",
+            "config_name",
+            "model",
+            "weights",
+            "random_seed",
+            "epochs",
+            "training_set_size",
+            "training_time_seconds",
+            "training_time_minutes",
+            "iou_threshold",
+            "test_metrics",
+            "per_class_test_metrics",
         ]
         for field in required_fields:
             assert field in saved, f"Missing required field: {field}"
@@ -161,7 +168,11 @@ class TestBaselineEvaluatorOutputStructure:
             patch.object(evaluator, "_compute_hfs", return_value=self._default_hfs_result()),
         ):
             _run_evaluate(
-                evaluator, config, "yolov8n", output_dir, gradcam_dir,
+                evaluator,
+                config,
+                "yolov8n",
+                output_dir,
+                gradcam_dir,
                 checkpoint_path="fake.pt",
                 val_data_yaml="val.yaml",
                 test_data_yaml="test.yaml",
@@ -188,7 +199,11 @@ class TestBaselineEvaluatorOutputStructure:
             patch.object(evaluator, "_compute_hfs", return_value=self._default_hfs_result()),
         ):
             _run_evaluate(
-                evaluator, config, "yolov8n", output_dir, gradcam_dir,
+                evaluator,
+                config,
+                "yolov8n",
+                output_dir,
+                gradcam_dir,
                 checkpoint_path="fake.pt",
                 val_data_yaml="val.yaml",
                 test_data_yaml="test.yaml",
@@ -215,7 +230,11 @@ class TestBaselineEvaluatorOutputStructure:
             patch.object(evaluator, "_compute_hfs", return_value=self._default_hfs_result()),
         ):
             _run_evaluate(
-                evaluator, config, "yolov8s", output_dir, gradcam_dir,
+                evaluator,
+                config,
+                "yolov8s",
+                output_dir,
+                gradcam_dir,
                 checkpoint_path="fake.pt",
                 val_data_yaml="val.yaml",
                 test_data_yaml="test.yaml",

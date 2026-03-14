@@ -3,10 +3,6 @@
 Validates: Requirements 2.5, 3.5
 """
 
-import os
-import tempfile
-from pathlib import Path
-
 import pytest
 
 from src.explainability.hfs_scorer import Heatmap_Focus_Scorer
@@ -40,6 +36,7 @@ def dataset_dir(tmp_path):
 # 5.2 Exploratory test — fails on unfixed code (fallback used), passes after fix
 # ---------------------------------------------------------------------------
 
+
 def test_exploratory_label_path_not_fallback(scorer, dataset_dir):
     """Bug 7 exploratory: bbox loaded from labels/ dir, not the fallback centroid.
 
@@ -59,6 +56,7 @@ def test_exploratory_label_path_not_fallback(scorer, dataset_dir):
 # ---------------------------------------------------------------------------
 # 5.3 Preservation test — correct values are returned when label file exists
 # ---------------------------------------------------------------------------
+
 
 def test_preservation_correct_bbox_values_returned(scorer, dataset_dir):
     """Bug 7 preservation: when label file exists at correct YOLO path, exact bbox is returned."""

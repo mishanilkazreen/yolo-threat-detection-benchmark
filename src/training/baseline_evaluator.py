@@ -240,6 +240,7 @@ class Baseline_Evaluator:
 
             try:
                 from PIL import Image as PILImage
+
                 with PILImage.open(path) as img:
                     w, h = img.size
                 image_sizes.append((w, h))
@@ -335,9 +336,7 @@ class Baseline_Evaluator:
                         y1 = max(0, int(y1))
                         x2 = min(image_width, int(x2))
                         y2 = min(image_height, int(y2))
-                        heatmap[y1:y2, x1:x2] = np.maximum(
-                            heatmap[y1:y2, x1:x2], conf
-                        )
+                        heatmap[y1:y2, x1:x2] = np.maximum(heatmap[y1:y2, x1:x2], conf)
         except Exception as e:
             self.logger.warning(f"Heatmap generation failed for {image_path}: {e}")
             # Return uniform heatmap as fallback

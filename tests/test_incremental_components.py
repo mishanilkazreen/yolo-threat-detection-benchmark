@@ -9,16 +9,15 @@ Tests the newly implemented components:
 - Round_Metrics_Tracker
 """
 
-import json
+from pathlib import Path
 import sys
 import tempfile
-from pathlib import Path
 
 # Add project root to path
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-import pytest
+import pytest  # noqa: E402
 
 
 def test_dataset_splitter_import():
@@ -94,7 +93,7 @@ def test_detection_validator_iou_computation():
     iou = validator._compute_iou(bbox1, bbox2)
     assert 0.0 < iou < 1.0, f"Expected 0 < IoU < 1, got {iou}"
 
-    print(f"✓ Detection_Validator IoU computation working correctly")
+    print("✓ Detection_Validator IoU computation working correctly")
 
 
 def test_detection_validator_validation_logic():
@@ -105,35 +104,37 @@ def test_detection_validator_validation_logic():
 
     # Create a mock detection
     detection = {
-        'image_id': 'test.jpg',
-        'pred_class': 1,
-        'bbox': [0.5, 0.5, 0.2, 0.2],
-        'confidence': 0.9
+        "image_id": "test.jpg",
+        "pred_class": 1,
+        "bbox": [0.5, 0.5, 0.2, 0.2],
+        "confidence": 0.9,
     }
 
     # Create mock ground truth annotations
     gt_annotations = [
         {
-            'class_id': 1,
-            'bbox': [0.5, 0.5, 0.2, 0.2]  # Perfect match
+            "class_id": 1,
+            "bbox": [0.5, 0.5, 0.2, 0.2],  # Perfect match
         }
     ]
 
     is_verified, match_info = validator._validate_single_detection(detection, gt_annotations)
     assert is_verified, "Detection should be verified (perfect match)"
-    assert abs(match_info['iou'] - 1.0) < 0.001, f"Expected IoU≈1.0, got {match_info['iou']}"
+    assert abs(match_info["iou"] - 1.0) < 0.001, f"Expected IoU≈1.0, got {match_info['iou']}"
 
     # Test class mismatch
     gt_annotations_wrong_class = [
         {
-            'class_id': 2,  # Different class
-            'bbox': [0.5, 0.5, 0.2, 0.2]
+            "class_id": 2,  # Different class
+            "bbox": [0.5, 0.5, 0.2, 0.2],
         }
     ]
 
-    is_verified, match_info = validator._validate_single_detection(detection, gt_annotations_wrong_class)
+    is_verified, match_info = validator._validate_single_detection(
+        detection, gt_annotations_wrong_class
+    )
     assert not is_verified, "Detection should be rejected (class mismatch)"
-    assert match_info['reason'] == 'no_class_match'
+    assert match_info["reason"] == "no_class_match"
 
     print("✓ Detection_Validator validation logic working correctly")
 
@@ -147,38 +148,36 @@ def test_round_metrics_tracker_csv_export():
     # Create mock round data
     rounds_data = [
         {
-            'round': 1,
-            'training_set_size': 200,
-            'verified_samples_added': 0,
-            'unlabeled_pool_remaining': 800,
-            'metrics': {
-                'mAP50': 0.623,
-                'mAP50-95': 0.412,
-                'precision': 0.687,
-                'recall': 0.598,
-                'f1_score': 0.639,
-                'fitness': 0.435
+            "round": 1,
+            "training_set_size": 200,
+            "verified_samples_added": 0,
+            "unlabeled_pool_remaining": 800,
+            "metrics": {
+                "mAP50": 0.623,
+                "mAP50-95": 0.412,
+                "precision": 0.687,
+                "recall": 0.598,
+                "f1_score": 0.639,
+                "fitness": 0.435,
             },
-            'model_info': {
-                'inference_time_ms': 12.5
-            },
-            'round_training_time_seconds': 720.3,
-            'cumulative_training_time_seconds': 720.3
+            "model_info": {"inference_time_ms": 12.5},
+            "round_training_time_seconds": 720.3,
+            "cumulative_training_time_seconds": 720.3,
         }
     ]
 
     with tempfile.TemporaryDirectory() as tmpdir:
-        csv_path = Path(tmpdir) / 'test_metrics.csv'
+        csv_path = Path(tmpdir) / "test_metrics.csv"
         tracker._export_to_csv(rounds_data, csv_path)
 
         assert csv_path.exists(), "CSV file should be created"
 
         # Read and verify CSV content
-        with open(csv_path, 'r') as f:
+        with open(csv_path) as f:
             content = f.read()
-            assert 'round' in content
-            assert 'mAP50' in content
-            assert '0.623' in content
+            assert "round" in content
+            assert "mAP50" in content
+            assert "0.623" in content
 
     print("✓ Round_Metrics_Tracker CSV export working correctly")
 
@@ -186,7 +185,7 @@ def test_round_metrics_tracker_csv_export():
 def test_configuration_manager_incremental_validation():
     """Test Configuration_Manager incremental training field validation."""
     from src.config.manager import ConfigurationManager
-    from src.config.parser import Configuration, TrainingConfig, ModelConfig, DataConfig
+    from src.config.parser import Configuration, DataConfig, ModelConfig, TrainingConfig
 
     # Create a valid configuration with incremental training fields
     config = Configuration(
@@ -198,17 +197,12 @@ def test_configuration_manager_incremental_validation():
             image_size=640,
             device="cuda",
             runs=1,
-            seeds=None
+            seeds=None,
         ),
-        model=ModelConfig(
-            name="yolov8n",
-            weights="yolov8n.pt"
-        ),
+        model=ModelConfig(name="yolov8n", weights="yolov8n.pt"),
         data=DataConfig(
-            yaml_path="config/data/test.yaml",
-            train_init_percentage=0.2,
-            iou_threshold=0.5
-        )
+            yaml_path="config/data/test.yaml", train_init_percentage=0.2, iou_threshold=0.5
+        ),
     )
 
     # This should not raise an exception

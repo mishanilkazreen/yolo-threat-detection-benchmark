@@ -10,14 +10,13 @@ Tests for Bug 8 — Per-class precision, recall, and F1 in _extract_metrics().
 """
 
 from unittest.mock import MagicMock
-import pytest
 
 from src.training.evaluator import Metrics_Collector
-
 
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
 
 def _make_mock_results(num_classes: int = 3):
     """Build a minimal mock YOLO validation result with per-class arrays."""
@@ -28,11 +27,11 @@ def _make_mock_results(num_classes: int = 3):
     box.mr = 0.70
 
     # Per-class arrays
-    box.maps = [0.70, 0.75, 0.80]          # triggers the if-block
+    box.maps = [0.70, 0.75, 0.80]  # triggers the if-block
     box.ap50 = [0.70, 0.75, 0.80]
-    box.ap   = [0.50, 0.55, 0.60]
-    box.p    = [0.78, 0.82, 0.80]
-    box.r    = [0.65, 0.72, 0.73]
+    box.ap = [0.50, 0.55, 0.60]
+    box.p = [0.78, 0.82, 0.80]
+    box.r = [0.65, 0.72, 0.73]
 
     results = MagicMock()
     results.box = box
@@ -63,6 +62,7 @@ def _call_extract_metrics(results):
 # ---------------------------------------------------------------------------
 # 6.2 Exploratory test — new per-class keys must be present
 # ---------------------------------------------------------------------------
+
 
 class TestBug8Exploratory:
     def test_precision_per_class_present(self):
@@ -98,8 +98,7 @@ class TestBug8Exploratory:
 
         collector = Metrics_Collector()
         expected_f1 = [
-            collector._compute_f1(float(p), float(r))
-            for p, r in zip(results.box.p, results.box.r)
+            collector._compute_f1(float(p), float(r)) for p, r in zip(results.box.p, results.box.r)
         ]
         assert pcm["f1_score_per_class"] == expected_f1
 
@@ -114,6 +113,7 @@ class TestBug8Exploratory:
 # ---------------------------------------------------------------------------
 # 6.3 Preservation test — existing keys unchanged
 # ---------------------------------------------------------------------------
+
 
 class TestBug8Preservation:
     def test_map50_per_class_still_present(self):
@@ -147,7 +147,7 @@ class TestBug8Preservation:
     def test_no_per_class_block_when_maps_absent(self):
         """When results.box has no 'maps' attribute, per_class_metrics must be absent."""
         results = _make_mock_results()
-        del results.box.maps          # remove the attribute
+        del results.box.maps  # remove the attribute
         # hasattr will now return False
         results.box.configure_mock(**{"maps": MagicMock()})
         # Rebuild without maps by using spec
@@ -157,9 +157,9 @@ class TestBug8Preservation:
         box.mp = 0.80
         box.mr = 0.70
         box.ap50 = [0.70, 0.75, 0.80]
-        box.ap   = [0.50, 0.55, 0.60]
-        box.p    = [0.78, 0.82, 0.80]
-        box.r    = [0.65, 0.72, 0.73]
+        box.ap = [0.50, 0.55, 0.60]
+        box.p = [0.78, 0.82, 0.80]
+        box.r = [0.65, 0.72, 0.73]
         results2 = MagicMock()
         results2.box = box
         results2.fitness = 0.60

@@ -89,6 +89,7 @@ class Baseline_Trainer:
 
         # Select device
         from .device_utils import select_device
+
         device = select_device(config.training.device)
 
         self.logger.info(
@@ -145,12 +146,14 @@ class Baseline_Trainer:
         Returns:
             Callback function compatible with Ultralytics YOLO
         """
+
         def on_train_epoch_start(trainer):
             epoch = trainer.epoch
             decay_steps = epoch // step_interval
-            expected_lr = lr0 * (lrf ** decay_steps)
+            expected_lr = lr0 * (lrf**decay_steps)
             for param_group in trainer.optimizer.param_groups:
-                param_group['lr'] = expected_lr
+                param_group["lr"] = expected_lr
+
         return on_train_epoch_start
 
     def _write_data_yaml(

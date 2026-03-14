@@ -12,7 +12,6 @@ The test verifies:
 2. Split ratios are NO LONGER in the config (confirming they were removed)
 """
 
-import tempfile
 from pathlib import Path
 
 import pytest
@@ -66,7 +65,7 @@ class TestBugConditionExploration:
         # Create a mock trainer object
         class MockOptimizer:
             def __init__(self):
-                self.param_groups = [{'lr': lr0}]
+                self.param_groups = [{"lr": lr0}]
 
         class MockTrainer:
             def __init__(self, epoch):
@@ -75,9 +74,9 @@ class TestBugConditionExploration:
 
         # Test LR at different epochs
         test_cases = [
-            (0, 0.001),    # Epoch 0: initial LR
-            (5, 0.0001),   # Epoch 5: LR * 0.1
-            (10, 0.00001), # Epoch 10: LR * 0.1 * 0.1
+            (0, 0.001),  # Epoch 0: initial LR
+            (5, 0.0001),  # Epoch 5: LR * 0.1
+            (10, 0.00001),  # Epoch 10: LR * 0.1 * 0.1
         ]
 
         tolerance = 1e-7
@@ -85,7 +84,7 @@ class TestBugConditionExploration:
         for epoch, expected_lr in test_cases:
             trainer = MockTrainer(epoch)
             callback(trainer)
-            actual_lr = trainer.optimizer.param_groups[0]['lr']
+            actual_lr = trainer.optimizer.param_groups[0]["lr"]
 
             assert abs(actual_lr - expected_lr) < tolerance, (
                 f"Epoch {epoch}: Expected LR={expected_lr:.6f}, got {actual_lr:.6f}. "
@@ -124,18 +123,15 @@ class TestBugConditionExploration:
                 "lrf": 0.1,
                 "runs": 1,
                 "seeds": [42],
-                "device": "cpu"
+                "device": "cpu",
             },
-            "model": {
-                "name": "yolov8n",
-                "weights": "yolov8n.yaml"
-            },
+            "model": {"name": "yolov8n", "weights": "yolov8n.yaml"},
             "data": {
                 "yaml_path": "dummy.yaml",
                 "train_init_percentage": 0.2,
-                "iou_threshold": 0.5
+                "iou_threshold": 0.5,
                 # NOTE: train_split, val_split, test_split should NOT be here after fix
-            }
+            },
         }
 
         config_file.write_text(yaml.dump(config_data))
@@ -145,23 +141,23 @@ class TestBugConditionExploration:
 
         # Verify that split ratios are NOT in the config (they were removed)
         # After Task 3.2, DataConfig should not have these attributes
-        assert not hasattr(config.data, 'train_split'), (
+        assert not hasattr(config.data, "train_split"), (
             "train_split should NOT exist in DataConfig after fix. "
             "Task 3.2 removed this field because it was never used."
         )
 
-        assert not hasattr(config.data, 'val_split'), (
+        assert not hasattr(config.data, "val_split"), (
             "val_split should NOT exist in DataConfig after fix. "
             "Task 3.2 removed this field because it was never used."
         )
 
-        assert not hasattr(config.data, 'test_split'), (
+        assert not hasattr(config.data, "test_split"), (
             "test_split should NOT exist in DataConfig after fix. "
             "Task 3.2 removed this field because it was never used."
         )
 
         # Verify that the config still has the fields that ARE used
-        assert hasattr(config.data, 'train_init_percentage'), (
+        assert hasattr(config.data, "train_init_percentage"), (
             "train_init_percentage should still exist (it IS used for incremental training)"
         )
 
@@ -183,20 +179,17 @@ class TestBugConditionExploration:
                 "lrf": 0.1,
                 "runs": 1,
                 "seeds": [42],
-                "device": "cpu"
+                "device": "cpu",
             },
-            "model": {
-                "name": "yolov8n",
-                "weights": "yolov8n.yaml"
-            },
+            "model": {"name": "yolov8n", "weights": "yolov8n.yaml"},
             "data": {
                 "yaml_path": "dummy.yaml",
                 "train_init_percentage": 0.2,
                 "iou_threshold": 0.5,
                 "train_split": 0.7,
                 "val_split": 0.2,
-                "test_split": 0.1
-            }
+                "test_split": 0.1,
+            },
         }
 
         config_with_splits.write_text(yaml.dump(config_data_with_splits))
@@ -205,12 +198,12 @@ class TestBugConditionExploration:
         config2 = ConfigurationParser.parse(config_with_splits)
 
         # Even if present in YAML, they should not be in the parsed config
-        assert not hasattr(config2.data, 'train_split'), (
+        assert not hasattr(config2.data, "train_split"), (
             "train_split should be ignored by parser after fix"
         )
-        assert not hasattr(config2.data, 'val_split'), (
+        assert not hasattr(config2.data, "val_split"), (
             "val_split should be ignored by parser after fix"
         )
-        assert not hasattr(config2.data, 'test_split'), (
+        assert not hasattr(config2.data, "test_split"), (
             "test_split should be ignored by parser after fix"
         )

@@ -9,19 +9,17 @@ This test FAILS on unfixed code (no callback registered) and PASSES after the fi
 **Validates: Requirements 2.1**
 """
 
-import tempfile
 from pathlib import Path
-from unittest.mock import MagicMock, call, patch
+from unittest.mock import MagicMock, patch
 
-import pytest
 import yaml
 
 from src.training.baseline_trainer import Baseline_Trainer
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
 
 def _make_config(lr0: float = 0.001, lrf: float = 0.1):
     """Build a minimal mock config for Baseline_Trainer.train()."""
@@ -55,6 +53,7 @@ def _write_data_yaml(tmp_path: Path) -> str:
 # ---------------------------------------------------------------------------
 # Test: add_callback called before model.train()
 # ---------------------------------------------------------------------------
+
 
 class TestBaselineTrainerCallbackRegistration:
     """
@@ -95,8 +94,10 @@ class TestBaselineTrainerCallbackRegistration:
 
         with (
             patch("src.training.baseline_trainer.YOLO", return_value=mock_model),
-            patch("src.training.baseline_trainer.Baseline_Trainer._find_checkpoint",
-                  return_value="fake/best.pt"),
+            patch(
+                "src.training.baseline_trainer.Baseline_Trainer._find_checkpoint",
+                return_value="fake/best.pt",
+            ),
             patch("src.training.device_utils.select_device", return_value="cpu"),
         ):
             trainer.train(
@@ -119,7 +120,9 @@ class TestBaselineTrainerCallbackRegistration:
         )
 
         # Verify add_callback comes before train in the call sequence
-        add_callback_idx = next(i for i, entry in enumerate(call_order) if entry[0] == "add_callback")
+        add_callback_idx = next(
+            i for i, entry in enumerate(call_order) if entry[0] == "add_callback"
+        )
         train_idx = next(i for i, entry in enumerate(call_order) if entry[0] == "train")
         assert add_callback_idx < train_idx, (
             f"add_callback (index {add_callback_idx}) must be called before "
@@ -149,8 +152,10 @@ class TestBaselineTrainerCallbackRegistration:
 
         with (
             patch("src.training.baseline_trainer.YOLO", return_value=mock_model),
-            patch("src.training.baseline_trainer.Baseline_Trainer._find_checkpoint",
-                  return_value="fake/best.pt"),
+            patch(
+                "src.training.baseline_trainer.Baseline_Trainer._find_checkpoint",
+                return_value="fake/best.pt",
+            ),
             patch("src.training.device_utils.select_device", return_value="cpu"),
         ):
             trainer.train(
@@ -172,6 +177,7 @@ class TestBaselineTrainerCallbackRegistration:
 # ---------------------------------------------------------------------------
 # Test: iou not passed to model.train() (Bug 1.4)
 # ---------------------------------------------------------------------------
+
 
 class TestBaselineTrainerNoIouKwarg:
     """
@@ -208,8 +214,10 @@ class TestBaselineTrainerNoIouKwarg:
 
         with (
             patch("src.training.baseline_trainer.YOLO", return_value=mock_model),
-            patch("src.training.baseline_trainer.Baseline_Trainer._find_checkpoint",
-                  return_value="fake/best.pt"),
+            patch(
+                "src.training.baseline_trainer.Baseline_Trainer._find_checkpoint",
+                return_value="fake/best.pt",
+            ),
             patch("src.training.device_utils.select_device", return_value="cpu"),
         ):
             trainer.train(

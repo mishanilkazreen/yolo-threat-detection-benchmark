@@ -38,7 +38,7 @@ class Detection_Validator:
         detections: list[dict[str, Any]],
         ground_truth_dir: str,
         unlabeled_pool: list[str] | None = None,
-        output_path: str | None = None
+        output_path: str | None = None,
     ) -> dict[str, Any]:
         """
         Validate edge agent detections against ground truth.
@@ -83,7 +83,7 @@ class Detection_Validator:
         # Group detections by image
         detections_by_image: dict[str, list[dict[str, Any]]] = {}
         for det in detections:
-            img_id = det['image_id']
+            img_id = det["image_id"]
             if img_id not in detections_by_image:
                 detections_by_image[img_id] = []
             detections_by_image[img_id].append(det)
@@ -98,15 +98,12 @@ class Detection_Validator:
         # Validate each image's detections
         for img_id, img_detections in detections_by_image.items():
             # Load ground truth for this image
-            gt_file = gt_dir_path / Path(img_id).with_suffix('.txt').name
+            gt_file = gt_dir_path / Path(img_id).with_suffix(".txt").name
 
             if not gt_file.exists():
                 logger.warning(f"Ground truth not found for {img_id}, rejecting all detections")
                 for det in img_detections:
-                    rejected_detections.append({
-                        **det,
-                        'rejection_reason': 'no_ground_truth'
-                    })
+                    rejected_detections.append({**det, "rejection_reason": "no_ground_truth"})
                 continue
 
             gt_annotations = self._load_ground_truth(gt_file)
@@ -114,10 +111,7 @@ class Detection_Validator:
             if not gt_annotations:
                 logger.warning(f"Empty ground truth for {img_id}, rejecting all detections")
                 for det in img_detections:
-                    rejected_detections.append({
-                        **det,
-                        'rejection_reason': 'empty_ground_truth'
-                    })
+                    rejected_detections.append({**det, "rejection_reason": "empty_ground_truth"})
                 continue
 
             # Validate each detection against ground truth
@@ -125,19 +119,23 @@ class Detection_Validator:
                 is_verified, match_info = self._validate_single_detection(det, gt_annotations)
 
                 if is_verified:
-                    verified_detections.append({
-                        **det,
-                        'gt_class': match_info['gt_class'],
-                        'iou': match_info['iou'],
-                        'gt_bbox': match_info['gt_bbox']
-                    })
+                    verified_detections.append(
+                        {
+                            **det,
+                            "gt_class": match_info["gt_class"],
+                            "iou": match_info["iou"],
+                            "gt_bbox": match_info["gt_bbox"],
+                        }
+                    )
                     verified_image_ids.add(img_id)
                 else:
-                    rejected_detections.append({
-                        **det,
-                        'rejection_reason': match_info['reason'],
-                        'best_iou': match_info.get('best_iou', 0.0)
-                    })
+                    rejected_detections.append(
+                        {
+                            **det,
+                            "rejection_reason": match_info["reason"],
+                            "best_iou": match_info.get("best_iou", 0.0),
+                        }
+                    )
 
         # Compute statistics
         total_detections = len(detections)
@@ -152,16 +150,16 @@ class Detection_Validator:
         logger.info(f"Undetected images: {undetected_count}")
 
         results = {
-            'verified_samples': sorted(verified_image_ids),
-            'verified_detections': verified_detections,
-            'rejected_detections': rejected_detections,
-            'undetected_images': undetected_images,
-            'total_detections': total_detections,
-            'verified_count': verified_count,
-            'rejected_count': rejected_count,
-            'undetected_count': undetected_count,
-            'verification_rate': verification_rate,
-            'iou_threshold': self.iou_threshold
+            "verified_samples": sorted(verified_image_ids),
+            "verified_detections": verified_detections,
+            "rejected_detections": rejected_detections,
+            "undetected_images": undetected_images,
+            "total_detections": total_detections,
+            "verified_count": verified_count,
+            "rejected_count": rejected_count,
+            "undetected_count": undetected_count,
+            "verification_rate": verification_rate,
+            "iou_threshold": self.iou_threshold,
         }
 
         # Save results if output path provided
@@ -169,7 +167,7 @@ class Detection_Validator:
             output_path_obj = Path(output_path)
             output_path_obj.parent.mkdir(parents=True, exist_ok=True)
 
-            with open(output_path_obj, 'w') as f:
+            with open(output_path_obj, "w") as f:
                 json.dump(results, f, indent=2)
 
             logger.info(f"Saved validation results to {output_path_obj}")
@@ -203,17 +201,12 @@ class Detection_Validator:
                     class_id = int(parts[0])
                     bbox = [float(parts[1]), float(parts[2]), float(parts[3]), float(parts[4])]
 
-                    annotations.append({
-                        'class_id': class_id,
-                        'bbox': bbox
-                    })
+                    annotations.append({"class_id": class_id, "bbox": bbox})
 
         return annotations
 
     def _validate_single_detection(
-        self,
-        detection: dict[str, Any],
-        gt_annotations: list[dict[str, Any]]
+        self, detection: dict[str, Any], gt_annotations: list[dict[str, Any]]
     ) -> tuple[bool, dict[str, Any]]:
         """
         Validate a single detection against ground truth annotations.
@@ -227,16 +220,16 @@ class Detection_Validator:
             - is_verified: True if detection is verified
             - match_info: Dictionary with validation details
         """
-        pred_class = detection['pred_class']
-        pred_bbox = detection['bbox']
+        pred_class = detection["pred_class"]
+        pred_bbox = detection["bbox"]
 
         best_iou = 0.0
         best_match = None
 
         # Find best matching ground truth annotation
         for gt_ann in gt_annotations:
-            gt_class = gt_ann['class_id']
-            gt_bbox = gt_ann['bbox']
+            gt_class = gt_ann["class_id"]
+            gt_bbox = gt_ann["bbox"]
 
             # Check class match
             if pred_class != gt_class:
@@ -252,17 +245,14 @@ class Detection_Validator:
         # Verify if best match meets threshold
         if best_match is not None and best_iou >= self.iou_threshold:
             return True, {
-                'gt_class': best_match['class_id'],
-                'gt_bbox': best_match['bbox'],
-                'iou': best_iou
+                "gt_class": best_match["class_id"],
+                "gt_bbox": best_match["bbox"],
+                "iou": best_iou,
             }
         else:
-            reason = 'no_class_match' if best_match is None else 'low_iou'
+            reason = "no_class_match" if best_match is None else "low_iou"
 
-            return False, {
-                'reason': reason,
-                'best_iou': best_iou
-            }
+            return False, {"reason": reason, "best_iou": best_iou}
 
     def _compute_iou(self, bbox1: list[float], bbox2: list[float]) -> float:
         """
@@ -326,7 +316,9 @@ class Detection_Validator:
         summary.append(f"Verified detections: {validation_results['verified_count']}")
         summary.append(f"Rejected detections: {validation_results['rejected_count']}")
         summary.append(f"Verification rate: {validation_results['verification_rate']:.2%}")
-        summary.append(f"Verified samples: {len(validation_results['verified_samples'])} unique images")
+        summary.append(
+            f"Verified samples: {len(validation_results['verified_samples'])} unique images"
+        )
         summary.append(f"IoU threshold: {validation_results['iou_threshold']}")
         summary.append("=" * 60)
 

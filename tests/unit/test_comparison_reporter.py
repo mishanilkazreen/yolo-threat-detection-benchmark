@@ -3,16 +3,15 @@
 import math
 from pathlib import Path
 
-import pytest
 from hypothesis import given, settings
 from hypothesis import strategies as st
 
 from src.aggregation.comparison_reporter import COMPARISON_COLUMNS, Comparison_Reporter
 
-
 # ---------------------------------------------------------------------------
 # Helpers / strategies
 # ---------------------------------------------------------------------------
+
 
 def _make_metrics(
     mAP50: float = 0.821,
@@ -97,8 +96,11 @@ class TestGenerateComparison:
 
     def test_csv_has_correct_columns(self, tmp_path: Path):
         reporter = Comparison_Reporter()
-        reporter.generate_comparison("cfg", _make_metrics(), _make_metrics(), output_dir=str(tmp_path))
+        reporter.generate_comparison(
+            "cfg", _make_metrics(), _make_metrics(), output_dir=str(tmp_path)
+        )
         import csv
+
         with open(tmp_path / "baseline_vs_incremental_cfg.csv") as f:
             reader = csv.DictReader(f)
             fieldnames = reader.fieldnames
@@ -107,7 +109,9 @@ class TestGenerateComparison:
 
     def test_markdown_contains_header(self, tmp_path: Path):
         reporter = Comparison_Reporter()
-        reporter.generate_comparison("cfg", _make_metrics(), _make_metrics(), output_dir=str(tmp_path))
+        reporter.generate_comparison(
+            "cfg", _make_metrics(), _make_metrics(), output_dir=str(tmp_path)
+        )
         content = (tmp_path / "baseline_vs_incremental_cfg.md").read_text()
         assert "Baseline vs Incremental" in content
         assert "mAP@0.5 (test)" in content
@@ -115,7 +119,9 @@ class TestGenerateComparison:
     def test_output_dir_created_if_missing(self, tmp_path: Path):
         nested = tmp_path / "deep" / "nested"
         reporter = Comparison_Reporter()
-        reporter.generate_comparison("cfg", _make_metrics(), _make_metrics(), output_dir=str(nested))
+        reporter.generate_comparison(
+            "cfg", _make_metrics(), _make_metrics(), output_dir=str(nested)
+        )
         assert (nested / "baseline_vs_incremental_cfg.md").exists()
 
 
@@ -135,6 +141,7 @@ class TestGenerateAllComparisons:
             "training_time_seconds": 1000.0,
         }
         import json
+
         (d / "final_test_metrics.json").write_text(json.dumps(test_metrics))
         hfs = {"mean_hfs": 0.6}
         (d / "hfs_metrics.json").write_text(json.dumps(hfs))
@@ -283,8 +290,7 @@ class TestPropertyDifferenceRow:
             expected = incremental[key] - baseline[key]
             actual = diff_row[col_label]
             assert abs(actual - expected) < 1e-9, (
-                f"Difference mismatch for {col_label}: "
-                f"expected {expected}, got {actual}"
+                f"Difference mismatch for {col_label}: expected {expected}, got {actual}"
             )
 
 
@@ -294,9 +300,7 @@ class TestPropertyOneTablePerConfig:
     Validates: Requirements 4.5
     """
 
-    @given(
-        st.lists(_config_name_strategy(), min_size=1, max_size=10, unique=True)
-    )
+    @given(st.lists(_config_name_strategy(), min_size=1, max_size=10, unique=True))
     @settings(max_examples=100)
     def test_one_table_per_config(self, config_names):
         """
@@ -306,6 +310,7 @@ class TestPropertyOneTablePerConfig:
         exactly N .md and N .csv files.
         """
         import tempfile
+
         with tempfile.TemporaryDirectory() as tmp_dir:
             reporter = Comparison_Reporter()
             out = Path(tmp_dir) / "outputs"

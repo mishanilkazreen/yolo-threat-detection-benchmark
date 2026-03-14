@@ -50,7 +50,6 @@ class DataConfig:
     # train_init_percentage controls the initial training set size within the training split.
 
 
-
 @dataclass
 class Configuration:
     """Complete configuration object."""
@@ -149,9 +148,7 @@ class ConfigurationParser:
         epochs = data.get("epochs")
 
         if epochs is None and epochs_per_round is None:
-            raise ConfigurationParseError(
-                "Either 'epochs' or 'epochs_per_round' must be specified"
-            )
+            raise ConfigurationParseError("Either 'epochs' or 'epochs_per_round' must be specified")
 
         # Required fields (epochs is NOT required if epochs_per_round is provided)
         required_fields = ["patience", "image_size"]

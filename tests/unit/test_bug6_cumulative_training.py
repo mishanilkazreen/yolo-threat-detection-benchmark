@@ -10,13 +10,12 @@ the verified images only (50 images), not the cumulative set (758 images).
 Preservation test (4.3): When verified_images is empty, current_training_images is unchanged.
 """
 
-import pytest
 from unittest.mock import patch
-
 
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
 
 def _make_image_list(prefix: str, count: int) -> list[str]:
     return [f"{prefix}_{i:04d}.jpg" for i in range(count)]
@@ -55,6 +54,7 @@ def _run_verified_block(
 # ---------------------------------------------------------------------------
 # 4.2 Exploratory test — next round uses verified-only set
 # ---------------------------------------------------------------------------
+
 
 class TestBug6VerifiedOnlyTrainingSet:
     """Validates: Requirements 2.4 (verified-only per round)"""
@@ -109,6 +109,7 @@ class TestBug6VerifiedOnlyTrainingSet:
 # ---------------------------------------------------------------------------
 # 4.3 Preservation test — empty verified_images leaves training set unchanged
 # ---------------------------------------------------------------------------
+
 
 class TestBug6PreservationEmptyVerified:
     """Validates: Requirements 3.4"""

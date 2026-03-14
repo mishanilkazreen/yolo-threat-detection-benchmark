@@ -154,7 +154,8 @@ class TestConfigurationParser:
         config_path = self.create_temp_config(config_dict)
         try:
             with pytest.raises(
-                ConfigurationParseError, match="Either 'epochs' or 'epochs_per_round' must be specified"
+                ConfigurationParseError,
+                match="Either 'epochs' or 'epochs_per_round' must be specified",
             ):
                 ConfigurationParser.parse(config_path)
         finally:

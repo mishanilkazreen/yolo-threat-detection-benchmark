@@ -8,14 +8,13 @@ Task 2.4 — Preservation test: _verify_split_ratio() with a 70/20/10 split logs
 """
 
 import logging
-import pytest
 
 from src.training.runner import Experiment_Runner
-
 
 # ---------------------------------------------------------------------------
 # Task 2.3 — Exploratory test (fails on unfixed code, passes after fix)
 # ---------------------------------------------------------------------------
+
 
 def test_verify_split_ratio_warns_on_deviant_split(caplog):
     """
@@ -31,8 +30,10 @@ def test_verify_split_ratio_warns_on_deviant_split(caplog):
         runner._verify_split_ratio(train_count=3000, val_count=1200, test_count=800)
 
     assert len(caplog.records) > 0, "Expected a warning to be logged for a deviant split"
-    assert any("deviate" in record.message.lower() or "split" in record.message.lower()
-               for record in caplog.records), (
+    assert any(
+        "deviate" in record.message.lower() or "split" in record.message.lower()
+        for record in caplog.records
+    ), (
         f"Warning message did not mention split deviation. Got: {[r.message for r in caplog.records]}"
     )
 
@@ -40,6 +41,7 @@ def test_verify_split_ratio_warns_on_deviant_split(caplog):
 # ---------------------------------------------------------------------------
 # Task 2.4 — Preservation test: no warning for a 70/20/10 split
 # ---------------------------------------------------------------------------
+
 
 def test_verify_split_ratio_no_warning_on_valid_split(caplog):
     """
