@@ -304,6 +304,12 @@ class Experiment_Runner:
         if epochs_per_round is None:
             if config.training.epochs is not None:
                 epochs_per_round = config.training.epochs // rounds
+                if epochs_per_round < 1:
+                    raise ValueError(
+                        f"Invalid configuration: epochs_per_round computed as 0. "
+                        f"Ensure that total epochs ({config.training.epochs}) is at least equal to "
+                        f"the number of rounds ({rounds}), or specify epochs_per_round explicitly."
+                    )
             else:
                 raise ValueError("Either epochs_per_round or epochs must be specified")
 
