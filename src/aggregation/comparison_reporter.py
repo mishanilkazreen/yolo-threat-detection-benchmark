@@ -214,11 +214,21 @@ class Comparison_Reporter:
             test_metrics = test_data.get("test_metrics", {})
         else:
             test_metrics = test_data.get("metrics", {})
+        # Training time key differs between some writers:
+        # - baseline / some evaluators: "training_time_seconds"
+        # - incremental (Metrics_Collector.evaluate_final_test): "total_training_time_seconds"
+        training_time = test_data.get("training_time_seconds")
+        if training_time is None:
+            training_time = test_data.get("total_training_time_seconds")
+        if training_time is None:
+            training_time = float("nan")
+
         metrics: dict[str, Any] = {
             "mAP50": test_metrics.get("mAP50", float("nan")),
             "mAP50-95": test_metrics.get("mAP50-95", float("nan")),
             "f1_score": test_metrics.get("f1_score", float("nan")),
-            "training_time_seconds": test_data.get("training_time_seconds", float("nan")),
+            # Normalize under a single internal key for downstream consumers
+            "training_time_seconds": training_time,
         }
 
         # HFS
