@@ -47,8 +47,8 @@ def test_edge_agent_simulator_import():
         assert simulator.device == "cpu"
         print("✓ Edge_Agent_Simulator import successful")
     except ImportError as e:
-        print(f"⚠ Edge_Agent_Simulator import skipped (missing dependency: {e})")
-        return
+        pytest.skip(f"Edge_Agent_Simulator import skipped (missing dependency: {e})")
+
 
 
 def test_detection_validator_import():
