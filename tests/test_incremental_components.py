@@ -50,7 +50,6 @@ def test_edge_agent_simulator_import():
         pytest.skip(f"Edge_Agent_Simulator import skipped (missing dependency: {e})")
 
 
-
 def test_detection_validator_import():
     """Test that Detection_Validator can be imported."""
     from src.training.detection_validator import Detection_Validator
