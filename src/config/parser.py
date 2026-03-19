@@ -1,10 +1,12 @@
 """Configuration parser for YAML configuration files."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
 import yaml
+
+from src.explainability.xai.config import XAIConfig
 
 
 @dataclass
@@ -57,6 +59,7 @@ class Configuration:
     training: TrainingConfig
     model: ModelConfig
     data: DataConfig
+    xai: XAIConfig = field(default_factory=XAIConfig)
 
 
 class ConfigurationParseError(Exception):
@@ -138,7 +141,17 @@ class ConfigurationParser:
         except Exception as e:
             raise ConfigurationParseError(f"Error parsing data section in {source}: {e}")
 
-        return Configuration(training=training_config, model=model_config, data=data_config)
+        # Parse XAI configuration (optional)
+        xai_config = XAIConfig()  # Default configuration
+        if "xai" in data:
+            try:
+                xai_config = ConfigurationParser._parse_xai(data["xai"], source)
+            except Exception as e:
+                raise ConfigurationParseError(f"Error parsing xai section in {source}: {e}")
+
+        return Configuration(
+            training=training_config, model=model_config, data=data_config, xai=xai_config
+        )
 
     @staticmethod
     def _parse_training(data: dict[str, Any], source: str | Path) -> TrainingConfig:
@@ -319,4 +332,122 @@ class ConfigurationParser:
             yaml_path=yaml_path,
             train_init_percentage=train_init_percentage,
             iou_threshold=iou_threshold,
+        )
+
+    @staticmethod
+    def _parse_xai(data: dict[str, Any], source: str | Path) -> XAIConfig:
+        """Parse XAI configuration section."""
+        # All XAI fields are optional with sensible defaults
+        enabled = data.get("enabled", False)
+        if not isinstance(enabled, bool):
+            raise ConfigurationParseError(
+                f"xai.enabled must be a boolean, got: {type(enabled).__name__}"
+            )
+
+        # Parse methods configuration
+        methods = data.get("methods", {"gradcam": True, "lrp": False, "shap": False})
+        if not isinstance(methods, dict):
+            raise ConfigurationParseError("xai.methods must be a dictionary")
+
+        # Validate method names
+        valid_methods = {"gradcam", "lrp", "shap"}
+        invalid_methods = set(methods.keys()) - valid_methods
+        if invalid_methods:
+            raise ConfigurationParseError(
+                f"Invalid XAI methods: {', '.join(invalid_methods)}. "
+                f"Valid methods: {', '.join(valid_methods)}"
+            )
+
+        # Ensure all method values are boolean
+        for method, method_enabled in methods.items():
+            if not isinstance(method_enabled, bool):
+                raise ConfigurationParseError(
+                    f"xai.methods.{method} must be a boolean, got: {type(method_enabled).__name__}"
+                )
+
+        # Parse sample limit
+        sample_limit = data.get("sample_limit")
+        if sample_limit is not None:
+            try:
+                sample_limit = int(sample_limit)
+                if sample_limit <= 0:
+                    raise ConfigurationParseError("xai.sample_limit must be positive")
+            except (ValueError, TypeError):
+                raise ConfigurationParseError(
+                    f"xai.sample_limit must be an integer, got: {sample_limit}"
+                )
+
+        # Parse target layers
+        target_layers = data.get(
+            "target_layers",
+            {
+                "yolov11": "model.22",
+                "yolov12": "model.22",
+                "yolo26": "model.21",
+                "yolov8": "model.22",
+            },
+        )
+        if not isinstance(target_layers, dict):
+            raise ConfigurationParseError("xai.target_layers must be a dictionary")
+
+        # Parse background set size
+        background_set_size = data.get("background_set_size", 75)
+        try:
+            background_set_size = int(background_set_size)
+            if background_set_size <= 0:
+                raise ConfigurationParseError("xai.background_set_size must be positive")
+        except (ValueError, TypeError):
+            raise ConfigurationParseError(
+                f"xai.background_set_size must be an integer, got: {background_set_size}"
+            )
+
+        # Parse background set seed
+        background_set_seed = data.get("background_set_seed", 42)
+        try:
+            background_set_seed = int(background_set_seed)
+        except (ValueError, TypeError):
+            raise ConfigurationParseError(
+                f"xai.background_set_seed must be an integer, got: {background_set_seed}"
+            )
+
+        # Parse output overlays
+        output_overlays = data.get("output_overlays", True)
+        if not isinstance(output_overlays, bool):
+            raise ConfigurationParseError(
+                f"xai.output_overlays must be a boolean, got: {type(output_overlays).__name__}"
+            )
+
+        # Parse save raw attributions
+        save_raw_attributions = data.get("save_raw_attributions", False)
+        if not isinstance(save_raw_attributions, bool):
+            raise ConfigurationParseError(
+                f"xai.save_raw_attributions must be a boolean, got: {type(save_raw_attributions).__name__}"
+            )
+
+        # Parse HFS computation
+        hfs_computation = data.get("hfs_computation", True)
+        if not isinstance(hfs_computation, bool):
+            raise ConfigurationParseError(
+                f"xai.hfs_computation must be a boolean, got: {type(hfs_computation).__name__}"
+            )
+
+        # Parse LRP rule
+        lrp_rule = data.get("lrp_rule", "epsilon")
+        valid_lrp_rules = {"epsilon", "gamma", "alpha-beta"}
+        if lrp_rule not in valid_lrp_rules:
+            raise ConfigurationParseError(
+                f"xai.lrp_rule must be one of {valid_lrp_rules}, got: '{lrp_rule}'"
+            )
+
+        return XAIConfig(
+            enabled=enabled,
+            methods=methods,
+            sample_limit=sample_limit,
+            target_layers=target_layers,
+            background_set_size=background_set_size,
+            background_set_seed=background_set_seed,
+            output_overlays=output_overlays,
+            save_raw_attributions=save_raw_attributions,
+            hfs_computation=hfs_computation,
+            lrp_rule=lrp_rule,
         )

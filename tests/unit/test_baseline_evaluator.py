@@ -36,38 +36,25 @@ def _run_evaluate(evaluator, config, config_name, output_dir, gradcam_dir, **kwa
     """
     Run evaluator.evaluate() with output dirs redirected to tmp_path.
 
-    Patches Path so that outputs/{config_name}_baseline and
-    explanations/{config_name}_baseline/gradcam resolve to the provided dirs.
+    Mocks the Output_Manager to return the provided test directories.
     """
-    baseline_name = f"{config_name}_baseline"
     output_dir.mkdir(parents=True, exist_ok=True)
     gradcam_dir.mkdir(parents=True, exist_ok=True)
 
-    import src.training.baseline_evaluator as mod
-
-    original_path = mod.Path
-
-    class PatchedPath:
-        """Proxy that intercepts specific path strings."""
-
-        def __new__(cls, *args):
-            if len(args) == 1:
-                s = str(args[0])
-                if s == f"outputs/{baseline_name}":
-                    return output_dir
-                if s == f"explanations/{baseline_name}/gradcam":
-                    return gradcam_dir
-            return original_path(*args)
-
-    mod.Path = PatchedPath
-    try:
+    # Mock the Output_Manager methods to return test directories
+    with (
+        patch.object(
+            evaluator.output_manager, "get_evaluation_output_path", return_value=output_dir
+        ),
+        patch.object(
+            evaluator.output_manager, "get_explainability_output_path", return_value=gradcam_dir
+        ),
+    ):
         result = evaluator.evaluate(
             config_name=config_name,
             config=config,
             **kwargs,
         )
-    finally:
-        mod.Path = original_path
 
     return result
 
@@ -98,8 +85,6 @@ class TestBaselineEvaluatorOutputStructure:
     def test_final_test_metrics_contains_required_fields(self, tmp_path: Path):
         """
         Verify final_test_metrics.json contains all required metadata fields.
-
-        **Validates: Requirements 7.1, 7.2, 7.3, 7.4, 2.1, 2.2, 2.3**
         """
         config = _make_config()
         evaluator = Baseline_Evaluator()

@@ -112,10 +112,14 @@ class ConfigurationManager:
         # Validate device
         valid_devices = ["auto", "cpu", "cuda", "mps"]
         device_lower = config.training.device.lower()
-        if device_lower not in valid_devices and not device_lower.startswith("cuda:"):
+        if (
+            device_lower not in valid_devices
+            and not device_lower.startswith("cuda:")
+            and not device_lower.isdigit()
+        ):  # Allow single digit for GPU index
             raise ConfigurationParseError(
                 f"Invalid device '{config.training.device}'. "
-                f"Must be one of: {', '.join(valid_devices)}, or 'cuda:N' for specific GPU"
+                f"Must be one of: {', '.join(valid_devices)}, 'cuda:N', or 'N' for specific GPU"
             )
 
         # Validate multi-run configuration
@@ -131,6 +135,9 @@ class ConfigurationManager:
 
         # Validate incremental training fields
         ConfigurationManager._validate_incremental_training_fields(config, config_path)
+
+        # Validate XAI configuration
+        ConfigurationManager._validate_xai_config(config, config_path)
 
     @staticmethod
     def _validate_incremental_training_fields(
@@ -199,6 +206,56 @@ class ConfigurationManager:
                     f"Configuration {config_path}: data.iou_threshold must be in [0, 1], "
                     f"got {config.data.iou_threshold}"
                 )
+
+    @staticmethod
+    def _validate_xai_config(config: Configuration, config_path: str | Path) -> None:
+        """
+        Validate XAI configuration fields.
+
+        Args:
+            config: Configuration object to validate
+            config_path: Path to configuration file (for error messages)
+
+        Raises:
+            ConfigurationParseError: If validation fails
+        """
+        # XAI configuration is optional, but if present, validate it
+        if not hasattr(config, "xai") or config.xai is None:
+            return
+
+        xai = config.xai
+
+        # Validate enabled methods when XAI is enabled
+        if xai.enabled:
+            enabled_methods = [method for method, enabled in xai.methods.items() if enabled]
+            if not enabled_methods:
+                raise ConfigurationParseError(
+                    f"Configuration {config_path}: XAI is enabled but no methods are enabled. "
+                    f"Enable at least one method: gradcam, lrp, shap"
+                )
+
+        # Validate target layers for supported architectures
+        model_name_lower = config.model.name.lower()
+        architecture = None
+        for arch in ["yolov8", "yolov11", "yolov12", "yolo26"]:
+            if arch in model_name_lower:
+                architecture = arch
+                break
+
+        if architecture and architecture not in xai.target_layers:
+            raise ConfigurationParseError(
+                f"Configuration {config_path}: Missing target layer configuration for "
+                f"architecture '{architecture}' in xai.target_layers"
+            )
+
+        # Validate sample limit consistency with expensive methods
+        expensive_methods = ["shap", "lrp"]
+        enabled_expensive = [m for m in expensive_methods if xai.methods.get(m, False)]
+
+        if enabled_expensive and xai.sample_limit is None:
+            # This is a warning case - expensive methods without sample limit
+            # We don't raise an error but could log a warning in the future
+            pass
 
     @staticmethod
     def load_explainer_config(config_path: str | Path) -> ExplainerConfig:

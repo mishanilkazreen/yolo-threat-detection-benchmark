@@ -1,4 +1,4 @@
-# YOLO26n Training Configuration with XAI Explainability
+# YOLOv11n Training Configuration with XAI Explainability
 
 training:
   epochs: 25  # Total epochs across all rounds
@@ -15,8 +15,8 @@ training:
   device: "0"  # GPU device
 
 model:
-  name: "yolo26n"
-  weights: "yolo26n.pt"  # Pretrained weights (auto-downloaded)
+  name: "yolov11n"
+  weights: "yolo11n.pt"  # Pretrained weights (auto-downloaded)
 
 data:
   yaml_path: "config/data/weapon_detection_data.yaml"

@@ -237,3 +237,6 @@ explanations/
 
 # IDE
 .idea/
+
+# YOLO-26-CAM Repo
+src/yolo_cam

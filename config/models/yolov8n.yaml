@@ -1,27 +1,36 @@
-# YOLOv8n Training Configuration
+# YOLOv8n Training Configuration with XAI Explainability
 
 training:
-  epochs_per_round: 10  # Epochs per round (as per architecture spec)
+  epochs: 25  # Total epochs across all rounds
+  epochs_per_round: 5  # Epochs per round
   rounds: 5  # Number of incremental training rounds
   patience: 10
   image_size: 640
-  batch_size: 16  # Fixed batch size
-  optimizer: "AdamW"  # AdamW optimizer
-  lr0: 0.001  # Initial learning rate
-  lrf: 0.1  # Final learning rate (for step decay)
+  batch_size: 16
+  optimizer: "AdamW"
+  lr0: 0.001
+  lrf: 0.1
   runs: 1  # Number of runs for statistical analysis
   seeds: [42]  # Fixed seeds for each run
   device: "0"  # GPU device
-  run_baseline: true  # Enable one-shot baseline training for comparison
-  baseline_epochs: 50  # Number of epochs for baseline training
 
 model:
   name: "yolov8n"
-  weights: "yolov8n.yaml"  # Architecture only, NO pretrained weights (random init)
+  weights: "yolov8n.pt"  # Pretrained weights (auto-downloaded)
 
 data:
   yaml_path: "config/data/weapon_detection_data.yaml"
   train_init_percentage: 0.2  # Start with 20% of training data in Round 1
   iou_threshold: 0.5  # IoU threshold for detection validation
-  # Note: Dataset uses pre-existing train/val/test splits from Roboflow download.
-  # train_init_percentage controls the initial training set size within the training split.
+
+# XAI Explainability Configuration
+xai:
+  enabled: true  # Enable XAI processing
+  methods:
+    gradcam: true   # Enable Grad-CAM (fast, good for visualization)
+    lrp: true       # Enable Layer-wise Relevance Propagation (moderate cost)
+    shap: true      # Enable SHAP
+  sample_limit: 16  # Limit XAI processing to first 16 images per round
+  target_layer: "model.9"  # SPPF — shared backbone, upstream of all FPN levels
+  background_set_size: 75  # Number of background images for SHAP (when enabled)
+  output_overlays: true    # Save attribution maps overlaid on original images

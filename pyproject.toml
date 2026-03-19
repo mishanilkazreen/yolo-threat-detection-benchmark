@@ -18,6 +18,8 @@ dependencies = [
     "Pillow>=10.0.0",
     "opencv-python>=4.8.0",
     "tqdm>=4.65.0",
+    "torch",
+    "torchvision",
 ]
 
 [project.optional-dependencies]
@@ -33,6 +35,12 @@ dev = [
 ]
 xai = [
     "shap>=0.42.0",
+    "zennit>=0.5.0",
+    "captum>=0.8.0",
+    "tensorflow>=2.10.0",
+    # YOLO-26-CAM library dependencies (library source copied to src/yolo_cam/)
+    # Source: https://github.com/rigvedrs/YOLO-26-CAM
+    "ttach>=0.0.3",  # Test-time augmentation for YOLO-CAM
 ]
 
 [build-system]
@@ -167,6 +175,22 @@ exclude_lines = [
     "if __name__ == .__main__.:",
     "class .*\\bProtocol\\):",
     "@(abc\\.)?abstractmethod",
+]
+
+[[tool.uv.index]]
+name = "pytorch-cu128-nightly"
+url = "https://download.pytorch.org/whl/nightly/cu128"
+explicit = true
+
+[tool.uv]
+environments = ["sys_platform == 'win32'"]
+
+[tool.uv.sources]
+torch = [
+    { index = "pytorch-cu128-nightly" },
+]
+torchvision = [
+    { index = "pytorch-cu128-nightly" },
 ]
 
 [dependency-groups]

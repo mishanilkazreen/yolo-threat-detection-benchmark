@@ -24,6 +24,9 @@ class Baseline_Trainer:
 
     def __init__(self):
         self.logger = logging.getLogger(__name__)
+        from ..utils.output_manager import Output_Manager
+
+        self.output_manager = Output_Manager()
 
     def train(
         self,
@@ -50,8 +53,10 @@ class Baseline_Trainer:
                             training_set_size, epochs
         """
         baseline_name = f"{config_name}_baseline"
-        output_dir = f"outputs/{baseline_name}"
-        Path(output_dir).mkdir(parents=True, exist_ok=True)
+        # Use Output_Manager for evaluation output path (for data.yaml and splits)
+        output_dir = self.output_manager.get_evaluation_output_path(
+            model_name=config_name, round_name=baseline_name, create=True
+        )
 
         self.logger.info(f"Starting one-shot baseline training: {baseline_name}")
         self.logger.info(f"  Full training partition size: {len(full_training_images)} images")
@@ -99,6 +104,9 @@ class Baseline_Trainer:
 
         train_start = time.time()
 
+        # Use Output_Manager to get YOLO project parameter
+        yolo_project = self.output_manager.get_yolo_project_parameter(config_name)
+
         model.train(
             data=str(data_yaml_path),
             epochs=baseline_epochs,
@@ -110,8 +118,8 @@ class Baseline_Trainer:
             cos_lr=False,
             seed=seed,
             device=device,
-            project="runs/detect",
-            name=baseline_name,
+            project=yolo_project,
+            name=f"{config_name}/{baseline_name}",
             exist_ok=True,
             verbose=True,
         )
@@ -119,8 +127,10 @@ class Baseline_Trainer:
         training_time = time.time() - train_start
         self.logger.info(f"Baseline training completed in {training_time:.2f} seconds")
 
-        # Locate best checkpoint
-        checkpoint_path = self._find_checkpoint(baseline_name)
+        # Use Output_Manager to resolve checkpoint path
+        checkpoint_path = self.output_manager.resolve_checkpoint_path(
+            model_name=config_name, round_name=f"{config_name}_baseline", checkpoint_type="best"
+        )
 
         self.logger.info(f"Baseline checkpoint: {checkpoint_path}")
 
@@ -163,7 +173,7 @@ class Baseline_Trainer:
         training_images: list[str],
         val_images: list[str],
         base_path: Path,
-        output_dir: str,
+        output_dir: Path,
     ) -> None:
         """Write a data.yaml pointing to the full training partition and val_fixed."""
         # Load original data.yaml for class names and metadata
@@ -206,19 +216,3 @@ class Baseline_Trainer:
             yaml.dump(data_config, f, default_flow_style=False)
 
         self.logger.debug(f"Wrote baseline data.yaml to {output_yaml_path}")
-
-    def _find_checkpoint(self, baseline_name: str) -> str:
-        """Find the best checkpoint after training."""
-        possible_paths = [
-            Path(f"runs/detect/{baseline_name}/weights/best.pt"),
-            Path(f"runs/detect/runs/detect/{baseline_name}/weights/best.pt"),
-        ]
-
-        for path in possible_paths:
-            if path.exists():
-                return str(path)
-
-        raise FileNotFoundError(
-            "Best checkpoint not found after baseline training. Checked:\n"
-            + "\n".join(f"  - {p}" for p in possible_paths)
-        )
