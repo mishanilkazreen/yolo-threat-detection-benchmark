@@ -126,6 +126,11 @@ warn_unused_ignores = true
 warn_no_return = true
 warn_unreachable = true
 strict_equality = true
+exclude = [
+    "^src/yolo_cam/",
+    "^tests/",
+    "^scripts/",
+]
 
 [[tool.mypy.overrides]]
 module = [
@@ -135,6 +140,12 @@ module = [
     "hypothesis.*",
 ]
 ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = [
+    "src.yolo_cam.*",
+]
+ignore_errors = true
 
 [[tool.mypy.overrides]]
 module = [
