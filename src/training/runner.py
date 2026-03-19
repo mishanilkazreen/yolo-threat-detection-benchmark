@@ -1174,7 +1174,7 @@ class Experiment_Runner:
 
             # Get all image files (avoid duplicates from case-insensitive search)
             image_extensions = {".jpg", ".jpeg", ".png", ".bmp", ".tiff", ".tif"}
-            images = set()  # Use set to avoid duplicates
+            images: set[str] = set()  # Use set to avoid duplicates
 
             for ext in image_extensions:
                 images.update(p.name for p in val_path.glob(f"*{ext}"))

@@ -53,7 +53,7 @@ class XAIConfig:
         """Check if a specific XAI method is enabled."""
         return self.enabled and self.methods.get(method, False)
 
-    def get_target_layer(self, architecture: str, strict: bool = False) -> str:
+    def get_target_layer(self, architecture: str | None, strict: bool = False) -> str:
         """Get target layer for a specific YOLO architecture.
 
         Args:
@@ -67,13 +67,12 @@ class XAIConfig:
         Raises:
             KeyError: If strict=True and detected variant not in target_layers
         """
-        if architecture is None:
-            architecture = ""
+        arch_str: str = architecture or ""
 
         # Check architectures longest-first to avoid substring matches
         arch_base = None
         for arch in ["yolov12", "yolov11", "yolo26", "yolov8"]:
-            if arch in architecture.lower():
+            if arch in arch_str.lower():
                 arch_base = arch
                 break
 

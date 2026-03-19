@@ -151,9 +151,10 @@ def generate_gradcam_attribution(
             )
             output_path = ""
             if output_dir or output_manager:
-                out_dir = output_dir or str(
-                    output_manager.get_method_output_dir(AttributionMethod.GRADCAM)
-                )
+                if output_manager is not None:
+                    out_dir = str(output_manager.get_method_output_dir(AttributionMethod.GRADCAM))
+                else:
+                    out_dir = output_dir or ""
                 output_path = _save_original_only(image_np, image_path, out_dir)
             blank_cam = np.zeros((image_height, image_width), dtype=np.float32)
             return blank_cam, None, output_path
@@ -218,7 +219,7 @@ def generate_gradcam_attribution(
                     image_path=image_path,
                     method=AttributionMethod.GRADCAM,
                 )
-            else:
+            elif output_dir is not None:
                 output_path = _save_gradcam_visualization(
                     image_np, grayscale_cam, cam_image, image_path, output_dir
                 )

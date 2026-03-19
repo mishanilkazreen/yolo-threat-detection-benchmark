@@ -147,7 +147,7 @@ def generate_shap_attribution(
                     image_path=image_path,
                     method=AttributionMethod.SHAP,
                 )
-            else:
+            elif output_dir is not None:
                 # Fallback to legacy method
                 output_path = _save_shap_visualization(
                     image_np, attribution_np, image_path, output_dir
@@ -342,11 +342,13 @@ def _extract_shap_target(outputs: Any) -> torch.Tensor:
         # Fallback - infer device from pred to avoid device mismatch errors
         batch_size = len(outputs) if isinstance(outputs, (list, tuple)) else 1
         # Extract device from pred (handle list/tuple by using first element)
+        inferred_device = "cpu"
         if isinstance(pred, (list, tuple)):
             first = pred[0] if len(pred) > 0 else None
-            inferred_device = first.device if hasattr(first, "device") else "cpu"
-        else:
-            inferred_device = pred.device if hasattr(pred, "device") else "cpu"
+            if first is not None and hasattr(first, "device"):
+                inferred_device = first.device
+        elif pred is not None and hasattr(pred, "device"):
+            inferred_device = pred.device
         # Return 2D tensor: [batch_size, 1]
         return torch.ones(batch_size, 1, device=inferred_device)
 

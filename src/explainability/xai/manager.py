@@ -33,8 +33,8 @@ class XAIManager:
                           If None, creates a new instance with default base directory.
         """
         self.config = config
-        self.background_set = None
-        self.output_manager = None
+        self.background_set: list[np.ndarray] | None = None
+        self.output_manager: XAIOutputManager | None = None
         self.path_manager = output_manager if output_manager is not None else Output_Manager()
         self._setup_logging()
 
@@ -263,9 +263,9 @@ class XAIManager:
                     image_path=image_path,
                     detections=detections,
                     gt_boxes=gt_boxes,
-                    target_layer=target_layer,
+                    _target_layer=target_layer,
                     output_manager=self.output_manager,
-                    device=device,
+                    _device=device,
                     target_class_names=getattr(self.config, "gradcam_target_classes", None),
                 )
                 attribution_method = AttributionMethod.GRADCAM

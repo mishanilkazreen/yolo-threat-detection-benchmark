@@ -94,10 +94,10 @@ class ConfigurationSerializer:
 
         # Only include optional fields if they are set
         if data.train_init_percentage is not None:
-            result["train_init_percentage"] = data.train_init_percentage
+            result["train_init_percentage"] = data.train_init_percentage  # type: ignore[assignment]
 
         if data.iou_threshold is not None:
-            result["iou_threshold"] = data.iou_threshold
+            result["iou_threshold"] = data.iou_threshold  # type: ignore[assignment]
 
         return result
 

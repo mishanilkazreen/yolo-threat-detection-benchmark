@@ -418,7 +418,7 @@ def _generate_lrp_with_zennit(
                 image_path=image_path,
                 method=AttributionMethod.LRP,
             )
-        else:
+        elif output_dir is not None:
             # Fallback to legacy method
             output_path = _save_lrp_visualization(image_np, relevance_np, image_path, output_dir)
 
@@ -495,7 +495,7 @@ def _generate_lrp_with_captum(
                 image_path=image_path,
                 method=AttributionMethod.LRP,
             )
-        else:
+        elif output_dir is not None:
             # Fallback to legacy method
             output_path = _save_lrp_visualization(image_np, attr_np, image_path, output_dir)
 

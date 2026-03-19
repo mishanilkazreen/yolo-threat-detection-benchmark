@@ -1,12 +1,13 @@
 # XAI (Explainable AI) Module
 
-This module provides explainable AI capabilities for YOLO object detection models. It implements three complementary XAI methods as modular, independent components.
+This module provides explainable AI capabilities for YOLO object detection models.
+It implements three complementary XAI methods as modular, independent components.
 
 ## Architecture
 
 The XAI module follows a modular architecture where each method can be used independently:
 
-```
+```text
 src/explainability/xai/
 ├── __init__.py          # Module exports
 ├── interfaces.py        # Core data models and interfaces
@@ -21,18 +22,21 @@ src/explainability/xai/
 ## Supported XAI Methods
 
 ### 1. Grad-CAM (Gradient-weighted Class Activation Mapping)
+
 - **Fast and efficient** - Good for initial analysis
 - Generates heatmaps showing important regions for model predictions
 - Supports HFS (Heatmap Focus Score) computation
 - Works with all YOLO architectures
 
 ### 2. LRP (Layer-wise Relevance Propagation)
+
 - **Computationally expensive** - Disabled by default
 - Provides pixel-level relevance scores
 - Supports bbox-weighted relevance computation
 - Uses zennit library (preferred) or captum as fallback
 
 ### 3. SHAP (SHapley Additive exPlanations)
+
 - **Very computationally expensive** - Disabled by default
 - Provides theoretically grounded attributions
 - Requires background set of validation images
@@ -121,7 +125,7 @@ attribution_map, hfs_score, output_path = generate_gradcam_attribution(
 
 XAI results are saved in method-specific directories:
 
-```
+```text
 outputs/
 └── xai/
     ├── gradcam/

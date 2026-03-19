@@ -100,9 +100,6 @@ class XAIOutputManager:
             self._save_lrp_overlay(image_np, attribution_np, output_path)
         elif method == AttributionMethod.SHAP:
             self._save_shap_overlay(image_np, attribution_np, output_path)
-        else:
-            logger.warning(f"Unknown method {method}, using default overlay")
-            self._save_default_overlay(image_np, attribution_np, output_path)
 
     def _save_gradcam_overlay(self, image_np: np.ndarray, cam_np: np.ndarray, output_path: str):
         """Save Grad-CAM as 3-panel matplotlib figure."""
@@ -188,7 +185,7 @@ class XAIOutputManager:
 
         # Create heatmap
         attr_uint8 = (255 * attr_norm).astype(np.uint8)
-        heatmap = cv2.applyColorMap(attr_uint8, cv2.COLORMAP_JET)  # type: ignore
+        heatmap = cv2.applyColorMap(attr_uint8, cv2.COLORMAP_JET)
         heatmap = cv2.cvtColor(heatmap, cv2.COLOR_BGR2RGB)
 
         # Overlay on original image
@@ -247,10 +244,11 @@ class XAIOutputManager:
         from pathlib import Path
 
         if output_dir is None:
-            output_dir = self.base_output_dir
+            output_dir_path: Path = self.base_output_dir
+        else:
+            output_dir_path = Path(output_dir)
 
-        output_path = Path(output_dir)
-        csv_file = output_path / f"hfs_individual_{config_name}_round_{round_num}.csv"
+        csv_file = output_dir_path / f"hfs_individual_{config_name}_round_{round_num}.csv"
 
         # Ensure output directory exists
         csv_file.parent.mkdir(parents=True, exist_ok=True)
@@ -307,10 +305,11 @@ class XAIOutputManager:
         from pathlib import Path
 
         if output_dir is None:
-            output_dir = self.base_output_dir
+            output_dir_path: Path = self.base_output_dir
+        else:
+            output_dir_path = Path(output_dir)
 
-        output_path = Path(output_dir)
-        csv_file = output_path / f"hfs_aggregate_{config_name}.csv"
+        csv_file = output_dir_path / f"hfs_aggregate_{config_name}.csv"
 
         # Ensure output directory exists
         csv_file.parent.mkdir(parents=True, exist_ok=True)
@@ -385,10 +384,11 @@ class XAIOutputManager:
         from pathlib import Path
 
         if output_dir is None:
-            output_dir = self.base_output_dir
+            output_dir_path: Path = self.base_output_dir
+        else:
+            output_dir_path = Path(output_dir)
 
-        output_path = Path(output_dir)
-        csv_file = output_path / f"hfs_cumulative_{config_name}.csv"
+        csv_file = output_dir_path / f"hfs_cumulative_{config_name}.csv"
 
         # Ensure output directory exists
         csv_file.parent.mkdir(parents=True, exist_ok=True)
