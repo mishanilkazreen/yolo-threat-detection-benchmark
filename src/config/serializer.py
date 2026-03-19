@@ -5,7 +5,7 @@ from typing import Any
 
 import yaml
 
-from .parser import Configuration, DataConfig, ModelConfig, TrainingConfig
+from .parser import Configuration, DataConfig, ModelConfig, TrainingConfig, XAIConfig
 
 
 class ConfigurationSerializer:
@@ -45,11 +45,17 @@ class ConfigurationSerializer:
         Returns:
             Dictionary representation suitable for YAML serialization
         """
-        return {
+        result = {
             "training": ConfigurationSerializer._training_to_dict(config.training),
             "model": ConfigurationSerializer._model_to_dict(config.model),
             "data": ConfigurationSerializer._data_to_dict(config.data),
         }
+
+        # Only include XAI section if it's not using all default values
+        if ConfigurationSerializer._should_include_xai(config.xai):
+            result["xai"] = ConfigurationSerializer._xai_to_dict(config.xai)
+
+        return result
 
     @staticmethod
     def _training_to_dict(training: TrainingConfig) -> dict[str, Any]:
@@ -84,4 +90,65 @@ class ConfigurationSerializer:
     @staticmethod
     def _data_to_dict(data: DataConfig) -> dict[str, Any]:
         """Convert DataConfig to dictionary."""
-        return {"yaml_path": data.yaml_path}
+        result = {"yaml_path": data.yaml_path}
+
+        # Only include optional fields if they are set
+        if data.train_init_percentage is not None:
+            result["train_init_percentage"] = data.train_init_percentage
+
+        if data.iou_threshold is not None:
+            result["iou_threshold"] = data.iou_threshold
+
+        return result
+
+    @staticmethod
+    def _should_include_xai(xai: XAIConfig) -> bool:
+        """Check if XAI config differs from defaults and should be included."""
+        default_xai = XAIConfig()
+        return (
+            xai.enabled != default_xai.enabled
+            or xai.methods != default_xai.methods
+            or xai.sample_limit != default_xai.sample_limit
+            or xai.target_layers != default_xai.target_layers
+            or xai.background_set_size != default_xai.background_set_size
+            or xai.background_set_seed != default_xai.background_set_seed
+            or xai.output_overlays != default_xai.output_overlays
+            or xai.save_raw_attributions != default_xai.save_raw_attributions
+            or xai.hfs_computation != default_xai.hfs_computation
+        )
+
+    @staticmethod
+    def _xai_to_dict(xai: XAIConfig) -> dict[str, Any]:
+        """Convert XAIConfig to dictionary."""
+        default_xai = XAIConfig()
+        result: dict[str, Any] = {}
+
+        # Only include fields that differ from defaults
+        if xai.enabled != default_xai.enabled:
+            result["enabled"] = xai.enabled
+
+        if xai.methods != default_xai.methods:
+            result["methods"] = xai.methods
+
+        if xai.sample_limit != default_xai.sample_limit:
+            result["sample_limit"] = xai.sample_limit
+
+        if xai.target_layers != default_xai.target_layers:
+            result["target_layers"] = xai.target_layers
+
+        if xai.background_set_size != default_xai.background_set_size:
+            result["background_set_size"] = xai.background_set_size
+
+        if xai.background_set_seed != default_xai.background_set_seed:
+            result["background_set_seed"] = xai.background_set_seed
+
+        if xai.output_overlays != default_xai.output_overlays:
+            result["output_overlays"] = xai.output_overlays
+
+        if xai.save_raw_attributions != default_xai.save_raw_attributions:
+            result["save_raw_attributions"] = xai.save_raw_attributions
+
+        if xai.hfs_computation != default_xai.hfs_computation:
+            result["hfs_computation"] = xai.hfs_computation
+
+        return result

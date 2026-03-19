@@ -24,10 +24,17 @@ class Baseline_Evaluator:
     subset used by the incremental experiment.
     """
 
-    def __init__(self):
+    def __init__(self, output_manager=None):
         self.logger = logging.getLogger(__name__)
         self.metrics_collector = Metrics_Collector()
         self.hfs_scorer = Heatmap_Focus_Scorer()
+
+        # Import and initialize Output_Manager if not provided
+        if output_manager is None:
+            from ..utils.output_manager import Output_Manager
+
+            output_manager = Output_Manager()
+        self.output_manager = output_manager
 
     def evaluate(
         self,
@@ -63,11 +70,20 @@ class Baseline_Evaluator:
             dict with val_metrics, test_metrics, hfs_metrics, and metadata
         """
         baseline_name = f"{config_name}_baseline"
-        output_dir = Path(f"outputs/{baseline_name}")
-        output_dir.mkdir(parents=True, exist_ok=True)
 
-        gradcam_dir = Path(f"explanations/{baseline_name}/gradcam")
-        gradcam_dir.mkdir(parents=True, exist_ok=True)
+        # Use Output_Manager for path construction
+        output_dir = self.output_manager.get_evaluation_output_path(
+            model_name=baseline_name,
+            round_name=None,  # Use default round name
+            create=True,
+        )
+
+        gradcam_dir = self.output_manager.get_explainability_output_path(
+            model_name=baseline_name,
+            round_name=None,  # Use default round name
+            method="gradcam",
+            create=True,
+        )
 
         self.logger.info(f"Evaluating baseline model: {baseline_name}")
         self.logger.info(f"  Checkpoint: {checkpoint_path}")

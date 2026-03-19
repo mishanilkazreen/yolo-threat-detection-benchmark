@@ -76,7 +76,6 @@ class TestDatasetValidator:
         Test validation detects missing label files.
 
         Validates: Property 6 - Missing Label Detection
-        Requirements: 3.1
         """
         with tempfile.TemporaryDirectory() as tmpdir:
             structure = {
@@ -106,7 +105,6 @@ class TestDatasetValidator:
         Test validation detects empty annotation files.
 
         Validates: Property 7 - Empty Annotation Detection
-        Requirements: 3.2
         """
         with tempfile.TemporaryDirectory() as tmpdir:
             structure = {
@@ -138,7 +136,6 @@ class TestDatasetValidator:
         Test validation detects duplicate filenames across splits.
 
         Validates: Property 4 - No Duplicate Filenames Across Splits
-        Requirements: 2.4
         """
         with tempfile.TemporaryDirectory() as tmpdir:
             structure = {
@@ -244,7 +241,6 @@ class TestDatasetValidator:
         Test that error messages include specific file paths.
 
         Validates: Property 8 - Validation Error Reporting
-        Requirements: 3.3
         """
         with tempfile.TemporaryDirectory() as tmpdir:
             structure = {"train": {"images": ["missing_label.jpg"], "labels": []}}
