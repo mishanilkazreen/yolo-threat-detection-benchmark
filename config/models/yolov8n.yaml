@@ -13,6 +13,8 @@ training:
   runs: 1  # Number of runs for statistical analysis
   seeds: [42]  # Fixed seeds for each run
   device: "0"  # GPU device
+  run_baseline: true  # Run baseline model for comparison
+  baseline_epochs: 50  # Epochs for baseline training
 
 model:
   name: "yolov8n"
