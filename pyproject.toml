@@ -32,7 +32,13 @@ dev = [
     "pytest-cov>=4.0.0",
 ]
 xai = [
-    "shap>=0.42.0",
+    "shap>=0.42.0,<1.0.0",
+    "torch>=2.0.0,<3.0.0",
+    "torchvision>=0.15.0,<1.0.0",
+    "zennit>=0.5.0,<1.0.0",
+    "captum>=0.7.0,<1.0.0",
+    "tensorflow>=2.13.0,<3.0.0",
+    "ttach>=0.0.3,<1.0.0",
 ]
 
 [build-system]
