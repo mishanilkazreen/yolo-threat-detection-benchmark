@@ -339,7 +339,7 @@ class XAIManager:
         for method in AttributionMethod:
             method_results = [r for r in results if r.method == method and r.hfs_score is not None]
             if method_results:
-                hfs_scores = [r.hfs_score for r in method_results]
+                hfs_scores = [r.hfs_score for r in method_results if r.hfs_score is not None]
                 method_hfs[method.value] = float(np.mean(hfs_scores))
 
         return method_hfs

@@ -45,7 +45,7 @@ def get_target_layer_module(model: Any, target_layer_path: str) -> torch.nn.Modu
     torch_model = model.model if hasattr(model, "model") else model
 
     # Try to find the target layer by iterating through named modules
-    target_module = None
+    target_module: torch.nn.Module | None = None
     for name, module in torch_model.named_modules():
         if name == target_layer_path:
             target_module = module
@@ -298,7 +298,7 @@ def _build_class_mask(
 
     if mask.max() > 0:
         blur_k = max(31, (min(h, w) // 20) | 1)
-        mask = cv2.GaussianBlur(mask, (blur_k, blur_k), 0)
+        mask = cv2.GaussianBlur(mask, (blur_k, blur_k), 0).astype(np.float32)
         mask = mask / mask.max()
 
     return mask

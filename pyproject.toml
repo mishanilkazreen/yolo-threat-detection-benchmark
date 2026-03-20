@@ -136,6 +136,12 @@ ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
 module = [
+    "yolo_cam.*",
+]
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = [
     "src.training.evaluator",
 ]
 ignore_errors = true

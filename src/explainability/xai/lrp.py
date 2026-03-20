@@ -582,7 +582,7 @@ def _extract_target_score_lrp(outputs: Any, detections: dict[str, Any]) -> torch
         if isinstance(outputs, (list, tuple)):
             tensors = [t for t in outputs if isinstance(t, torch.Tensor)]
             if tensors:
-                target_score = sum(t.sum() for t in tensors)
+                target_score = sum((t.sum() for t in tensors), torch.tensor(0.0))
             else:
                 raise RuntimeError("No tensors found in model output for LRP gradient computation")
         else:
