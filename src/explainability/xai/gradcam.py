@@ -11,8 +11,8 @@ import numpy as np
 from PIL import Image
 import torch
 
-from src.yolo_cam.eigen_cam import EigenCAM
-from src.yolo_cam.utils.image import show_cam_on_image
+from yolo_cam.eigen_cam import EigenCAM
+from yolo_cam.utils.image import show_cam_on_image
 
 from ..hfs_scorer import Heatmap_Focus_Scorer
 from .interfaces import AttributionMethod

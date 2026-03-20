@@ -239,4 +239,4 @@ explanations/
 .idea/
 
 # YOLO-26-CAM Repo
-src/yolo_cam
+yolo_cam
