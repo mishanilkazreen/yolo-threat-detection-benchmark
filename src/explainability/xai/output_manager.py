@@ -117,7 +117,9 @@ class XAIOutputManager:
         import cv2 as _cv2
 
         if cam_norm.shape != (h, w):
-            cam_norm = _cv2.resize(cam_norm, (w, h), interpolation=_cv2.INTER_LINEAR)
+            cam_norm = _cv2.resize(cam_norm, (w, h), interpolation=_cv2.INTER_LINEAR).astype(
+                np.float32
+            )
         cam_max = cam_norm.max()
         if cam_max > 0:
             cam_norm = cam_norm / cam_max

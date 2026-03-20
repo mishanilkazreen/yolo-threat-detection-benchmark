@@ -1,5 +1,6 @@
 """Heatmap Focus Score (HFS) computation for explainability analysis."""
 
+from collections.abc import Sequence
 import json
 import logging
 from pathlib import Path
@@ -118,7 +119,7 @@ class Heatmap_Focus_Scorer:
 
     def compute_mean_hfs(
         self,
-        heatmaps: list[np.ndarray],
+        heatmaps: Sequence[np.ndarray | None],
         bboxes: list[tuple[float, float, float, float]],
         image_sizes: list[tuple[int, int]],
     ) -> float:
@@ -344,7 +345,7 @@ class Heatmap_Focus_Scorer:
 
     def compute_mean_bbox_weighted_relevance(
         self,
-        relevance_maps: list[np.ndarray],
+        relevance_maps: Sequence[np.ndarray | None],
         bboxes: list[tuple[float, float, float, float]],
         image_sizes: list[tuple[int, int]],
     ) -> float:

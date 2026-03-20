@@ -42,7 +42,7 @@ repos:
           - types-PyYAML
           - types-tqdm
         args: [--ignore-missing-imports]
-        exclude: ^(tests/|scripts/)
+        exclude: ^(tests/|scripts/|yolo_cam/)
 
   - repo: local
     hooks:
