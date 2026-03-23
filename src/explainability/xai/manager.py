@@ -257,13 +257,12 @@ class XAIManager:
 
         try:
             if method == "gradcam":
-                target_layer = self._get_target_layer(model)
                 attribution_map, hfs_score, output_path = generate_gradcam_attribution(
                     model=model,
                     image_path=image_path,
                     detections=detections,
                     gt_boxes=gt_boxes,
-                    _target_layer=target_layer,
+                    _target_layer="",
                     output_manager=self.output_manager,
                     _device=device,
                     target_class_names=getattr(self.config, "gradcam_target_classes", None),

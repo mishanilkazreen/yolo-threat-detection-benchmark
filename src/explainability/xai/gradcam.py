@@ -10,7 +10,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
 import torch
-
 from yolo_cam.eigen_cam import EigenCAM
 from yolo_cam.utils.image import show_cam_on_image
 
@@ -218,6 +217,8 @@ def generate_gradcam_attribution(
                     original_image=image_np,
                     image_path=image_path,
                     method=AttributionMethod.GRADCAM,
+                    detections=detections,
+                    model_names=model_names,
                 )
             elif output_dir is not None:
                 output_path = _save_gradcam_visualization(
@@ -310,6 +311,8 @@ def _save_gradcam_visualization(
     cam_image: np.ndarray,
     image_path: str,
     output_dir: str,
+    detections: dict[str, Any] | None = None,
+    model_names: dict[int, str] | None = None,
 ) -> str:
     """Save Grad-CAM as a 3-panel matplotlib figure."""
     output_dir_path = Path(output_dir)
@@ -333,7 +336,28 @@ def _save_gradcam_visualization(
     axes[1].axis("off")
     fig.colorbar(im, ax=axes[1], fraction=0.046, pad=0.04)
 
-    axes[2].imshow(cam_image)
+    cam_image_out = cam_image.copy()
+    if detections and model_names:
+        for box, cls, score in zip(
+            detections.get("boxes", []),
+            detections.get("classes", []),
+            detections.get("scores", []),
+            strict=False,
+        ):
+            x1, y1, x2, y2 = int(box[0]), int(box[1]), int(box[2]), int(box[3])
+            label = f"{model_names.get(int(cls), str(int(cls)))}: {score:.2f}"
+            cv2.rectangle(cam_image_out, (x1, y1), (x2, y2), (0, 255, 0), 2)
+            cv2.putText(
+                cam_image_out,
+                label,
+                (x1, max(y1 - 5, 10)),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                0.5,
+                (0, 255, 0),
+                1,
+            )
+
+    axes[2].imshow(cam_image_out)
     axes[2].set_title("Overlay", fontsize=13)
     axes[2].axis("off")
 

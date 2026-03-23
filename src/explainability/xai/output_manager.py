@@ -54,6 +54,8 @@ class XAIOutputManager:
         original_image: np.ndarray,
         image_path: str,
         method: AttributionMethod,
+        detections: dict | None = None,
+        model_names: dict[int, str] | None = None,
     ) -> str:
         """
         Save attribution outputs (overlays and/or raw data).
@@ -63,6 +65,8 @@ class XAIOutputManager:
             original_image: Original image as numpy array
             image_path: Path to original image file
             method: XAI method used to generate attribution
+            detections: Optional YOLO detections dict with boxes, classes, scores
+            model_names: Optional mapping of class IDs to class names
 
         Returns:
             Path to saved overlay image (empty string if overlays disabled)
@@ -81,7 +85,9 @@ class XAIOutputManager:
         # Save overlay visualization if enabled
         if self.save_overlays:
             output_path = str(method_dir / f"{image_name}_{method.value}.png")
-            self._save_overlay_visualization(original_image, attribution_map, output_path, method)
+            self._save_overlay_visualization(
+                original_image, attribution_map, output_path, method, detections, model_names
+            )
             logger.debug(f"Saved overlay visualization to {output_path}")
 
         return output_path
@@ -92,16 +98,27 @@ class XAIOutputManager:
         attribution_np: np.ndarray,
         output_path: str,
         method: AttributionMethod,
+        detections: dict | None = None,
+        model_names: dict[int, str] | None = None,
     ):
         """Save attribution visualization as overlay on original image."""
         if method == AttributionMethod.GRADCAM:
-            self._save_gradcam_overlay(image_np, attribution_np, output_path)
+            self._save_gradcam_overlay(
+                image_np, attribution_np, output_path, detections, model_names
+            )
         elif method == AttributionMethod.LRP:
             self._save_lrp_overlay(image_np, attribution_np, output_path)
         elif method == AttributionMethod.SHAP:
             self._save_shap_overlay(image_np, attribution_np, output_path)
 
-    def _save_gradcam_overlay(self, image_np: np.ndarray, cam_np: np.ndarray, output_path: str):
+    def _save_gradcam_overlay(
+        self,
+        image_np: np.ndarray,
+        cam_np: np.ndarray,
+        output_path: str,
+        detections: dict | None = None,
+        model_names: dict[int, str] | None = None,
+    ):
         """Save Grad-CAM as 3-panel matplotlib figure."""
         from .gradcam import _save_gradcam_visualization, show_cam_on_image
 
@@ -127,7 +144,13 @@ class XAIOutputManager:
         cam_image = show_cam_on_image(img_float, cam_norm, use_rgb=True)
 
         saved = _save_gradcam_visualization(
-            image_np, cam_norm, cam_image, synthetic_image_path, str(out.parent)
+            image_np,
+            cam_norm,
+            cam_image,
+            synthetic_image_path,
+            str(out.parent),
+            detections=detections,
+            model_names=model_names,
         )
 
         saved_path = Path(saved)

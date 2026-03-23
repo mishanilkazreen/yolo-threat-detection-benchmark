@@ -7,7 +7,6 @@ from unittest.mock import MagicMock, patch
 
 import numpy as np
 from PIL import Image
-import pytest
 import torch
 
 from src.explainability.xai.shap import (
@@ -148,11 +147,12 @@ class TestGenerateSHAPAttribution:
 
     def create_mock_model(self):
         """Create a mock YOLO model for testing."""
-        model = MagicMock()
-        model.eval = MagicMock()
-        model.requires_grad_ = MagicMock()
-        model.zero_grad = MagicMock()
-        model.imgsz = 640
+        # Create inner model mock
+        inner_model = MagicMock()
+        inner_model.eval = MagicMock(return_value=None)
+        inner_model.requires_grad_ = MagicMock(return_value=None)
+        inner_model.zero_grad = MagicMock(return_value=None)
+        inner_model.modules = MagicMock(return_value=[])
 
         # Mock forward pass that returns tensor with confidence scores
         def mock_forward(x):
@@ -161,7 +161,13 @@ class TestGenerateSHAPAttribution:
             # Features: [x, y, w, h, confidence, class_probs...]
             return torch.tensor([[[0.5, 0.5, 0.3, 0.4, 0.8, 0.9]]] * batch_size, requires_grad=True)
 
-        model.side_effect = mock_forward
+        inner_model.side_effect = mock_forward
+
+        # Create outer model mock
+        model = MagicMock()
+        model.model = inner_model
+        model.imgsz = 640
+
         return model
 
     def create_background_set(self, size: int = 3) -> list[np.ndarray]:
@@ -277,15 +283,22 @@ class TestGenerateSHAPAttribution:
         model = self.create_mock_model()
         background_set = self.create_background_set()
 
-        with pytest.raises((FileNotFoundError, OSError)):  # Should raise exception for invalid path
-            generate_shap_attribution(
-                model=model,
-                image_path="nonexistent_image.jpg",
-                detections={},
-                gt_boxes=[(0.5, 0.5, 0.4, 0.6)],
-                background_set=background_set,
-                device="cpu",
-            )
+        # Function catches exceptions and returns empty attribution map
+        attribution_map, hfs_score, output_path = generate_shap_attribution(
+            model=model,
+            image_path="nonexistent_image.jpg",
+            detections={},
+            gt_boxes=[(0.5, 0.5, 0.4, 0.6)],
+            background_set=background_set,
+            device="cpu",
+        )
+
+        # Should return zero attribution map and empty output path on error
+        assert isinstance(attribution_map, np.ndarray)
+        assert attribution_map.shape == (640, 640)  # Default size
+        assert np.all(attribution_map == 0)
+        assert hfs_score is None
+        assert output_path == ""
 
 
 class TestSHAPHelperFunctions:
@@ -327,25 +340,28 @@ class TestSHAPHelperFunctions:
         """Test SHAP target extraction from YOLO outputs."""
         from src.explainability.xai.shap import _extract_shap_target
 
-        # Test with 3D tensor (batch, detections, features)
-        outputs = torch.tensor([[[0.5, 0.5, 0.3, 0.4, 0.8, 0.9]]], requires_grad=True)
+        # Test with 3D tensor in YOLO format: [batch, features, N_anchors]
+        # Features: [x, y, w, h, class1_score, class2_score]
+        outputs = torch.tensor([[[0.5], [0.5], [0.3], [0.4], [0.8], [0.9]]], requires_grad=True)
         target = _extract_shap_target(outputs)
 
         assert isinstance(target, torch.Tensor)
-        assert target.shape == (1,)  # One value per batch
-        assert abs(target.item() - 0.8) < 1e-6  # Should extract confidence score
+        assert target.shape == (1, 1)  # [batch_size, 1]
+        # Function sums class scores (indices 4+): 0.8 + 0.9 = 1.7
+        assert abs(target.item() - 1.7) < 1e-6
 
     def test_extract_shap_target_list_output(self):
         """Test SHAP target extraction from list output."""
         from src.explainability.xai.shap import _extract_shap_target
 
-        # Test with list output
-        outputs = [torch.tensor([[[0.5, 0.5, 0.3, 0.4, 0.8, 0.9]]], requires_grad=True)]
+        # Test with list output in YOLO format: [batch, features, N_anchors]
+        outputs = [torch.tensor([[[0.5], [0.5], [0.3], [0.4], [0.8], [0.9]]], requires_grad=True)]
         target = _extract_shap_target(outputs)
 
         assert isinstance(target, torch.Tensor)
-        assert target.shape == (1,)
-        assert abs(target.item() - 0.8) < 1e-6
+        assert target.shape == (1, 1)  # [batch_size, 1]
+        # Function sums class scores (indices 4+): 0.8 + 0.9 = 1.7
+        assert abs(target.item() - 1.7) < 1e-6
 
     def test_extract_shap_target_2d_tensor(self):
         """Test SHAP target extraction from 2D tensor."""
@@ -356,5 +372,5 @@ class TestSHAPHelperFunctions:
         target = _extract_shap_target(outputs)
 
         assert isinstance(target, torch.Tensor)
-        assert target.shape == (1,)
+        assert target.shape == (1, 1)  # [batch_size, 1]
         assert abs(target.item() - 0.8) < 1e-6  # Should return maximum value

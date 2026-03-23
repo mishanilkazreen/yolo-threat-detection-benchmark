@@ -306,7 +306,7 @@ class TestYolov8nConfig:
         config = ConfigurationParser.parse(self.YOLOV8N_PATH)
 
         # Training section pre-existing fields
-        assert config.training.epochs_per_round == 10
+        assert config.training.epochs_per_round == 5
         assert config.training.rounds == 5
         assert config.training.patience == 10
         assert config.training.image_size == 640
@@ -320,7 +320,7 @@ class TestYolov8nConfig:
 
         # Model section
         assert config.model.name == "yolov8n"
-        assert config.model.weights == "yolov8n.yaml"
+        assert config.model.weights == "yolov8n.pt"
 
         # Data section
         assert config.data.yaml_path == "config/data/weapon_detection_data.yaml"

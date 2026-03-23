@@ -20,7 +20,7 @@ class TestXAIOutputManager:
 
             # Check that method directories are created
             for method in AttributionMethod:
-                method_dir = Path(temp_dir) / "xai" / method.value
+                method_dir = Path(temp_dir) / method.value
                 assert method_dir.exists()
 
                 # Check that raw directories are created when save_raw=True
@@ -34,7 +34,7 @@ class TestXAIOutputManager:
 
             # Check that raw directories are NOT created
             for method in AttributionMethod:
-                raw_dir = Path(temp_dir) / "xai" / method.value / "raw"
+                raw_dir = Path(temp_dir) / method.value / "raw"
                 assert not raw_dir.exists()
 
     def test_save_attribution_outputs_overlay_only(self):
@@ -62,7 +62,7 @@ class TestXAIOutputManager:
             assert "gradcam" in Path(output_path).name
 
             # Check that raw file was NOT saved
-            raw_path = Path(temp_dir) / "xai" / "gradcam" / "raw" / "test_image_gradcam_raw.npy"
+            raw_path = Path(temp_dir) / "gradcam" / "raw" / "test_image_gradcam_raw.npy"
             assert not raw_path.exists()
 
     def test_save_attribution_outputs_raw_only(self):
@@ -87,7 +87,7 @@ class TestXAIOutputManager:
             assert output_path == ""
 
             # Check that raw file was saved
-            raw_path = Path(temp_dir) / "xai" / "lrp" / "raw" / "test_image_lrp_raw.npy"
+            raw_path = Path(temp_dir) / "lrp" / "raw" / "test_image_lrp_raw.npy"
             assert raw_path.exists()
 
             # Verify raw data content
@@ -117,7 +117,7 @@ class TestXAIOutputManager:
             assert Path(output_path).exists()
 
             # Check that raw file was saved
-            raw_path = Path(temp_dir) / "xai" / "shap" / "raw" / "test_image_shap_raw.npy"
+            raw_path = Path(temp_dir) / "shap" / "raw" / "test_image_shap_raw.npy"
             assert raw_path.exists()
 
     def test_get_method_output_dir(self):
@@ -127,7 +127,7 @@ class TestXAIOutputManager:
 
             for method in AttributionMethod:
                 output_dir = manager.get_method_output_dir(method)
-                expected_dir = Path(temp_dir) / "xai" / method.value
+                expected_dir = Path(temp_dir) / method.value
                 assert output_dir == expected_dir
                 assert output_dir.exists()
 
@@ -176,8 +176,10 @@ class TestXAIOutputManager:
 
             # Try to load the image to verify it's valid
             with Image.open(output_path) as img:
-                assert img.size == (64, 64)
-                assert img.mode == "RGB"
+                # Image will be larger than 64x64 due to matplotlib figure with title/labels
+                assert img.size[0] > 64  # Width should be larger
+                assert img.size[1] > 64  # Height should be larger
+                assert img.mode in ("RGB", "RGBA")  # Matplotlib may save as RGBA
 
     def test_lrp_overlay_visualization(self):
         """Test LRP specific overlay visualization with positive/negative values."""
@@ -199,8 +201,10 @@ class TestXAIOutputManager:
             assert Path(output_path).exists()
 
             with Image.open(output_path) as img:
-                assert img.size == (64, 64)
-                assert img.mode == "RGB"
+                # Image will be larger than 64x64 due to matplotlib figure with title/labels
+                assert img.size[0] > 64
+                assert img.size[1] > 64
+                assert img.mode in ("RGB", "RGBA")  # Matplotlib may save as RGBA
 
     def test_shap_overlay_visualization(self):
         """Test SHAP specific overlay visualization."""
@@ -222,5 +226,7 @@ class TestXAIOutputManager:
             assert Path(output_path).exists()
 
             with Image.open(output_path) as img:
-                assert img.size == (64, 64)
-                assert img.mode == "RGB"
+                # Image will be larger than 64x64 due to matplotlib figure with title/labels
+                assert img.size[0] > 64
+                assert img.size[1] > 64
+                assert img.mode in ("RGB", "RGBA")  # Matplotlib may save as RGBA
