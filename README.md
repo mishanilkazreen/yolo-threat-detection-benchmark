@@ -48,28 +48,33 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
 ```
 
-### 3. Create virtual environment and install dependencies
+### 3. Clone and install YOLO-CAM (EigenCAM for YOLO)
+
+**Important:** This step is required before running any scripts or tests.
 
 ```bash
-# Create venv and install the project with dev dependencies
-uv venv --python 3.11
-uv pip install -e ".[dev]"
+# Clone YOLO-CAM into the project root
+git clone https://github.com/rigvedrs/YOLO-26-CAM.git yolo_cam
 ```
 
-To also install optional explainability dependencies (SHAP):
+This clones the YOLO-CAM library which provides EigenCAM implementation for YOLO models. The
+library will be automatically added to Python's path when running scripts or tests.
+
+### 4. Create virtual environment and install dependencies
 
 ```bash
+uv venv --python 3.11
 uv pip install -e ".[dev,xai]"
 ```
 
-### 4. Install pre-commit hooks
+### 5. Install pre-commit hooks
 
 ```bash
 uv run pre-commit install
 uv run pre-commit install --hook-type pre-push
 ```
 
-### 5. Download dataset
+### 6. Download dataset
 
 #### Get your Roboflow credentials
 
@@ -107,19 +112,13 @@ Then run:
 uv run python scripts/download_dataset.py
 ```
 
-### 6. Validate dataset
+### 7. Validate dataset
 
 ```bash
 uv run python scripts/validate_dataset.py
 ```
 
 ## Usage
-
-### Quick test (3 epochs)
-
-```bash
-uv run python scripts/train_model.py config/models/yolov8n_test.yaml
-```
 
 ### Full training
 
@@ -213,6 +212,7 @@ This project uses GitHub Actions for continuous integration and delivery:
 ├── .markdownlint.json
 ├── .python-version
 ├── pyproject.toml         # Project metadata, dependencies, and tool config
+├── yolo_cam/              # YOLO-CAM (EigenCAM) library (cloned from GitHub)
 ├── config/
 │   ├── data/              # Dataset configurations
 │   └── models/            # Model training configurations
