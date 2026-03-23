@@ -67,7 +67,7 @@ jobs:
         run: uv venv --python ${{ matrix.python-version }}
 
       - name: Install dependencies
-        run: uv pip install -e ".[dev]"
+        run: uv pip install -e ".[dev,xai]"
 
       - name: Clone YOLO-CAM repository
         run: git clone https://github.com/rigvedrs/YOLO-26-CAM.git yolo_cam
