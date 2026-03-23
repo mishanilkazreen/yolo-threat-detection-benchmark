@@ -2279,6 +2279,7 @@ dependencies = [
     { name = "pyyaml" },
     { name = "roboflow" },
     { name = "tqdm" },
+    { name = "ttach" },
     { name = "ultralytics" },
 ]
 
@@ -2300,7 +2301,6 @@ xai = [
     { name = "tensorflow" },
     { name = "torch" },
     { name = "torchvision" },
-    { name = "ttach" },
     { name = "zennit" },
 ]
 
@@ -2338,7 +2338,7 @@ requires-dist = [
     { name = "torch", marker = "extra == 'xai'", specifier = ">=2.0.0,<3.0.0" },
     { name = "torchvision", marker = "extra == 'xai'", specifier = ">=0.15.0,<1.0.0" },
     { name = "tqdm", specifier = ">=4.65.0" },
-    { name = "ttach", marker = "extra == 'xai'", specifier = ">=0.0.3,<1.0.0" },
+    { name = "ttach", specifier = ">=0.0.3,<1.0.0" },
     { name = "types-pyyaml", marker = "extra == 'dev'", specifier = ">=6.0.0" },
     { name = "types-tqdm", marker = "extra == 'dev'", specifier = ">=4.66.0" },
     { name = "ultralytics", specifier = ">=8.0.0" },
