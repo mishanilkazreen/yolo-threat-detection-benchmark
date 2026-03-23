@@ -69,6 +69,9 @@ jobs:
       - name: Install dependencies
         run: uv pip install -e ".[dev]"
 
+      - name: Clone YOLO-CAM repository
+        run: git clone https://github.com/rigvedrs/YOLO-26-CAM.git yolo_cam
+
       - name: Run ruff linting
         run: uv run ruff check .
 
