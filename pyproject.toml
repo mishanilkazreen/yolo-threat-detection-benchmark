@@ -18,6 +18,7 @@ dependencies = [
     "Pillow>=10.0.0",
     "opencv-python>=4.8.0",
     "tqdm>=4.65.0",
+    "ttach>=0.0.3,<1.0.0",
 ]
 
 [project.optional-dependencies]
@@ -38,7 +39,6 @@ xai = [
     "zennit>=0.5.0,<1.0.0",
     "captum>=0.7.0,<1.0.0",
     "tensorflow>=2.13.0,<3.0.0",
-    "ttach>=0.0.3,<1.0.0",
 ]
 
 [build-system]
