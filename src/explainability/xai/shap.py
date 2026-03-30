@@ -6,11 +6,15 @@ import time
 from typing import Any
 
 import cv2
+import matplotlib
+
+matplotlib.use("Agg")  # non-interactive backend — avoids tkinter/main-thread errors
 import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
 import torch
 
+from ..hfs_scorer import Heatmap_Focus_Scorer
 from .interfaces import AttributionMethod
 from .output_manager import XAIOutputManager
 
@@ -21,7 +25,7 @@ def generate_shap_attribution(
     model: Any,
     image_path: str,
     detections: dict[str, Any],  # noqa: ARG001
-    gt_boxes: list[tuple[float, float, float, float]],  # noqa: ARG001
+    gt_boxes: list[tuple[float, float, float, float]],
     background_set: list[np.ndarray],  # noqa: ARG001
     device: str = "cuda",
     output_dir: str | None = None,
@@ -136,6 +140,22 @@ def generate_shap_attribution(
             attribution_np, image_height, image_width, target_size
         )
 
+        # Normalise to [-1, 1] via abs-max so scale is consistent across images
+        abs_max = float(np.abs(attribution_np).max())
+        if abs_max > 0:
+            attribution_np = attribution_np / abs_max
+
+        # Compute HFS score (bbox-weighted relevance, handles signed maps like LRP)
+        hfs_score = None
+        if gt_boxes:
+            try:
+                hfs_scorer = Heatmap_Focus_Scorer()
+                hfs_score = hfs_scorer.compute_bbox_weighted_relevance(
+                    attribution_np, gt_boxes[0], image_width, image_height
+                )
+            except Exception as e:
+                logger.warning(f"Failed to compute SHAP HFS score: {e}")
+
         # Save visualization
         output_path = ""
         if output_dir or output_manager:
@@ -155,13 +175,13 @@ def generate_shap_attribution(
 
         processing_time = time.time() - start_time
 
+        hfs_str = f"{hfs_score:.4f}" if hfs_score is not None else "N/A"
         logger.info(
             f"Generated SHAP attribution for {Path(image_path).name} "
-            f"(time: {processing_time:.2f}s, shape: {attribution_np.shape})"
+            f"(HFS: {hfs_str}, time: {processing_time:.2f}s, shape: {attribution_np.shape})"
         )
 
-        # HFS score computation is supported for SHAP attribution maps
-        return attribution_np, None, output_path
+        return attribution_np, hfs_score, output_path
 
     except BaseException as e:
         logger.error(f"Failed to generate SHAP attribution for {image_path}: {e}")

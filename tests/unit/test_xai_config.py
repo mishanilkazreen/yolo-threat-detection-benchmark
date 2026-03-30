@@ -17,6 +17,7 @@ class TestXAIConfig:
         assert config.methods["lrp"] is False
         assert config.methods["shap"] is False
         assert config.sample_limit is None
+        assert config.target_layer is None
         assert config.background_set_size == 75
         assert config.output_overlays is True
 
@@ -36,13 +37,13 @@ class TestXAIConfig:
         """Test target layer resolution for different architectures."""
         config = XAIConfig()
 
-        assert config.get_target_layer("yolov11n") == "model.9"
-        assert config.get_target_layer("yolov12s") == "model.9"
-        assert config.get_target_layer("yolo26m") == "model.9"
-        assert config.get_target_layer("yolov8l") == "model.9"
+        assert config.get_target_layer("yolov11n") == "model.22"
+        assert config.get_target_layer("yolov12s") == "model.20"
+        assert config.get_target_layer("yolo26m") == "model.22"
+        assert config.get_target_layer("yolov8l") == "model.18"
 
         # Unknown architecture should default to yolov11
-        assert config.get_target_layer("unknown_model") == "model.9"
+        assert config.get_target_layer("unknown_model") == "model.22"
 
     def test_get_enabled_methods(self):
         """Test getting list of enabled methods."""
@@ -65,15 +66,15 @@ class TestArchitectureConfig:
         """Test getting architecture-specific configuration."""
         # Test supported architectures
         yolov11_config = get_architecture_config("yolov11n")
-        assert yolov11_config["gradcam_target"] == "model.9"
+        assert yolov11_config["gradcam_target"] == "model.22"
         assert "backbone_layers" in yolov11_config
 
         yolo26_config = get_architecture_config("yolo26s")
-        assert yolo26_config["gradcam_target"] == "model.9"
+        assert yolo26_config["gradcam_target"] == "model.22"
 
         # Test case insensitive
-        config = get_architecture_config("YOLOv12M")
-        assert config["gradcam_target"] == "model.9"
+        config = get_architecture_config("YOLOv8M")
+        assert config["gradcam_target"] == "model.18"
 
     def test_get_architecture_config_unsupported(self):
         """Test error handling for unsupported architectures."""

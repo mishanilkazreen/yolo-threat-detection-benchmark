@@ -41,7 +41,6 @@ class XAIManager:
     def _setup_logging(self):
         """Set up logging for XAI processing."""
         self.logger = logging.getLogger(__name__)
-        self.logger.setLevel(logging.DEBUG)
 
     def is_enabled(self) -> bool:
         """Check if XAI processing is enabled."""
@@ -262,7 +261,7 @@ class XAIManager:
                     image_path=image_path,
                     detections=detections,
                     gt_boxes=gt_boxes,
-                    _target_layer="",
+                    target_layer=self._get_target_layer(model),
                     output_manager=self.output_manager,
                     _device=device,
                     target_class_names=getattr(self.config, "gradcam_target_classes", None),
@@ -323,6 +322,8 @@ class XAIManager:
     def _get_target_layer(self, model: Any) -> str:
         """Get target layer for the model architecture."""
         model_name = getattr(model, "model_name", None)
+        if not isinstance(model_name, str):
+            model_name = None
         if model_name is None and hasattr(model, "yaml") and isinstance(model.yaml, dict):
             model_name = model.yaml.get("name")
 

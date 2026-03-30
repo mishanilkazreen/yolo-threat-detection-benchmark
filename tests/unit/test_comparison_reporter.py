@@ -190,7 +190,7 @@ class TestGenerateAllComparisons:
 
 class TestLoadMetricsIncrementalKey:
     """
-    Task 2.2 — Exploratory: _load_metrics(is_baseline=False) reads from "metrics" key.
+    Exploratory: _load_metrics(is_baseline=False) reads from "metrics" key.
     Fails on unfixed code (which reads "test_metrics"), passes after the fix.
     """
 
@@ -227,7 +227,7 @@ class TestLoadMetricsIncrementalKey:
 
 class TestLoadMetricsBaselineKeyPreserved:
     """
-    Task 2.3 — Preservation: _load_metrics(is_baseline=True) still reads from "test_metrics" key.
+    Preservation: _load_metrics(is_baseline=True) still reads from "test_metrics" key.
     """
 
     def test_baseline_metrics_non_nan(self, tmp_path: Path):

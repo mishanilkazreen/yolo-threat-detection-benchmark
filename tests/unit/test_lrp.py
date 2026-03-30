@@ -181,8 +181,6 @@ class TestSaveLrpVisualization:
         img.save(str(p))
         return str(p)
 
-    # --- Task 3.1: output file created, filename pattern, return value ---
-
     def test_output_file_created(self, sample_image_np, sample_image_path, tmp_path):
         """Output PNG file is created and path is returned as string."""
         relevance = np.random.rand(64, 64).astype(np.float32)
@@ -208,8 +206,6 @@ class TestSaveLrpVisualization:
         )
         assert isinstance(result, str)
 
-    # --- Task 3.3: diverging colormap (mixed positive/negative) ---
-
     def test_diverging_colormap_produces_file(self, sample_image_np, sample_image_path, tmp_path):
         """Mixed-sign relevance map produces a non-empty PNG file."""
         relevance = np.random.uniform(-1.0, 1.0, (64, 64)).astype(np.float32)
@@ -219,8 +215,6 @@ class TestSaveLrpVisualization:
         assert Path(result).exists()
         assert Path(result).stat().st_size > 0
 
-    # --- Task 3.4: sequential colormap (non-negative) ---
-
     def test_sequential_colormap_produces_file(self, sample_image_np, sample_image_path, tmp_path):
         """Non-negative relevance map uses hot colormap path and produces a file."""
         relevance = np.random.rand(64, 64).astype(np.float32)  # all >= 0
@@ -229,8 +223,6 @@ class TestSaveLrpVisualization:
         )
         assert Path(result).exists()
 
-    # --- Task 3.5: zero-max relevance map ---
-
     def test_zero_max_relevance_no_raise(self, sample_image_np, sample_image_path, tmp_path):
         """Zero-max relevance map does not raise and produces a file."""
         relevance = np.zeros((64, 64), dtype=np.float32)
@@ -238,8 +230,6 @@ class TestSaveLrpVisualization:
             sample_image_np, relevance, sample_image_path, str(tmp_path)
         )
         assert Path(result).exists()
-
-    # --- Task 3.6: single-channel image ---
 
     def test_single_channel_image_no_raise(self, sample_image_path, tmp_path):
         """Single-channel (grayscale) image does not raise and produces a file."""
@@ -254,8 +244,6 @@ class TestSaveLrpVisualization:
         relevance = np.random.rand(64, 64).astype(np.float32)
         result = _save_lrp_visualization(image_np, relevance, sample_image_path, str(tmp_path))
         assert Path(result).exists()
-
-    # --- Task 3.7: mismatched spatial dimensions ---
 
     def test_mismatched_dimensions_resized(self, sample_image_np, sample_image_path, tmp_path):
         """Relevance map smaller than image is resized; output file produced, no exception."""

@@ -1,12 +1,15 @@
 """Configuration parser for YAML configuration files."""
 
 from dataclasses import dataclass, field
+import logging
 from pathlib import Path
 from typing import Any
 
 import yaml
 
 from src.explainability.xai.config import XAIConfig
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -377,18 +380,30 @@ class ConfigurationParser:
                     f"xai.sample_limit must be an integer, got: {sample_limit}"
                 )
 
-        # Parse target layers
-        target_layers = data.get(
-            "target_layers",
-            {
-                "yolov11": "model.22",
-                "yolov12": "model.22",
-                "yolo26": "model.21",
-                "yolov8": "model.22",
-            },
-        )
-        if not isinstance(target_layers, dict):
-            raise ConfigurationParseError("xai.target_layers must be a dictionary")
+        # Parse target layer
+        _ARCH_KEYS = ("yolov11", "yolov12", "yolo26", "yolov8")
+        target_layers: dict[str, str] = {}
+
+        if "target_layers" in data:
+            raw_layers = data["target_layers"]
+            if not isinstance(raw_layers, dict):
+                raise ConfigurationParseError(
+                    f"xai.target_layers must be a dict, got: {type(raw_layers).__name__}"
+                )
+            for k, v in raw_layers.items():
+                if not isinstance(v, str):
+                    raise ConfigurationParseError(
+                        f"xai.target_layers values must be strings, got {type(v).__name__} for key '{k}'"
+                    )
+            target_layers = dict(raw_layers)
+
+        target_layer = data.get("target_layer")
+        if target_layer is not None and not isinstance(target_layer, str):
+            raise ConfigurationParseError(
+                f"xai.target_layer must be a string, got: {type(target_layer).__name__}"
+            )
+        if isinstance(target_layer, str) and not target_layers:
+            target_layers = dict.fromkeys(_ARCH_KEYS, target_layer)
 
         # Parse background set size
         background_set_size = data.get("background_set_size", 75)
@@ -439,10 +454,23 @@ class ConfigurationParser:
                 f"xai.lrp_rule must be one of {valid_lrp_rules}, got: '{lrp_rule}'"
             )
 
+        # Parse gradcam target classes
+        gradcam_target_classes = data.get("gradcam_target_classes", ["knife", "pistol"])
+        if not isinstance(gradcam_target_classes, list):
+            raise ConfigurationParseError(
+                f"xai.gradcam_target_classes must be a list, got: {type(gradcam_target_classes).__name__}"
+            )
+        for item in gradcam_target_classes:
+            if not isinstance(item, str):
+                raise ConfigurationParseError(
+                    f"xai.gradcam_target_classes must be a list of strings, got item: {type(item).__name__}"
+                )
+
         return XAIConfig(
             enabled=enabled,
             methods=methods,
             sample_limit=sample_limit,
+            target_layer=target_layer,
             target_layers=target_layers,
             background_set_size=background_set_size,
             background_set_seed=background_set_seed,
@@ -450,4 +478,5 @@ class ConfigurationParser:
             save_raw_attributions=save_raw_attributions,
             hfs_computation=hfs_computation,
             lrp_rule=lrp_rule,
+            gradcam_target_classes=gradcam_target_classes,
         )

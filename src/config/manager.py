@@ -1,11 +1,14 @@
 """Configuration manager for loading and validating configurations."""
 
+import logging
 from pathlib import Path
 from typing import Any
 
 import yaml
 
 from .parser import Configuration, ConfigurationParseError, ConfigurationParser
+
+logger = logging.getLogger(__name__)
 
 
 class ExplainerConfig:
@@ -234,28 +237,19 @@ class ConfigurationManager:
                     f"Enable at least one method: gradcam, lrp, shap"
                 )
 
-        # Validate target layers for supported architectures
-        model_name_lower = config.model.name.lower()
-        architecture = None
-        for arch in ["yolov8", "yolov11", "yolov12", "yolo26"]:
-            if arch in model_name_lower:
-                architecture = arch
-                break
-
-        if architecture and architecture not in xai.target_layers:
-            raise ConfigurationParseError(
-                f"Configuration {config_path}: Missing target layer configuration for "
-                f"architecture '{architecture}' in xai.target_layers"
-            )
+        # target_layer is optional — None means auto-resolve from ARCHITECTURE_LAYER_MAPPING
 
         # Validate sample limit consistency with expensive methods
         expensive_methods = ["shap", "lrp"]
         enabled_expensive = [m for m in expensive_methods if xai.methods.get(m, False)]
 
         if enabled_expensive and xai.sample_limit is None:
-            # This is a warning case - expensive methods without sample limit
-            # We don't raise an error but could log a warning in the future
-            pass
+            logger.warning(
+                "Expensive XAI methods %s are enabled without a sample_limit. "
+                "This may cause long runtimes. Consider setting xai.sample_limit "
+                "to limit the number of samples processed.",
+                enabled_expensive,
+            )
 
     @staticmethod
     def load_explainer_config(config_path: str | Path) -> ExplainerConfig:

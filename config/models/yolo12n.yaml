@@ -1,36 +1,35 @@
-# YOLOv12n Training Configuration with XAI Explainability
+# YOLO12n Training Configuration
 
 training:
-  epochs: 100  # Total epochs across all rounds
-  epochs_per_round: 20  # Epochs per round
-  rounds: 5  # Number of incremental training rounds
+  epochs: 25
+  epochs_per_round: 5
+  rounds: 5
   patience: 10
   image_size: 640
   batch_size: 16
   optimizer: "AdamW"
   lr0: 0.001
   lrf: 0.1
-  runs: 1  # Number of runs for statistical analysis
-  seeds: [42]  # Fixed seeds for each run
-  device: "0"  # GPU device
+  runs: 1
+  seeds: [42]
+  device: "0"
 
 model:
   name: "yolov12n"
-  weights: "yolo12n.pt"  # Pretrained weights (auto-downloaded)
+  weights: "yolo12n.pt"
 
 data:
   yaml_path: "config/data/weapon_detection_data.yaml"
-  train_init_percentage: 0.2  # Start with 20% of training data in Round 1
-  iou_threshold: 0.5  # IoU threshold for detection validation
+  train_init_percentage: 0.2
+  iou_threshold: 0.5
 
-# XAI Explainability Configuration
 xai:
-  enabled: true  # Enable XAI processing
+  enabled: true
   methods:
-    gradcam: true   # Enable Grad-CAM (fast, good for visualization)
-    lrp: true       # Enable Layer-wise Relevance Propagation (moderate cost)
-    shap: true      # Enable SHAP
-  sample_limit: 16  # Limit XAI processing to first 16 images per round
-  target_layer: "model.9"  # SPPF — shared backbone, upstream of all FPN levels
-  background_set_size: 75  # Number of background images for SHAP (when enabled)
-  output_overlays: true    # Save attribution maps overlaid on original images
+    gradcam: true
+    lrp: true
+    shap: true
+  sample_limit: 16
+  target_layer: "model.20"  # C3k2 — neck P5, 20×20 (EigenCAM used; A2C2f blocks unreliable for GradCAM)
+  background_set_size: 75
+  output_overlays: true

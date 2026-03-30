@@ -207,20 +207,15 @@ class TestXAIConfigurationParsing:
         finally:
             Path(config_path).unlink()
 
-    def test_parse_config_architecture_specific_target_layers(self):
-        """Test parsing configuration with architecture-specific target layers."""
+    def test_parse_config_target_layer_string(self):
+        """Test parsing configuration with a single target_layer string."""
         config_data = {
             "training": {"epochs": 50, "patience": 10, "image_size": 640},
             "model": {"name": "yolov11n", "weights": "yolov11n.pt"},
             "data": {"yaml_path": "data.yaml"},
             "xai": {
                 "enabled": True,
-                "target_layers": {
-                    "yolov11": "model.22",
-                    "yolov12": "model.22",
-                    "yolo26": "model.21",
-                    "yolov8": "model.22",
-                },
+                "target_layer": "model.22",
             },
         }
 
@@ -230,8 +225,55 @@ class TestXAIConfigurationParsing:
 
         try:
             config = ConfigurationParser.parse(config_path)
-            assert config.xai.target_layers["yolov11"] == "model.22"
-            assert config.xai.target_layers["yolo26"] == "model.21"
+            assert config.xai.target_layer == "model.22"
+            assert config.xai.get_target_layer("yolov11n") == "model.22"
+        finally:
+            Path(config_path).unlink()
+
+    def test_parse_config_target_layer_overrides_arch_default(self):
+        """An explicit target_layer overrides the per-arch fallback."""
+        config_data = {
+            "training": {"epochs": 50, "patience": 10, "image_size": 640},
+            "model": {"name": "yolov11n", "weights": "yolov11n.pt"},
+            "data": {"yaml_path": "data.yaml"},
+            "xai": {
+                "enabled": True,
+                "target_layer": "model.5",  # deliberate non-default
+            },
+        }
+
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".yaml", delete=False) as f:
+            yaml.dump(config_data, f)
+            config_path = f.name
+
+        try:
+            config = ConfigurationParser.parse(config_path)
+            assert config.xai.target_layer == "model.5"
+            # get_target_layer should return the explicit value, not the arch default
+            assert config.xai.get_target_layer("yolov11n") == "model.5"
+            assert config.xai.target_layer != XAIConfig().target_layer  # differs from default None
+        finally:
+            Path(config_path).unlink()
+
+    def test_parse_config_target_layers_dict_accepted(self):
+        """target_layers dict is accepted and stored on config.xai.target_layers."""
+        config_data = {
+            "training": {"epochs": 50, "patience": 10, "image_size": 640},
+            "model": {"name": "yolov11n", "weights": "yolov11n.pt"},
+            "data": {"yaml_path": "data.yaml"},
+            "xai": {
+                "enabled": True,
+                "target_layers": {"yolov11": "model.22"},
+            },
+        }
+
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".yaml", delete=False) as f:
+            yaml.dump(config_data, f)
+            config_path = f.name
+
+        try:
+            config = ConfigurationParser.parse(config_path)
+            assert config.xai.target_layers == {"yolov11": "model.22"}
         finally:
             Path(config_path).unlink()
 
@@ -365,8 +407,8 @@ class TestXAIConfigurationValidation:
         finally:
             Path(config_path).unlink()
 
-    def test_validate_missing_target_layer_for_architecture(self):
-        """Test validation fails when target layer is missing for the model architecture."""
+    def test_validate_target_layers_dict_accepted(self):
+        """target_layers dict is accepted and stored on config.xai.target_layers."""
         config_data = {
             "training": {"epochs": 50, "patience": 10, "image_size": 640},
             "model": {"name": "yolov11n", "weights": "yolov11n.pt"},
@@ -374,7 +416,7 @@ class TestXAIConfigurationValidation:
             "xai": {
                 "enabled": True,
                 "methods": {"gradcam": True},
-                "target_layers": {"yolov8": "model.22"},  # Missing yolov11
+                "target_layers": {"yolov8": "model.22"},
             },
         }
 
@@ -383,11 +425,8 @@ class TestXAIConfigurationValidation:
             config_path = f.name
 
         try:
-            with pytest.raises(
-                ConfigurationParseError,
-                match="Missing target layer configuration for architecture 'yolov11'",
-            ):
-                ConfigurationManager.load_training_config(config_path)
+            config = ConfigurationManager.load_training_config(config_path)
+            assert config.xai.target_layers == {"yolov8": "model.22"}
         finally:
             Path(config_path).unlink()
 
@@ -401,12 +440,7 @@ class TestXAIConfigurationValidation:
                 "enabled": True,
                 "methods": {"gradcam": True, "lrp": False, "shap": False},
                 "sample_limit": 10,
-                "target_layers": {
-                    "yolov11": "model.22",
-                    "yolov12": "model.22",
-                    "yolo26": "model.21",
-                    "yolov8": "model.22",
-                },
+                "target_layer": "model.22",
             },
         }
 
@@ -419,6 +453,38 @@ class TestXAIConfigurationValidation:
             config = ConfigurationManager.load_training_config(config_path)
             assert config.xai.enabled is True
             assert config.xai.methods["gradcam"] is True
+            assert config.xai.target_layer == "model.22"
+        finally:
+            Path(config_path).unlink()
+
+    def test_validate_xai_expensive_methods_without_sample_limit_logs_warning(self, caplog):
+        """Test that a warning is logged when expensive XAI methods are enabled without sample_limit."""
+        import logging
+
+        config_data = {
+            "training": {"epochs": 50, "patience": 10, "image_size": 640},
+            "model": {"name": "yolov11n", "weights": "yolov11n.pt"},
+            "data": {"yaml_path": "data.yaml"},
+            "xai": {
+                "enabled": True,
+                "methods": {"gradcam": False, "lrp": True, "shap": False},
+                # sample_limit intentionally omitted (defaults to None)
+                "target_layer": "model.22",
+            },
+        }
+
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".yaml", delete=False) as f:
+            yaml.dump(config_data, f)
+            config_path = f.name
+
+        try:
+            with caplog.at_level(logging.WARNING, logger="src.config.manager"):
+                ConfigurationManager.load_training_config(config_path)
+
+            assert any(
+                "sample_limit" in record.message and "lrp" in record.message
+                for record in caplog.records
+            ), "Expected a warning about expensive XAI methods without sample_limit"
         finally:
             Path(config_path).unlink()
 
@@ -435,13 +501,11 @@ class TestXAIConfigDefaults:
         assert xai_config.methods["lrp"] is False
         assert xai_config.methods["shap"] is False
         assert xai_config.sample_limit is None
+        assert xai_config.target_layer is None  # None means auto-resolve from arch map
         assert xai_config.background_set_size == 75
         assert xai_config.output_overlays is True
 
-        # Check default target layers
-        assert "yolov11" in xai_config.target_layers
-        assert "yolov12" in xai_config.target_layers
-        assert "yolo26" in xai_config.target_layers
-        assert "yolov8" in xai_config.target_layers
-        assert xai_config.target_layers["yolov11"] == "model.9"
-        assert xai_config.target_layers["yolo26"] == "model.9"
+        # Arch-based fallback still resolves correctly
+        assert xai_config.get_target_layer("yolov11n") == "model.22"
+        assert xai_config.get_target_layer("yolo26n") == "model.22"
+        assert xai_config.get_target_layer("yolov8n") == "model.18"

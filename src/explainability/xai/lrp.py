@@ -6,6 +6,9 @@ import time
 from typing import Any
 
 import cv2
+import matplotlib
+
+matplotlib.use("Agg")  # non-interactive backend — avoids tkinter/main-thread errors
 import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
@@ -16,7 +19,6 @@ from .interfaces import AttributionMethod
 from .output_manager import XAIOutputManager
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
 
 
 def generate_lrp_attribution(
@@ -328,10 +330,15 @@ def _generate_lrp_with_zennit(
                     except Exception as e:
                         logger.warning(f"Input*gradient failed: {e}")
 
-                # Strategy 3: Use input magnitude as last resort
+                # Strategy 3: All strategies exhausted — raise explicit error
                 if gradient is None or gradient.abs().sum() < 1e-10:
-                    logger.warning("All gradient methods failed, using input-based attribution")
-                    gradient = input_req_grad * input_req_grad.abs()
+                    raise RuntimeError(
+                        "All LRP gradient strategies failed for YOLO26. "
+                        "Strategy 1 (direct autograd gradient) returned zero or None. "
+                        "Strategy 2 (input * gradient product) also returned zero or None. "
+                        "Cannot produce a valid LRP attribution. "
+                        "Check that the model graph is connected to the input tensor."
+                    )
 
                 if gradient is None:
                     raise RuntimeError(
@@ -352,9 +359,16 @@ def _generate_lrp_with_zennit(
                         )
                     relevance = gradient
     except Exception as e:
-        logger.warning(f"Zennit LRP failed: {e}, falling back to simple gradient method")
+        if is_yolo26:
+            logger.warning(
+                f"Zennit LRP failed (YOLO26 gradient strategies): {e}, "
+                "falling back to simple gradient method"
+            )
+        else:
+            logger.warning(f"Zennit LRP failed: {e}, falling back to simple gradient method")
         for mod in torch_model.modules():
-            mod._backward_hooks.clear()
+            if hasattr(mod, "_backward_hooks"):
+                mod._backward_hooks.clear()
             if hasattr(mod, "_full_backward_hooks"):
                 mod._full_backward_hooks.clear()
 
@@ -436,7 +450,7 @@ def _generate_lrp_with_zennit(
 def _generate_lrp_with_captum(
     model: Any,
     image_path: str,
-    detections: dict[str, Any],  # noqa: ARG001
+    detections: dict[str, Any],
     gt_boxes: list[tuple[float, float, float, float]],
     device: str,
     output_dir: str | None,
@@ -459,8 +473,18 @@ def _generate_lrp_with_captum(
     # Create LRP attributor
     lrp = CaptumLRP(model)
 
+    # Determine target class from detections (highest-confidence detection)
+    target_class = 0
+    scores = detections.get("scores", [])
+    classes = detections.get("classes", [])
+    if len(scores) > 0 and len(classes) > 0:
+        best_idx = int(np.argmax(scores))
+        target_class = int(classes[best_idx])
+    else:
+        logger.debug("No detections found; falling back to target=0 for Captum LRP")
+
     # Compute attributions
-    attributions = lrp.attribute(input_tensor, target=0)  # Use first class as target
+    attributions = lrp.attribute(input_tensor, target=target_class)
 
     # Process attribution map
     attr_np = attributions.squeeze().cpu().detach().numpy()
@@ -612,10 +636,12 @@ def _save_lrp_visualization(
     has_negative = bool(raw.min() < 0)
 
     if has_negative:
-        # Diverging: do NOT normalise — pass raw summed values, matplotlib centres at zero
+        # Diverging: normalise to [-1, 1] so the colorbar scale is consistent across images
         colormap = "RdBu_r"
-        display_heatmap = raw.astype(np.float32)
-        vmin, vmax = None, None  # let matplotlib auto-centre
+        raw_f32 = raw.astype(np.float32)
+        abs_max = np.abs(raw_f32).max()
+        display_heatmap = raw_f32 / abs_max if abs_max > 0 else raw_f32
+        vmin, vmax = -1.0, 1.0
     else:
         # Sequential: normalise to [0, 1]
         colormap = "hot"

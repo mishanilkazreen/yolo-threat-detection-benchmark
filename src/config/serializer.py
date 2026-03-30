@@ -109,12 +109,14 @@ class ConfigurationSerializer:
             xai.enabled != default_xai.enabled
             or xai.methods != default_xai.methods
             or xai.sample_limit != default_xai.sample_limit
-            or xai.target_layers != default_xai.target_layers
+            or xai.target_layer != default_xai.target_layer
             or xai.background_set_size != default_xai.background_set_size
             or xai.background_set_seed != default_xai.background_set_seed
             or xai.output_overlays != default_xai.output_overlays
             or xai.save_raw_attributions != default_xai.save_raw_attributions
             or xai.hfs_computation != default_xai.hfs_computation
+            or xai.lrp_rule != default_xai.lrp_rule
+            or xai.gradcam_target_classes != default_xai.gradcam_target_classes
         )
 
     @staticmethod
@@ -133,8 +135,8 @@ class ConfigurationSerializer:
         if xai.sample_limit != default_xai.sample_limit:
             result["sample_limit"] = xai.sample_limit
 
-        if xai.target_layers != default_xai.target_layers:
-            result["target_layers"] = xai.target_layers
+        if xai.target_layer != default_xai.target_layer:
+            result["target_layer"] = xai.target_layer
 
         if xai.background_set_size != default_xai.background_set_size:
             result["background_set_size"] = xai.background_set_size
@@ -150,5 +152,11 @@ class ConfigurationSerializer:
 
         if xai.hfs_computation != default_xai.hfs_computation:
             result["hfs_computation"] = xai.hfs_computation
+
+        if xai.lrp_rule != default_xai.lrp_rule:
+            result["lrp_rule"] = xai.lrp_rule
+
+        if xai.gradcam_target_classes != default_xai.gradcam_target_classes:
+            result["gradcam_target_classes"] = xai.gradcam_target_classes
 
         return result

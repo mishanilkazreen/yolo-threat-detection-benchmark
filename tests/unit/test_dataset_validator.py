@@ -74,8 +74,6 @@ class TestDatasetValidator:
     def test_validate_missing_labels(self):
         """
         Test validation detects missing label files.
-
-        Validates: Property 6 - Missing Label Detection
         """
         with tempfile.TemporaryDirectory() as tmpdir:
             structure = {
@@ -103,8 +101,6 @@ class TestDatasetValidator:
     def test_validate_empty_labels(self):
         """
         Test validation detects empty annotation files.
-
-        Validates: Property 7 - Empty Annotation Detection
         """
         with tempfile.TemporaryDirectory() as tmpdir:
             structure = {
@@ -134,8 +130,6 @@ class TestDatasetValidator:
     def test_validate_duplicate_filenames(self):
         """
         Test validation detects duplicate filenames across splits.
-
-        Validates: Property 4 - No Duplicate Filenames Across Splits
         """
         with tempfile.TemporaryDirectory() as tmpdir:
             structure = {
@@ -239,8 +233,6 @@ class TestDatasetValidator:
     def test_error_reporting_includes_file_paths(self):
         """
         Test that error messages include specific file paths.
-
-        Validates: Property 8 - Validation Error Reporting
         """
         with tempfile.TemporaryDirectory() as tmpdir:
             structure = {"train": {"images": ["missing_label.jpg"], "labels": []}}

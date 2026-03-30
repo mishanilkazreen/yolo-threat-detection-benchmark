@@ -48,17 +48,16 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
 ```
 
-### 3. Clone and install YOLO-CAM (EigenCAM for YOLO)
+### 3. YOLO-CAM (EigenCAM for YOLO) — vendored dependency
 
-**Important:** This step is required before running any scripts or tests.
+The `yolo_cam/` directory is vendored directly in this repository. No installation step is needed.
 
-```bash
-# Clone YOLO-CAM into the project root
-git clone https://github.com/rigvedrs/YOLO-26-CAM.git yolo_cam
-```
+It is a copy of [rigvedrs/YOLO-26-CAM](https://github.com/rigvedrs/YOLO-26-CAM) at commit
+`f380b07`, providing EigenCAM implementation for YOLO models. The library is automatically
+available to Python when running scripts or tests from the project root.
 
-This clones the YOLO-CAM library which provides EigenCAM implementation for YOLO models. The
-library will be automatically added to Python's path when running scripts or tests.
+To update the vendored copy, manually copy the upstream source at the desired commit into
+`yolo_cam/` and update the commit reference in `pyproject.toml` and this README.
 
 ### 4. Create virtual environment and install dependencies
 
@@ -124,8 +123,8 @@ uv run python scripts/validate_dataset.py
 
 ```bash
 uv run python scripts/train_model.py config/models/yolov8n.yaml
-uv run python scripts/train_model.py config/models/yolov11n.yaml
-uv run python scripts/train_model.py config/models/yolov12n.yaml
+uv run python scripts/train_model.py config/models/yolo11n.yaml
+uv run python scripts/train_model.py config/models/yolo12n.yaml
 uv run python scripts/train_model.py config/models/yolo26n.yaml
 ```
 
@@ -212,7 +211,7 @@ This project uses GitHub Actions for continuous integration and delivery:
 ├── .markdownlint.json
 ├── .python-version
 ├── pyproject.toml         # Project metadata, dependencies, and tool config
-├── yolo_cam/              # YOLO-CAM (EigenCAM) library (cloned from GitHub)
+├── yolo_cam/              # YOLO-CAM (EigenCAM) library (vendored from rigvedrs/YOLO-26-CAM@f380b07)
 ├── config/
 │   ├── data/              # Dataset configurations
 │   └── models/            # Model training configurations

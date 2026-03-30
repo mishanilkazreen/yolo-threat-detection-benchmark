@@ -6,6 +6,9 @@ import time
 from typing import Any
 
 import cv2
+import matplotlib
+
+matplotlib.use("Agg")  # non-interactive backend — avoids tkinter/main-thread errors
 import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
@@ -92,7 +95,7 @@ def generate_gradcam_attribution(
     image_path: str,
     detections: dict[str, Any],
     gt_boxes: list[tuple[float, float, float, float]],
-    _target_layer: str,
+    target_layer: str,
     _device: str = "cuda",
     _class_idx: int | None = None,
     output_dir: str | None = None,
@@ -107,7 +110,10 @@ def generate_gradcam_attribution(
         image_path: Path to input image
         detections: Model detections for the image
         gt_boxes: Ground-truth bounding boxes in YOLO format
-        target_layer: Unused — target layer is always model.model.model[-2]
+        target_layer: Target layer path string (e.g. "model.9"). When non-empty,
+            the specified layer is used as the CAM target via
+            ``get_target_layer_module``. When empty, falls back to
+            ``model.model.model[-2]`` (the penultimate layer).
         device: Computation device
         class_idx: Unused
         output_dir: Directory to save attribution visualization (legacy)
@@ -165,7 +171,10 @@ def generate_gradcam_attribution(
         # Resize to model input size
         rgb_img = cv2.resize(image_np, (target_size, target_size))
 
-        target_layers = [model.model.model[-2]]
+        if target_layer:
+            target_layers = [get_target_layer_module(model, target_layer)]
+        else:
+            target_layers = [model.model.model[-2]]
         cam = EigenCAM(model, target_layers, task="od")
         grayscale_cam = cam(rgb_img)[0, :, :]
 

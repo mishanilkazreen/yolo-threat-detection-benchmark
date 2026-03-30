@@ -61,16 +61,16 @@ class TestXAIManager:
 
         # Test with model_name attribute
         model.model_name = "yolov11n"
-        assert manager._get_target_layer(model) == "model.9"
+        assert manager._get_target_layer(model) == "model.22"
 
         # Test with yaml attribute
         model.model_name = None
         model.yaml = {"name": "yolo26s"}
-        assert manager._get_target_layer(model) == "model.9"
+        assert manager._get_target_layer(model) == "model.22"
 
         # Test fallback
         model.yaml = {}
-        assert manager._get_target_layer(model) == "model.9"  # Default
+        assert manager._get_target_layer(model) == "model.22"  # Default (yolov11)
 
     def test_sample_limit_application(self):
         """Test that sample limit is correctly applied."""
