@@ -48,29 +48,24 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
 ```
 
-### 3. YOLO-CAM (EigenCAM for YOLO) — vendored dependency
+### 3. Clone YOLO-CAM (EigenCAM for YOLO)
 
-The `yolo_cam/` directory is vendored directly in this repository. No installation step is needed.
-
-It is a copy of [rigvedrs/YOLO-26-CAM](https://github.com/rigvedrs/YOLO-26-CAM) at commit
-`f380b07`, providing EigenCAM implementation for YOLO models. The library is automatically
-available to Python when running scripts or tests from the project root.
-
-To update the vendored copy, manually copy the upstream source at the desired commit into
-`yolo_cam/` and update the commit reference in `pyproject.toml` and this README.
-
-### 4. Create virtual environment and install dependencies
+YOLO-CAM provides EigenCAM visualization for explainability. Clone it into the project root:
 
 ```bash
-uv venv --python 3.11
-uv pip install -e ".[dev,xai]"
+git clone https://github.com/rigvedrs/YOLO-26-CAM.git yolo_cam
 ```
 
-### 5. Install pre-commit hooks
+This provides [rigvedrs/YOLO-26-CAM](https://github.com/rigvedrs/YOLO-26-CAM), an EigenCAM implementation supporting
+YOLO26, YOLOv12, YOLOv11, YOLOv8, and older YOLO versions. The library will be automatically available to Python
+when running scripts or tests from the project root.
+
+To update YOLO-CAM to the latest version:
 
 ```bash
-uv run pre-commit install
-uv run pre-commit install --hook-type pre-push
+cd yolo_cam
+git pull origin main
+cd ..
 ```
 
 ### 6. Download dataset

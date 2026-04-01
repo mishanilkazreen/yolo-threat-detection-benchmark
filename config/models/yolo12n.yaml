@@ -1,8 +1,8 @@
 # YOLO12n Training Configuration
 
 training:
-  epochs: 25
-  epochs_per_round: 5
+  epochs: 125
+  epochs_per_round: 25
   rounds: 5
   patience: 10
   image_size: 640
