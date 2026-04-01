@@ -306,7 +306,7 @@ class TestYolov8nConfig:
         config = ConfigurationParser.parse(self.YOLOV8N_PATH)
 
         # Training section pre-existing fields
-        assert config.training.epochs_per_round == 5
+        assert config.training.epochs_per_round == 25
         assert config.training.rounds == 5
         assert config.training.patience == 10
         assert config.training.image_size == 640
