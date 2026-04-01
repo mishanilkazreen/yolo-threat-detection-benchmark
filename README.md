@@ -56,9 +56,9 @@ YOLO-CAM provides EigenCAM visualization for explainability. Clone it into the p
 git clone https://github.com/rigvedrs/YOLO-26-CAM.git yolo_cam
 ```
 
-This provides [rigvedrs/YOLO-26-CAM](https://github.com/rigvedrs/YOLO-26-CAM), an EigenCAM implementation supporting
-YOLO26, YOLOv12, YOLOv11, YOLOv8, and older YOLO versions. The library will be automatically available to Python
-when running scripts or tests from the project root.
+This provides [rigvedrs/YOLO-26-CAM](https://github.com/rigvedrs/YOLO-26-CAM), an EigenCAM implementation
+supporting YOLO26, YOLOv12, YOLOv11, and YOLOv8. The library will be automatically available to Python when
+running scripts or tests from the project root.
 
 To update YOLO-CAM to the latest version:
 
