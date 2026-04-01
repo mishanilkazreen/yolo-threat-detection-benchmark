@@ -909,9 +909,9 @@ class TestFixYolo12nEpochs:
             data = yaml.safe_load(f)
 
         epochs = data.get("training", {}).get("epochs")
-        assert epochs == 25, (
-            f"Bug 1.9 regression: yolo12n.yaml has epochs={epochs!r}, expected 25. "
-            "All model configs should use 25 epochs for consistency."
+        assert epochs == 125, (
+            f"Bug 1.9 regression: yolo12n.yaml has epochs={epochs!r}, expected 125. "
+            "All model configs should use 125 epochs (25 per round x 5 rounds)."
         )
 
 
