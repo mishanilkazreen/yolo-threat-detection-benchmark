@@ -447,6 +447,9 @@ class Experiment_Runner:
         # Track metrics across rounds
         all_round_metrics = []
         best_checkpoint_path = None
+        best_overall_checkpoint_path = None
+        best_overall_map50 = -1.0
+        best_overall_round = -1
         total_training_time = 0.0
 
         # Select device
@@ -618,6 +621,15 @@ class Experiment_Runner:
 
             all_round_metrics.append(round_metrics)
 
+            round_map50 = round_metrics["metrics"]["mAP50"]
+            if round_map50 > best_overall_map50:
+                best_overall_map50 = round_map50
+                best_overall_checkpoint_path = best_checkpoint_path
+                best_overall_round = round_num
+                self.logger.info(
+                    f"New best overall checkpoint: Round {round_num} (val mAP50={round_map50:.4f})"
+                )
+
             # Run XAI processing if enabled
             xai_manager = self._get_xai_manager(config)
             if xai_manager is not None:
@@ -704,27 +716,29 @@ class Experiment_Runner:
             self._cleanup_memory()
             self.logger.info(f"Round {round_num} completed, memory cleaned up")
 
-        # After all rounds complete, evaluate final model on test_fixed
+        # After all rounds complete, evaluate final model on test set using the
+        # best checkpoint across all rounds (by val mAP50), not the last round's.
+        final_checkpoint = best_overall_checkpoint_path or best_checkpoint_path
+
         self.logger.info(f"\n{'=' * 60}")
-        self.logger.info("Evaluating final model on test set...")
+        self.logger.info(
+            f"Evaluating final model on test set (best checkpoint from Round {best_overall_round}, "
+            f"val mAP50={best_overall_map50:.4f})..."
+        )
         self.logger.info(f"{'=' * 60}\n")
 
-        if best_checkpoint_path is None:
+        if final_checkpoint is None:
             raise ValueError("No best checkpoint found after training rounds")
-
-        # Type assertion: best_checkpoint_path is guaranteed to be str here
-        assert best_checkpoint_path is not None
 
         if not round_data_yamls:
             raise ValueError(
                 "No round data YAMLs were created during training; cannot perform final evaluation."
             )
 
-        # Use the highest round index for which a data.yaml was actually created
         last_round_with_yaml = max(round_data_yamls.keys())
 
         final_test_metrics = self.metrics_collector.evaluate_final_test(
-            checkpoint_path=best_checkpoint_path,
+            checkpoint_path=final_checkpoint,
             data_yaml=round_data_yamls[last_round_with_yaml],
             output_dir=output_dir,
             config_name=config_name,
@@ -938,13 +952,11 @@ class Experiment_Runner:
 
         with open(test_list, "w") as f:
             if test_images:
-                # Test images would be in test/images if they existed
                 test_image_dir = base_path / "test" / "images"
                 full_paths = [str((test_image_dir / img).absolute()) for img in test_images]
                 f.write("\n".join(full_paths))
             else:
-                # If no test images, use train images for testing
-                full_paths = [str((train_image_dir / img).absolute()) for img in training_images]
+                full_paths = [str((val_image_dir / img).absolute()) for img in val_images]
                 f.write("\n".join(full_paths))
 
         # Update data config with absolute paths
