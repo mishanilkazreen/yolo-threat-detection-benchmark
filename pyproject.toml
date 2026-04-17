@@ -20,6 +20,7 @@ dependencies = [
     "tqdm>=4.65.0",
     "torch>=2.0.0",
     "torchvision>=0.15.0",
+    "ttach>=0.0.3",
 ]
 
 [tool.uv.sources]
