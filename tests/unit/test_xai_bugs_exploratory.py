@@ -37,8 +37,8 @@ class TestBug11TargetLayerRespected:
 
     def test_eigencam_receives_layer_from_get_target_layer_module(self, tmp_path):
         """EigenCAM must be constructed with the layer resolved by get_target_layer_module."""
-        import torch
         from PIL import Image
+        import torch
 
         from src.explainability.xai.gradcam import generate_gradcam_attribution
 
@@ -105,8 +105,8 @@ class TestBug11TargetLayerRespected:
 
     def test_eigencam_falls_back_to_penultimate_layer_when_target_layer_empty(self, tmp_path):
         """When target_layer is empty, the penultimate layer fallback is used."""
-        import torch
         from PIL import Image
+        import torch
 
         from src.explainability.xai.gradcam import generate_gradcam_attribution
 
@@ -176,8 +176,8 @@ class TestBug12XAILibsInOptionalDeps:
 
     def _load_pyproject(self):
         """Parse pyproject.toml and return the parsed dict."""
-        import sys
         from pathlib import Path
+        import sys
 
         pyproject_path = Path(__file__).parent.parent.parent / "pyproject.toml"
         assert pyproject_path.exists(), f"pyproject.toml not found at {pyproject_path}"
@@ -836,8 +836,8 @@ class TestBug112CaptumTargetHardcodedExploratory:
 
         This test will PASS on unfixed code and FAIL after the fix is applied.
         """
-        import torch
         from PIL import Image
+        import torch
 
         from src.explainability.xai.lrp import _generate_lrp_with_captum
 

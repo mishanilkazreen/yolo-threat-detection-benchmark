@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
 import torch
+
 from yolo_cam.eigen_cam import EigenCAM
 from yolo_cam.utils.image import show_cam_on_image
 

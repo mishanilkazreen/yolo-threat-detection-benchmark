@@ -3,14 +3,14 @@
 import gc
 import json
 import logging
-import time
 from pathlib import Path
+import time
 from typing import Any
 
 import numpy as np
 import torch
-import yaml
 from ultralytics import YOLO
+import yaml
 
 from ..aggregation.comparison_reporter import Comparison_Reporter
 from ..config.parser import ConfigurationParser
