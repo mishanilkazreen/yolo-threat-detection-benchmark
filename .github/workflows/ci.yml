@@ -29,8 +29,11 @@ jobs:
       - name: Set up Python
         run: uv python install 3.11
 
+      - name: Create virtual environment
+        run: uv venv --python 3.11
+
       - name: Install dependencies
-        run: uv sync --extra dev --extra xai --python 3.11
+        run: uv pip install -e ".[dev,xai]"
 
       - name: Run pre-commit
         uses: pre-commit/action@v3.0.1
@@ -72,8 +75,11 @@ jobs:
       - name: Set up Python ${{ matrix.python-version }}
         run: uv python install ${{ matrix.python-version }}
 
+      - name: Create virtual environment
+        run: uv venv --python ${{ matrix.python-version }}
+
       - name: Install dependencies
-        run: uv sync --extra dev --extra xai --python ${{ matrix.python-version }}
+        run: uv pip install -e ".[dev,xai]"
 
       - name: Run ruff linting
         run: uv run ruff check .
