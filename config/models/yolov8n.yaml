@@ -1,27 +1,37 @@
 # YOLOv8n Training Configuration
 
 training:
-  epochs_per_round: 10  # Epochs per round (as per architecture spec)
-  rounds: 5  # Number of incremental training rounds
+  epochs: 125
+  epochs_per_round: 25
+  rounds: 5
   patience: 10
   image_size: 640
-  batch_size: 16  # Fixed batch size
-  optimizer: "AdamW"  # AdamW optimizer
-  lr0: 0.001  # Initial learning rate
-  lrf: 0.1  # Final learning rate (for step decay)
-  runs: 1  # Number of runs for statistical analysis
-  seeds: [42]  # Fixed seeds for each run
-  device: "0"  # GPU device
-  run_baseline: true  # Enable one-shot baseline training for comparison
-  baseline_epochs: 50  # Number of epochs for baseline training
+  batch_size: 16
+  optimizer: "AdamW"
+  lr0: 0.001
+  lrf: 0.1
+  runs: 1
+  seeds: [42]
+  device: "0"
+  run_baseline: true
+  baseline_epochs: 50
 
 model:
   name: "yolov8n"
-  weights: "yolov8n.yaml"  # Architecture only, NO pretrained weights (random init)
+  weights: "yolov8n.pt"
 
 data:
   yaml_path: "config/data/weapon_detection_data.yaml"
-  train_init_percentage: 0.2  # Start with 20% of training data in Round 1
-  iou_threshold: 0.5  # IoU threshold for detection validation
-  # Note: Dataset uses pre-existing train/val/test splits from Roboflow download.
-  # train_init_percentage controls the initial training set size within the training split.
+  train_init_percentage: 0.2
+  iou_threshold: 0.5
+
+xai:
+  enabled: true
+  methods:
+    gradcam: true
+    lrp: true
+    shap: true
+  sample_limit: 16
+  target_layer: "model.18"  # C2f [512] — neck P5, 20×20
+  background_set_size: 75
+  output_overlays: true

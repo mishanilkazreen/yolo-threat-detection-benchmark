@@ -15,6 +15,8 @@ import yaml
 from ..aggregation.comparison_reporter import Comparison_Reporter
 from ..config.parser import ConfigurationParser
 from ..data.validator import Dataset_Validator
+from ..explainability.xai.manager import XAIManager
+from ..utils.output_manager import Output_Manager
 from .baseline_evaluator import Baseline_Evaluator
 from .baseline_trainer import Baseline_Trainer
 from .device_utils import select_device
@@ -32,6 +34,7 @@ class Experiment_Runner:
         self.seed_manager = Seed_Manager()
         self.metrics_collector = Metrics_Collector()
         self.dataset_validator = Dataset_Validator()
+        self.output_manager = Output_Manager()
 
         # Import incremental training components lazily to avoid circular imports
         self._splitter = None
@@ -39,6 +42,9 @@ class Experiment_Runner:
         self._edge_agent_simulator = None
         self._detection_validator = None
         self._round_metrics_tracker = None
+
+        # XAI Manager - initialized when needed
+        self._xai_manager: XAIManager | None = None
 
     @property
     def splitter(self):
@@ -84,6 +90,16 @@ class Experiment_Runner:
 
             self._round_metrics_tracker = Round_Metrics_Tracker()
         return self._round_metrics_tracker
+
+    def _get_xai_manager(self, config: Any) -> XAIManager | None:
+        """Get XAI manager if XAI is enabled, otherwise return None."""
+        if not hasattr(config, "xai") or not config.xai.enabled:
+            return None
+
+        if self._xai_manager is None:
+            self._xai_manager = XAIManager(config.xai, output_manager=self.output_manager)
+
+        return self._xai_manager
 
     def _cleanup_memory(self):
         """
@@ -194,12 +210,17 @@ class Experiment_Runner:
     ) -> dict[str, Any]:
         """Run standard single-round training."""
 
-        # Create output directories
-        output_dir = f"outputs/{config_name}"
-        explanations_dir = f"explanations/{config_name}"
-
-        for dir_path in [output_dir, explanations_dir]:
-            Path(dir_path).mkdir(parents=True, exist_ok=True)
+        # Create output directories using Output_Manager
+        output_dir = str(
+            self.output_manager.get_evaluation_output_path(
+                model_name=config_name, round_name="train", create=True
+            )
+        )
+        explanations_dir = str(
+            self.output_manager.get_explainability_output_path(
+                model_name=config_name, round_name="train", create=True
+            )
+        )
 
         # Initialize model
         self.logger.info(f"Initializing model: {config.model.name}")
@@ -217,7 +238,7 @@ class Experiment_Runner:
         # Select device
         device = select_device(config.training.device)
 
-        # Train model
+        # Train model using Output_Manager for project parameter
         self.logger.info(f"Starting training (seed={seed}, device={device})...")
         train_start = time.time()
 
@@ -227,8 +248,8 @@ class Experiment_Runner:
             imgsz=config.training.image_size,
             patience=config.training.patience,
             device=device,
-            project="runs/detect",
-            name=config_name,
+            project=self.output_manager.get_yolo_project_parameter(config_name),
+            name=f"{config_name}/train",
             exist_ok=True,
             verbose=True,
             lr0=lr0,
@@ -236,32 +257,27 @@ class Experiment_Runner:
             cos_lr=False,  # Disable cosine LR scheduler to use our custom step decay
         )
 
-        # The actual project directory where YOLO saves results
-        project_dir = f"runs/detect/{config_name}"
-
         training_time = time.time() - train_start
         self.logger.info(f"Training completed in {training_time:.2f} seconds")
 
-        # Determine actual project directory (YOLO may create nested structure)
-        # Check both possible locations
-        possible_dirs = [f"runs/detect/{config_name}", f"runs/detect/runs/detect/{config_name}"]
+        # Get the actual project directory from Output_Manager
+        project_dir = str(
+            self.output_manager.get_training_output_path(
+                model_name=config_name, round_name="train", create=False
+            )
+        )
 
-        actual_project_dir = None
-        for dir_path in possible_dirs:
-            weights_dir = Path(dir_path) / "weights"
-            if weights_dir.exists() and (weights_dir / "best.pt").exists():
-                actual_project_dir = dir_path
-                break
+        # Verify checkpoint exists
+        weights_dir = Path(project_dir) / "weights"
+        if not weights_dir.exists() or not (weights_dir / "best.pt").exists():
+            raise FileNotFoundError(f"Could not find training results at: {project_dir}")
 
-        if actual_project_dir is None:
-            raise FileNotFoundError(f"Could not find training results. Checked: {possible_dirs}")
-
-        self.logger.info(f"Found training results at: {actual_project_dir}")
+        self.logger.info(f"Found training results at: {project_dir}")
 
         # Evaluate model
         self.logger.info("Evaluating model...")
         metrics = self.metrics_collector.evaluate_and_save(
-            project_dir=actual_project_dir,
+            project_dir=project_dir,
             config_name=config_name,
             data_yaml=config.data.yaml_path,
             output_dir=output_dir,
@@ -270,17 +286,28 @@ class Experiment_Runner:
             training_time=training_time,
         )
 
+        # Run XAI processing if enabled
+        xai_manager = self._get_xai_manager(config)
+        if xai_manager is not None:
+            self.logger.info("Running XAI processing...")
+            self._run_xai_processing(
+                xai_manager=xai_manager,
+                model_path=str(Path(project_dir) / "weights" / "best.pt"),
+                config=config,
+                output_dir=output_dir,
+                round_num=1,  # Standard training is considered round 1
+                model_name=config_name,
+                round_name="train",
+            )
+
         return metrics
 
     def _run_incremental_training(
         self, config: Any, config_name: str, seed: int, run_id: int | None = None
     ) -> dict[str, Any]:
-        """
-        Run 5-round incremental training with edge-cloud simulation.
+        """Run 5-round incremental training with edge-cloud simulation.
 
-        CRITICAL: Trains on ONLY newly verified samples per round (not cumulative).
-        Round 1: train_init only
-        Round 2+: ONLY verified samples from previous round
+        Trains on newly verified samples per round (not cumulative).
 
         Args:
             config: Training configuration
@@ -322,12 +349,21 @@ class Experiment_Runner:
         lr0 = getattr(config.training, "lr0", 0.001)
         lrf = getattr(config.training, "lrf", 0.1)
 
-        # Create output directories
-        output_dir = f"outputs/{config_name}"
-        explanations_dir = f"explanations/{config_name}"
+        # Create output directories using Output_Manager
+        # Use config_name as model_name for the base directory structure
+        output_dir = str(
+            self.output_manager.get_evaluation_output_path(
+                model_name=config_name,
+                round_name=None,  # Will create outputs/{config_name}/ for shared files
+                create=True,
+            ).parent
+        )  # Get parent to have outputs/{config_name}/ for shared metadata
 
-        for dir_path in [output_dir, explanations_dir]:
-            Path(dir_path).mkdir(parents=True, exist_ok=True)
+        explanations_dir = str(
+            self.output_manager.get_explainability_output_path(
+                model_name=config_name, round_name=None, create=True
+            ).parent
+        )  # Get parent to have explanations/{config_name}/ base
 
         # Load data.yaml to get dataset paths
         with open(config.data.yaml_path) as f:
@@ -397,11 +433,12 @@ class Experiment_Runner:
             "test_fixed": test_fixed,
         }
 
-        # Create temporary data.yaml files for each round
-        round_data_yamls = {}
+        # Track data.yaml files for each round (populated as rounds execute)
+        round_data_yamls: dict[int, str] = {}
+        round_data_yaml_paths: dict[int, str] = {}
         for round_num in range(1, rounds + 1):
             round_data_yaml = Path(output_dir) / f"data_round_{round_num}.yaml"
-            round_data_yamls[round_num] = str(round_data_yaml)
+            round_data_yaml_paths[round_num] = str(round_data_yaml)
 
         # Initialize training set with train_init
         current_training_images = splits["train_init"].copy()
@@ -433,22 +470,32 @@ class Experiment_Runner:
                 )
                 continue
 
-            # Create round-specific directories
-            round_project_dir = f"runs/detect/{config_name}/round_{round_num}"
-            round_explanations_dir = f"{explanations_dir}/round_{round_num}"
+            # Create round-specific directories using Output_Manager
+            round_name = f"incremental_round_{round_num}"
 
-            Path(round_project_dir).mkdir(parents=True, exist_ok=True)
-            Path(round_explanations_dir).mkdir(parents=True, exist_ok=True)
+            round_project_dir = str(
+                self.output_manager.get_training_output_path(
+                    model_name=config_name, round_name=round_name, create=True
+                )
+            )
+
+            round_explanations_dir = str(
+                self.output_manager.get_explainability_output_path(
+                    model_name=config_name, round_name=round_name, create=True
+                )
+            )
 
             # Create data.yaml for this round with current training set
             self._create_round_data_yaml(
                 original_data_yaml=config.data.yaml_path,
-                round_data_yaml=round_data_yamls[round_num],
+                round_data_yaml=round_data_yaml_paths[round_num],
                 training_images=current_training_images,
                 val_images=splits["val_fixed"],
                 test_images=splits["test_fixed"],
                 base_path=base_path,
             )
+            # Register this round's data.yaml as successfully created
+            round_data_yamls[round_num] = round_data_yaml_paths[round_num]
 
             # Initialize model
             if round_num == 1:
@@ -490,8 +537,8 @@ class Experiment_Runner:
                 lrf=lrf,
                 cos_lr=False,  # Disable cosine LR scheduler to use our custom step decay
                 device=device,
-                project="runs/detect",
-                name=f"{config_name}/round_{round_num}",
+                project=self.output_manager.get_yolo_project_parameter(config_name),
+                name=f"{config_name}/incremental_round_{round_num}",
                 exist_ok=True,
                 verbose=True,
             )
@@ -502,26 +549,18 @@ class Experiment_Runner:
                 f"Round {round_num} training completed in {round_training_time:.2f} seconds"
             )
 
-            # Find best checkpoint for this round
-            # YOLO may create nested directory structure, check both possible locations
-            possible_checkpoint_paths = [
-                Path(round_project_dir) / "weights" / "best.pt",
-                Path(f"runs/detect/runs/detect/{config_name}/round_{round_num}/weights/best.pt"),
-                Path(f"runs/detect/{config_name}/round_{round_num}/weights/best.pt"),
-            ]
-
-            best_checkpoint_path = None
-            for checkpoint_path in possible_checkpoint_paths:
-                if checkpoint_path.exists():
-                    best_checkpoint_path = str(checkpoint_path)
-                    self.logger.info(f"Found checkpoint at: {best_checkpoint_path}")
-                    break
-
-            if best_checkpoint_path is None:
-                raise FileNotFoundError(
-                    "Best checkpoint not found. Checked locations:\n"
-                    + "\n".join([f"  - {p}" for p in possible_checkpoint_paths])
+            # Find best checkpoint for this round using Output_Manager
+            round_name = f"incremental_round_{round_num}"
+            try:
+                best_checkpoint_path = str(
+                    self.output_manager.resolve_checkpoint_path(
+                        model_name=config_name, round_name=round_name, checkpoint_type="best"
+                    )
                 )
+                self.logger.info(f"Found checkpoint at: {best_checkpoint_path}")
+            except FileNotFoundError as e:
+                self.logger.error(f"Checkpoint resolution failed: {e}")
+                raise
 
             # Evaluate on val_fixed
             self.logger.info(f"Evaluating Round {round_num} on validation set...")
@@ -578,6 +617,20 @@ class Experiment_Runner:
             )
 
             all_round_metrics.append(round_metrics)
+
+            # Run XAI processing if enabled
+            xai_manager = self._get_xai_manager(config)
+            if xai_manager is not None:
+                self.logger.info(f"Running XAI processing for Round {round_num}...")
+                self._run_xai_processing(
+                    xai_manager=xai_manager,
+                    model_path=best_checkpoint_path,
+                    config=config,
+                    output_dir=output_dir,
+                    round_num=round_num,
+                    model_name=config_name,
+                    round_name=f"incremental_round_{round_num}",
+                )
 
             # If not the last round, run edge-cloud simulation
             if round_num < rounds and len(unlabeled_pool) > 0:
@@ -694,7 +747,12 @@ class Experiment_Runner:
 
         # Run one-shot baseline if configured
         if getattr(config.training, "run_baseline", False):
-            baseline_output_dir = f"outputs/{config_name}_baseline"
+            baseline_output_dir = str(
+                self.output_manager.get_evaluation_output_path(
+                    model_name=f"{config_name}_baseline", round_name="train", create=True
+                ).parent
+            )  # Get parent to have outputs/{config_name}_baseline/
+
             self.logger.info(f"{'=' * 60}")
             self.logger.info("Running one-shot baseline training")
             self.logger.info(f"Baseline output directory: {baseline_output_dir}")
@@ -715,8 +773,9 @@ class Experiment_Runner:
             )
 
             # Evaluate baseline using the last round's data.yaml for val and test
-            val_data_yaml = round_data_yamls[rounds]
-            test_data_yaml = round_data_yamls[rounds]
+            last_round_key = max(round_data_yamls.keys())
+            val_data_yaml = round_data_yamls[last_round_key]
+            test_data_yaml = round_data_yamls[last_round_key]
 
             baseline_evaluator = Baseline_Evaluator()
             baseline_eval_result = baseline_evaluator.evaluate(
@@ -939,9 +998,13 @@ class Experiment_Runner:
             "individual_runs": all_metrics,
         }
 
-        # Save aggregated results
-        output_path = Path(f"outputs/{config_name}/aggregated_results.json")
-        output_path.parent.mkdir(parents=True, exist_ok=True)
+        # Save aggregated results using Output_Manager
+        output_path = (
+            self.output_manager.get_evaluation_output_path(
+                model_name=config_name, round_name="train", create=True
+            )
+            / "aggregated_results.json"
+        )
 
         with open(output_path, "w") as f:
             json.dump(aggregated, f, indent=2)
@@ -974,3 +1037,155 @@ class Experiment_Runner:
             )
 
         self.logger.info("Dataset validation passed")
+
+    def _run_xai_processing(
+        self,
+        xai_manager: XAIManager,
+        model_path: str,
+        config: Any,
+        output_dir: str,
+        round_num: int,
+        model_name: str | None = None,
+        round_name: str | None = None,
+    ) -> None:
+        """
+        Run XAI processing on validation images.
+
+        Args:
+            xai_manager: Initialized XAI manager
+            model_path: Path to trained model checkpoint
+            config: Configuration object
+            output_dir: Output directory for XAI results (deprecated, use model_name/round_name)
+            round_num: Training round number
+            model_name: Model identifier for Output_Manager path construction
+            round_name: Round identifier for Output_Manager path construction
+        """
+        try:
+            # Load the trained model
+            model = YOLO(model_path)
+
+            # Get validation images from data.yaml
+            validation_images = self._get_validation_images(config.data.yaml_path)
+
+            if not validation_images:
+                self.logger.warning("No validation images found for XAI processing")
+                return
+
+            # Apply sample limit if configured
+            if config.xai.sample_limit is not None:
+                validation_images = validation_images[: config.xai.sample_limit]
+                self.logger.info(f"Limited XAI processing to {len(validation_images)} images")
+
+            # Run inference on validation images to get detections
+            self.logger.info(f"Running inference on {len(validation_images)} validation images...")
+            detections = {}
+            gt_boxes = {}
+
+            # Load data.yaml to get paths
+            with open(config.data.yaml_path) as f:
+                data_config = yaml.safe_load(f)
+            base_path = Path(data_config.get("path", "."))
+            val_image_dir = base_path / "valid" / "images"
+            val_labels_dir = base_path / "valid" / "labels"
+
+            for image_name in validation_images:
+                image_path = str(val_image_dir / image_name)
+
+                # Run inference
+                results = model(image_path, verbose=False)
+                if results and len(results) > 0:
+                    detections[image_path] = {
+                        "boxes": results[0].boxes.xyxy.cpu().numpy()
+                        if results[0].boxes is not None
+                        else [],
+                        "scores": results[0].boxes.conf.cpu().numpy()
+                        if results[0].boxes is not None
+                        else [],
+                        "classes": results[0].boxes.cls.cpu().numpy()
+                        if results[0].boxes is not None
+                        else [],
+                    }
+                else:
+                    detections[image_path] = {"boxes": [], "scores": [], "classes": []}
+
+                # Load ground truth boxes
+                label_path = val_labels_dir / f"{Path(image_name).stem}.txt"
+                gt_boxes_list = []
+                if label_path.exists():
+                    try:
+                        with open(label_path) as f:
+                            for line in f:
+                                parts = line.strip().split()
+                                if len(parts) >= 5:
+                                    # YOLO format: class x_center y_center width height (normalized)
+                                    _, x_center, y_center, width, height = map(float, parts[:5])
+                                    gt_boxes_list.append((x_center, y_center, width, height))
+                    except Exception as e:
+                        self.logger.warning(f"Failed to load ground truth for {image_name}: {e}")
+
+                gt_boxes[image_path] = gt_boxes_list
+
+            # Process with XAI manager
+            image_paths = [str(val_image_dir / img) for img in validation_images]
+            xai_results = xai_manager.process_batch(
+                model=model,
+                image_paths=image_paths,
+                detections=detections,
+                gt_boxes=gt_boxes,
+                round_num=round_num,
+                output_dir=output_dir,
+                validation_images=image_paths,  # For SHAP background set (use full paths)
+                model_name=model_name,
+                round_name=round_name,
+            )
+
+            if xai_results:
+                self.logger.info(
+                    f"XAI processing completed: {xai_results.num_images_processed} images processed, "
+                    f"{len(xai_results.failed_images)} failures"
+                )
+
+                # Log aggregate HFS scores
+                if xai_results.aggregate_hfs:
+                    for method, hfs in xai_results.aggregate_hfs.items():
+                        self.logger.info(f"  {method.upper()} mean HFS: {hfs:.4f}")
+            else:
+                self.logger.info("XAI processing completed (no results generated)")
+
+        except Exception as e:
+            self.logger.error(f"XAI processing failed: {e}")
+            # Don't raise - XAI failure shouldn't stop the main pipeline
+
+    def _get_validation_images(self, data_yaml_path: str) -> list[str]:
+        """
+        Get list of validation image filenames from data.yaml.
+
+        Args:
+            data_yaml_path: Path to data.yaml file
+
+        Returns:
+            List of validation image filenames
+        """
+        try:
+            with open(data_yaml_path) as f:
+                data_config = yaml.safe_load(f)
+
+            base_path = Path(data_config.get("path", "."))
+            val_path = base_path / "valid" / "images"
+
+            if not val_path.exists():
+                return []
+
+            # Get all image files (avoid duplicates from case-insensitive search)
+            image_extensions = {".jpg", ".jpeg", ".png", ".bmp", ".tiff", ".tif"}
+            images: set[str] = set()  # Use set to avoid duplicates
+
+            for ext in image_extensions:
+                images.update(p.name for p in val_path.glob(f"*{ext}"))
+                images.update(p.name for p in val_path.glob(f"*{ext.upper()}"))
+
+            return sorted(images)
+
+        except Exception as e:
+            self.logger.error(f"Failed to get validation images: {e}")
+            return []

@@ -18,7 +18,18 @@ dependencies = [
     "Pillow>=10.0.0",
     "opencv-python>=4.8.0",
     "tqdm>=4.65.0",
+    "torch>=2.0.0",
+    "torchvision>=0.15.0",
 ]
+
+[tool.uv.sources]
+torch = { index = "pytorch-cu128" }
+torchvision = { index = "pytorch-cu128" }
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
 
 [project.optional-dependencies]
 dev = [
@@ -32,7 +43,12 @@ dev = [
     "pytest-cov>=4.0.0",
 ]
 xai = [
-    "shap>=0.42.0",
+    "torch>=2.0.0,<3.0.0",
+    "torchvision>=0.15.0,<1.0.0",
+    "ttach>=0.0.3,<1.0.0",
+    "shap>=0.42.0,<1.0.0",
+    "zennit>=0.5.0,<1.0.0",
+    "captum>=0.7.0,<1.0.0",
 ]
 
 [build-system]
@@ -98,6 +114,7 @@ ignore = [
 
 [tool.ruff.lint.isort]
 known-first-party = ["src"]
+known-third-party = ["yolo_cam"]
 force-sort-within-sections = true
 
 [tool.ruff.format]
@@ -127,6 +144,12 @@ module = [
     "hypothesis.*",
 ]
 ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = [
+    "yolo_cam.*",
+]
+ignore_errors = true
 
 [[tool.mypy.overrides]]
 module = [

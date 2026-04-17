@@ -1,0 +1,35 @@
+# YOLO12n Training Configuration
+
+training:
+  epochs: 125
+  epochs_per_round: 25
+  rounds: 5
+  patience: 10
+  image_size: 640
+  batch_size: 16
+  optimizer: "AdamW"
+  lr0: 0.001
+  lrf: 0.1
+  runs: 1
+  seeds: [42]
+  device: "0"
+
+model:
+  name: "yolov12n"
+  weights: "yolo12n.pt"
+
+data:
+  yaml_path: "config/data/weapon_detection_data.yaml"
+  train_init_percentage: 0.2
+  iou_threshold: 0.5
+
+xai:
+  enabled: true
+  methods:
+    gradcam: true
+    lrp: true
+    shap: true
+  sample_limit: 16
+  target_layer: "model.20"  # C3k2 — neck P5, 20×20 (EigenCAM used; A2C2f blocks unreliable for GradCAM)
+  background_set_size: 75
+  output_overlays: true

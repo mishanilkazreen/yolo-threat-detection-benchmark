@@ -15,16 +15,27 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Clone YOLO-CAM
+        run: |
+          if [ ! -d "yolo_cam" ]; then
+            git clone https://github.com/rigvedrs/YOLO-26-CAM.git yolo_cam
+          fi
+
       - name: Install uv
         uses: astral-sh/setup-uv@v3
         with:
           version: "latest"
 
       - name: Set up Python
-        run: uv python install 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Create virtual environment
+        run: uv venv --python 3.11
 
       - name: Install dependencies
-        run: uv sync --extra dev --python 3.11
+        run: uv pip install -e ".[dev,xai]"
 
       - name: Run pre-commit
         uses: pre-commit/action@v3.0.1
@@ -36,13 +47,19 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.10", "3.11"]
+        python-version: ["3.11"]
         os: [ubuntu-latest]
 
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Clone YOLO-CAM
+        run: |
+          if [ ! -d "yolo_cam" ]; then
+            git clone https://github.com/rigvedrs/YOLO-26-CAM.git yolo_cam
+          fi
 
       - name: Free up disk space
         if: runner.os == 'Linux'
@@ -58,10 +75,15 @@ jobs:
           version: "latest"
 
       - name: Set up Python ${{ matrix.python-version }}
-        run: uv python install ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Create virtual environment
+        run: uv venv --python ${{ matrix.python-version }}
 
       - name: Install dependencies
-        run: uv sync --extra dev --python ${{ matrix.python-version }}
+        run: uv pip install -e ".[dev,xai]"
 
       - name: Run ruff linting
         run: uv run ruff check .

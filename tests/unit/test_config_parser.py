@@ -292,21 +292,21 @@ class TestYolov8nConfig:
     YOLOV8N_PATH = "config/models/yolov8n.yaml"
 
     def test_run_baseline_is_true(self):
-        """Task 3.2 — yolov8n.yaml must have run_baseline == True."""
+        """yolov8n.yaml must have run_baseline == True."""
         config = ConfigurationParser.parse(self.YOLOV8N_PATH)
         assert config.training.run_baseline is True
 
     def test_baseline_epochs_is_50(self):
-        """Task 3.2 — yolov8n.yaml must have baseline_epochs == 50."""
+        """yolov8n.yaml must have baseline_epochs == 50."""
         config = ConfigurationParser.parse(self.YOLOV8N_PATH)
         assert config.training.baseline_epochs == 50
 
     def test_pre_existing_fields_preserved(self):
-        """Task 3.3 — All pre-existing fields in yolov8n.yaml retain their original values."""
+        """All pre-existing fields in yolov8n.yaml retain their original values."""
         config = ConfigurationParser.parse(self.YOLOV8N_PATH)
 
         # Training section pre-existing fields
-        assert config.training.epochs_per_round == 10
+        assert config.training.epochs_per_round == 25
         assert config.training.rounds == 5
         assert config.training.patience == 10
         assert config.training.image_size == 640
@@ -320,7 +320,7 @@ class TestYolov8nConfig:
 
         # Model section
         assert config.model.name == "yolov8n"
-        assert config.model.weights == "yolov8n.yaml"
+        assert config.model.weights == "yolov8n.pt"
 
         # Data section
         assert config.data.yaml_path == "config/data/weapon_detection_data.yaml"

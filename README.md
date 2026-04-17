@@ -48,28 +48,27 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
 ```
 
-### 3. Create virtual environment and install dependencies
+### 3. Clone YOLO-CAM (EigenCAM for YOLO)
+
+YOLO-CAM provides EigenCAM visualization for explainability. Clone it into the project root:
 
 ```bash
-# Create venv and install the project with dev dependencies
-uv venv --python 3.11
-uv pip install -e ".[dev]"
+git clone https://github.com/rigvedrs/YOLO-26-CAM.git yolo_cam
 ```
 
-To also install optional explainability dependencies (SHAP):
+This provides [rigvedrs/YOLO-26-CAM](https://github.com/rigvedrs/YOLO-26-CAM), an EigenCAM implementation
+supporting YOLO26, YOLOv12, YOLOv11, and YOLOv8. The library will be automatically available to Python when
+running scripts or tests from the project root.
+
+To update YOLO-CAM to the latest version:
 
 ```bash
-uv pip install -e ".[dev,xai]"
+cd yolo_cam
+git pull origin main
+cd ..
 ```
 
-### 4. Install pre-commit hooks
-
-```bash
-uv run pre-commit install
-uv run pre-commit install --hook-type pre-push
-```
-
-### 5. Download dataset
+### 6. Download dataset
 
 #### Get your Roboflow credentials
 
@@ -107,7 +106,7 @@ Then run:
 uv run python scripts/download_dataset.py
 ```
 
-### 6. Validate dataset
+### 7. Validate dataset
 
 ```bash
 uv run python scripts/validate_dataset.py
@@ -115,18 +114,12 @@ uv run python scripts/validate_dataset.py
 
 ## Usage
 
-### Quick test (3 epochs)
-
-```bash
-uv run python scripts/train_model.py config/models/yolov8n_test.yaml
-```
-
 ### Full training
 
 ```bash
 uv run python scripts/train_model.py config/models/yolov8n.yaml
-uv run python scripts/train_model.py config/models/yolov11n.yaml
-uv run python scripts/train_model.py config/models/yolov12n.yaml
+uv run python scripts/train_model.py config/models/yolo11n.yaml
+uv run python scripts/train_model.py config/models/yolo12n.yaml
 uv run python scripts/train_model.py config/models/yolo26n.yaml
 ```
 
@@ -213,6 +206,7 @@ This project uses GitHub Actions for continuous integration and delivery:
 ├── .markdownlint.json
 ├── .python-version
 ├── pyproject.toml         # Project metadata, dependencies, and tool config
+├── yolo_cam/              # YOLO-CAM (EigenCAM) library (vendored from rigvedrs/YOLO-26-CAM@f380b07)
 ├── config/
 │   ├── data/              # Dataset configurations
 │   └── models/            # Model training configurations

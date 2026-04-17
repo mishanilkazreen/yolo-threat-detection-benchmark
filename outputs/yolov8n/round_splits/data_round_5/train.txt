@@ -1,0 +1,4 @@
+C:\Users\manig\Downloads\yolo-improvement-detection-moderation-paper\Weapon_Detection-1\train\images\armas--1610-_jpg.rf.79f604b85a1aa1c115ca6453cefe3e39.jpg
+C:\Users\manig\Downloads\yolo-improvement-detection-moderation-paper\Weapon_Detection-1\train\images\armas--850-_jpg.rf.ce7a4e72b2ee7939a79994cfd29a0a6f.jpg
+C:\Users\manig\Downloads\yolo-improvement-detection-moderation-paper\Weapon_Detection-1\train\images\knife_138_jpg.rf.df434d895e657908f45e539fef07d786.jpg
+C:\Users\manig\Downloads\yolo-improvement-detection-moderation-paper\Weapon_Detection-1\train\images\knife_251_jpg.rf.4a306e34a48011a6e67f89e5a63d4945.jpg

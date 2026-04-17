@@ -1,0 +1,8 @@
+{
+  "train_init_count": 1417,
+  "unlabeled_pool_count": 5669,
+  "val_fixed_count": 2026,
+  "test_fixed_count": 0,
+  "train_init_percentage": 0.2,
+  "random_seed": 42
+}

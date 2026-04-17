@@ -227,9 +227,10 @@ data/downloaded/
 *.pt
 
 # Training outputs
-runs/
-outputs/
-explanations/
+runs/**/*.pt
+runs/**/*.jpg
+explanations/**/*.png
+explanations/**/*.npy
 
 # Local configuration overrides
 *.local.yaml
@@ -237,3 +238,6 @@ explanations/
 
 # IDE
 .idea/
+
+# YOLO-26-CAM Repo
+yolo_cam/

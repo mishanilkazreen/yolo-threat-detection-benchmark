@@ -22,7 +22,7 @@ repos:
         args: ["--pytest-test-first"]
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: "v0.14.10"
+    rev: "v0.15.2"
     hooks:
       - id: ruff
         args: ["--fix", "--show-fixes"]
@@ -42,13 +42,13 @@ repos:
           - types-PyYAML
           - types-tqdm
         args: [--ignore-missing-imports]
-        exclude: ^(tests/|scripts/)
+        exclude: ^(tests/|scripts/|yolo_cam/)
 
   - repo: local
     hooks:
       - id: pytest-check
         name: pytest-check
-        entry: pytest
+        entry: uv run pytest
         language: system
         pass_filenames: false
         always_run: true

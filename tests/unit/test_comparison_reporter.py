@@ -190,7 +190,7 @@ class TestGenerateAllComparisons:
 
 class TestLoadMetricsIncrementalKey:
     """
-    Task 2.2 — Exploratory: _load_metrics(is_baseline=False) reads from "metrics" key.
+    Exploratory: _load_metrics(is_baseline=False) reads from "metrics" key.
     Fails on unfixed code (which reads "test_metrics"), passes after the fix.
     """
 
@@ -227,8 +227,7 @@ class TestLoadMetricsIncrementalKey:
 
 class TestLoadMetricsBaselineKeyPreserved:
     """
-    Task 2.3 — Preservation: _load_metrics(is_baseline=True) still reads from "test_metrics" key.
-    Validates: Requirements 3.1
+    Preservation: _load_metrics(is_baseline=True) still reads from "test_metrics" key.
     """
 
     def test_baseline_metrics_non_nan(self, tmp_path: Path):
@@ -270,15 +269,12 @@ class TestLoadMetricsBaselineKeyPreserved:
 class TestPropertyDifferenceRow:
     """
     Property 7: Comparison Difference Row Equals Incremental Minus Baseline
-    Validates: Requirements 4.2
     """
 
     @given(_metric_strategy(), _metric_strategy())
     @settings(max_examples=100)
     def test_difference_row_equals_incremental_minus_baseline(self, incremental, baseline):
         """
-        **Validates: Requirements 4.2**
-
         For any pair of metric dicts, the difference row must equal
         incremental_value - baseline_value for every metric column.
         """
@@ -297,15 +293,12 @@ class TestPropertyDifferenceRow:
 class TestPropertyOneTablePerConfig:
     """
     Property 8: One Comparison Table Per Configuration
-    Validates: Requirements 4.5
     """
 
     @given(st.lists(_config_name_strategy(), min_size=1, max_size=10, unique=True))
     @settings(max_examples=100)
     def test_one_table_per_config(self, config_names):
         """
-        **Validates: Requirements 4.5**
-
         For N configs, generate_comparison() called N times must produce
         exactly N .md and N .csv files.
         """

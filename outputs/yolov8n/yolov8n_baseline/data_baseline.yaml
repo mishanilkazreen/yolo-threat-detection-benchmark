@@ -1,0 +1,8 @@
+fraction: 1.0
+names:
+- knife
+- pistol
+nc: 2
+path: ./Weapon_Detection-1
+train: C:\Users\manig\Downloads\yolo-improvement-detection-moderation-paper\outputs\yolov8n\yolov8n_baseline\baseline_splits\train.txt
+val: C:\Users\manig\Downloads\yolo-improvement-detection-moderation-paper\outputs\yolov8n\yolov8n_baseline\baseline_splits\val.txt

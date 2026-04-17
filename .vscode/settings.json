@@ -1,5 +1,5 @@
 {
-  "python.defaultInterpreterPath": "./.venv/bin/python",
+  "python.defaultInterpreterPath": "${workspaceFolder}\\.venv\\Scripts\\python.exe",
   "[python]": {
     "editor.defaultFormatter": "charliermarsh.ruff",
     "editor.codeActionsOnSave": {
@@ -16,5 +16,5 @@
   "markdownlint.config": {
     "extends": ".markdownlint.json"
   },
-  "cSpell.import": [".cspell.json"]
+  "cSpell.import": ["${workspaceFolder}/.cspell.json"]
 }
