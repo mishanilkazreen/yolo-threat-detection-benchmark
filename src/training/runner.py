@@ -3,14 +3,14 @@
 import gc
 import json
 import logging
-from pathlib import Path
 import time
+from pathlib import Path
 from typing import Any
 
 import numpy as np
 import torch
-from ultralytics import YOLO
 import yaml
+from ultralytics import YOLO
 
 from ..aggregation.comparison_reporter import Comparison_Reporter
 from ..config.parser import ConfigurationParser
@@ -433,11 +433,12 @@ class Experiment_Runner:
             "test_fixed": test_fixed,
         }
 
-        # Create temporary data.yaml files for each round
-        round_data_yamls = {}
+        # Track data.yaml files for each round (populated as rounds execute)
+        round_data_yamls: dict[int, str] = {}
+        round_data_yaml_paths: dict[int, str] = {}
         for round_num in range(1, rounds + 1):
             round_data_yaml = Path(output_dir) / f"data_round_{round_num}.yaml"
-            round_data_yamls[round_num] = str(round_data_yaml)
+            round_data_yaml_paths[round_num] = str(round_data_yaml)
 
         # Initialize training set with train_init
         current_training_images = splits["train_init"].copy()
@@ -487,12 +488,14 @@ class Experiment_Runner:
             # Create data.yaml for this round with current training set
             self._create_round_data_yaml(
                 original_data_yaml=config.data.yaml_path,
-                round_data_yaml=round_data_yamls[round_num],
+                round_data_yaml=round_data_yaml_paths[round_num],
                 training_images=current_training_images,
                 val_images=splits["val_fixed"],
                 test_images=splits["test_fixed"],
                 base_path=base_path,
             )
+            # Register this round's data.yaml as successfully created
+            round_data_yamls[round_num] = round_data_yaml_paths[round_num]
 
             # Initialize model
             if round_num == 1:
@@ -770,8 +773,9 @@ class Experiment_Runner:
             )
 
             # Evaluate baseline using the last round's data.yaml for val and test
-            val_data_yaml = round_data_yamls[rounds]
-            test_data_yaml = round_data_yamls[rounds]
+            last_round_key = max(round_data_yamls.keys())
+            val_data_yaml = round_data_yamls[last_round_key]
+            test_data_yaml = round_data_yamls[last_round_key]
 
             baseline_evaluator = Baseline_Evaluator()
             baseline_eval_result = baseline_evaluator.evaluate(

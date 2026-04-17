@@ -37,8 +37,8 @@ class TestBug11TargetLayerRespected:
 
     def test_eigencam_receives_layer_from_get_target_layer_module(self, tmp_path):
         """EigenCAM must be constructed with the layer resolved by get_target_layer_module."""
-        from PIL import Image
         import torch
+        from PIL import Image
 
         from src.explainability.xai.gradcam import generate_gradcam_attribution
 
@@ -105,8 +105,8 @@ class TestBug11TargetLayerRespected:
 
     def test_eigencam_falls_back_to_penultimate_layer_when_target_layer_empty(self, tmp_path):
         """When target_layer is empty, the penultimate layer fallback is used."""
-        from PIL import Image
         import torch
+        from PIL import Image
 
         from src.explainability.xai.gradcam import generate_gradcam_attribution
 
@@ -176,8 +176,8 @@ class TestBug12XAILibsInOptionalDeps:
 
     def _load_pyproject(self):
         """Parse pyproject.toml and return the parsed dict."""
-        from pathlib import Path
         import sys
+        from pathlib import Path
 
         pyproject_path = Path(__file__).parent.parent.parent / "pyproject.toml"
         assert pyproject_path.exists(), f"pyproject.toml not found at {pyproject_path}"
@@ -250,20 +250,19 @@ class TestBug12XAILibsInOptionalDeps:
         )
 
     def test_torch_in_xai_optional_not_core(self):
-        """torch must be in [xai] optional deps and NOT in core deps.
+        """torch is a core dependency because YOLO training requires it.
 
-        This is the companion check — torch was already correctly placed in [xai],
-        and must remain there.
+        torch is also listed in [xai] optional deps for explainability libraries.
         """
         data = self._load_pyproject()
         if data is None:
             pytest.skip("tomllib/tomli not available and fallback not applicable")
 
         core_deps = self._get_core_deps(data)
-        xai_deps = self._get_xai_optional_deps(data)
 
-        assert "torch" not in core_deps, "torch must not be in [project] dependencies (core)"
-        assert "torch" in xai_deps, "torch must be in [project.optional-dependencies] xai"
+        assert "torch" in core_deps, (
+            "torch must be in [project] dependencies (core) for YOLO training"
+        )
 
 
 class TestBug14SilentLRPFallbackExploratory:
@@ -720,12 +719,7 @@ class TestBug110DeadCodeWarningExploratory:
 
     def _make_config_with_lrp_no_sample_limit(self):
         """Build a minimal Configuration with LRP enabled and sample_limit=None."""
-        from src.config.parser import (
-            Configuration,
-            DataConfig,
-            ModelConfig,
-            TrainingConfig,
-        )
+        from src.config.parser import Configuration, DataConfig, ModelConfig, TrainingConfig
         from src.explainability.xai.config import XAIConfig
 
         xai = XAIConfig(
@@ -786,12 +780,7 @@ class TestBug110DeadCodeWarningExploratory:
         import logging
 
         from src.config.manager import ConfigurationManager
-        from src.config.parser import (
-            Configuration,
-            DataConfig,
-            ModelConfig,
-            TrainingConfig,
-        )
+        from src.config.parser import Configuration, DataConfig, ModelConfig, TrainingConfig
         from src.explainability.xai.config import XAIConfig
 
         xai = XAIConfig(
@@ -847,8 +836,8 @@ class TestBug112CaptumTargetHardcodedExploratory:
 
         This test will PASS on unfixed code and FAIL after the fix is applied.
         """
-        from PIL import Image
         import torch
+        from PIL import Image
 
         from src.explainability.xai.lrp import _generate_lrp_with_captum
 
