@@ -114,6 +114,7 @@ ignore = [
 
 [tool.ruff.lint.isort]
 known-first-party = ["src"]
+known-third-party = ["yolo_cam"]
 force-sort-within-sections = true
 
 [tool.ruff.format]
