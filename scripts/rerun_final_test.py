@@ -8,14 +8,12 @@ Run from the project root:
     python scripts/rerun_final_test.py
 """
 
-import json
-import sys
 from pathlib import Path
+import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from src.training.evaluator import Metrics_Collector
-
 
 MODELS = {
     "yolov8n": {
@@ -41,7 +39,7 @@ MODELS = {
 SEED = 42
 
 
-def rebuild_data_yaml_with_val_as_test(model_name: str, output_dir: str) -> str:
+def rebuild_data_yaml_with_val_as_test(output_dir: str) -> str:
     """Create a data yaml where the test split points to val_fixed images."""
     import yaml
 
