@@ -1,8 +1,8 @@
 task: detect
 mode: train
-model: C:\Users\manig\Downloads\yolo-improvement-detection-moderation-paper\runs\yolov8n\incremental_round_4\weights\best.pt
+model: M:\_Research\yolo-improvement-detection-moderation-paper\.claude\worktrees\silly-archimedes\runs\yolov8n\incremental_round_4\weights\best.pt
 data: outputs\yolov8n\data_round_5.yaml
-epochs: 25
+epochs: 10
 time: null
 patience: 0
 batch: 16
@@ -12,7 +12,7 @@ save_period: -1
 cache: false
 device: '0'
 workers: 8
-project: C:\Users\manig\Downloads\yolo-improvement-detection-moderation-paper\runs
+project: M:\_Research\yolo-improvement-detection-moderation-paper\.claude\worktrees\silly-archimedes\runs
 name: incremental_round_5
 exist_ok: true
 pretrained: true
@@ -106,4 +106,4 @@ auto_augment: randaugment
 erasing: 0.4
 cfg: null
 tracker: botsort.yaml
-save_dir: C:\Users\manig\Downloads\yolo-improvement-detection-moderation-paper\runs\yolov8n\incremental_round_5
+save_dir: M:\_Research\yolo-improvement-detection-moderation-paper\.claude\worktrees\silly-archimedes\runs\yolov8n\incremental_round_5

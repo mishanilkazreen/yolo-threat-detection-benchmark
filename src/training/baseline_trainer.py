@@ -122,6 +122,12 @@ class Baseline_Trainer:
             name=f"{config_name}/{baseline_name}",
             exist_ok=True,
             verbose=True,
+            mosaic=getattr(config.training, "mosaic", 1.0),
+            scale=getattr(config.training, "scale", 0.5),
+            fliplr=getattr(config.training, "fliplr", 0.5),
+            hsv_h=getattr(config.training, "hsv_h", 0.015),
+            hsv_s=getattr(config.training, "hsv_s", 0.7),
+            hsv_v=getattr(config.training, "hsv_v", 0.4),
         )
 
         training_time = time.time() - train_start

@@ -44,10 +44,22 @@ class Round_Metrics_Tracker:
         output_path = Path(output_dir)
         output_path.mkdir(parents=True, exist_ok=True)
 
+        # Build the persisted metrics dict, explicitly including Table-1 fields when present
+        persisted = dict(metrics)
+        for field in (
+            "unlabeled_pool_size_at_round_start",
+            "total_detections",
+            "rejected_count",
+            "undetected_count",
+            "remaining_pool_size",
+        ):
+            if field in metrics:
+                persisted[field] = metrics[field]
+
         # Save round-specific metrics
         round_file = output_path / f"round_{round_num}_metrics.json"
         with open(round_file, "w") as f:
-            json.dump(metrics, f, indent=2)
+            json.dump(persisted, f, indent=2)
 
         logger.info(f"Saved round {round_num} metrics to {round_file}")
 
@@ -118,6 +130,11 @@ class Round_Metrics_Tracker:
             "round",
             "training_set_size",
             "verified_samples_added",
+            "unlabeled_pool_size_at_round_start",
+            "total_detections",
+            "rejected_count",
+            "undetected_count",
+            "remaining_pool_size",
             "unlabeled_pool_remaining",
             "mAP50",
             "mAP50-95",
@@ -139,6 +156,13 @@ class Round_Metrics_Tracker:
                     "round": round_data.get("round", 0),
                     "training_set_size": round_data.get("training_set_size", 0),
                     "verified_samples_added": round_data.get("verified_samples_added", 0),
+                    "unlabeled_pool_size_at_round_start": round_data.get(
+                        "unlabeled_pool_size_at_round_start", ""
+                    ),
+                    "total_detections": round_data.get("total_detections", ""),
+                    "rejected_count": round_data.get("rejected_count", ""),
+                    "undetected_count": round_data.get("undetected_count", ""),
+                    "remaining_pool_size": round_data.get("remaining_pool_size", ""),
                     "unlabeled_pool_remaining": round_data.get("unlabeled_pool_remaining", 0),
                 }
 

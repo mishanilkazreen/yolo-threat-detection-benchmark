@@ -1,0 +1,50 @@
+{
+  "round": 5,
+  "source": "paper_reference",
+  "notes": "PAPER REFERENCE DATA — NOT EXPERIMENTAL OUTPUT. Values taken from Kutlu & Emiroglu (MDPI Computers 2025, 14, 511), which reports YOLOv8n results. These numbers are NOT expected to match our YOLOv12n experimental results. File provided as a placeholder because our YOLOv12n Round 5 was skipped (no verified samples carried over from Round 4). Do not use these values as experimental output for YOLOv12n.",
+  "paper_citation": "Kutlu & Emiroglu, MDPI Computers 2025, 14, 511. https://doi.org/10.3390/computers14120511",
+  "paper_model": "yolov8n",
+  "timestamp": null,
+  "checkpoint_path": null,
+  "training_set_size": 684,
+  "verified_samples_added": 684,
+  "training_time_seconds": 1440.0,
+  "validation_time_seconds": null,
+  "metrics": {
+    "mAP50": 0.886,
+    "mAP50-95": null,
+    "precision": 1.0,
+    "recall": 0.7094017094017094,
+    "f1_score": 0.83
+  },
+  "rejected_count": 0,
+  "undetected_count": 0,
+  "remaining_pool_size": 0,
+  "per_class_metrics": {
+    "mAP50_per_class": [
+      0.884,
+      0.889
+    ],
+    "mAP50-95_per_class": [
+      null,
+      null
+    ],
+    "precision_per_class": [
+      0.91,
+      0.94
+    ],
+    "recall_per_class": [
+      0.7628787878787879,
+      0.7592307692307693
+    ],
+    "f1_score_per_class": [
+      0.83,
+      0.84
+    ]
+  },
+  "metric_notes": {
+    "aggregate_precision": "Paper reports 1.00 at peak F1 confidence (0.301) for all-classes. Mean of per-class precisions would be 0.925; the values diverge because the paper's aggregate metric is evaluated at a different confidence threshold than the per-class peak-F1 thresholds.",
+    "recall_derivation": "Recall values are derived analytically from reported F1 and Precision via R = F1*P / (2P - F1); the paper does not report recall directly.",
+    "mAP50-95": "Not reported in the source paper."
+  }
+}

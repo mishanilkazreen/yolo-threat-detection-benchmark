@@ -307,7 +307,7 @@ class Experiment_Runner:
     ) -> dict[str, Any]:
         """Run 5-round incremental training with edge-cloud simulation.
 
-        Trains on newly verified samples per round (not cumulative).
+        Trains cumulatively — each round trains on all verified samples accumulated so far.
 
         Args:
             config: Training configuration
@@ -320,7 +320,7 @@ class Experiment_Runner:
         """
         self.logger.info(f"Starting incremental training: {config.training.rounds} rounds")
         self.logger.info(
-            "ARCHITECTURE: Fine-tuning on ONLY newly verified samples per round (not cumulative)"
+            "ARCHITECTURE: Cumulative training — each round trains on all verified samples accumulated so far"
         )
 
         # Get incremental training parameters
@@ -371,67 +371,43 @@ class Experiment_Runner:
 
         base_path = Path(data_config.get("path", "."))
         train_path = base_path / data_config["train"]
-        val_path = base_path / data_config.get("val", "valid/images")
-        test_path = (
-            base_path / data_config.get("test", "test/images") if "test" in data_config else None
-        )
 
-        # Step 1: Split dataset into train_init, unlabeled_pool, val_fixed, test_fixed
+        # Step 1: Build the 70/20/10 split from the full image pool using
+        # Dataset_Splitter.  The Roboflow download has no test directory, so
+        # the splitter pools train/ + valid/ and re-partitions from scratch.
         self.logger.info(
-            f"Splitting dataset (train_init={train_init_percentage * 100}%, seed={seed})..."
+            f"Splitting full image pool into 70/20/10 "
+            f"(train_init={train_init_percentage * 100:.0f}%, seed={seed})..."
         )
 
-        # Get all training images
-        train_images = self._get_all_images(train_path)
-
-        # Shuffle and split training data
-        np.random.seed(seed)
-        train_images_shuffled = train_images.copy()
-        np.random.shuffle(train_images_shuffled)
-
-        split_idx = int(len(train_images_shuffled) * train_init_percentage)
-        train_init = train_images_shuffled[:split_idx]
-        unlabeled_pool = train_images_shuffled[split_idx:]
-
-        # Get validation and test images
-        val_fixed = self._get_all_images(val_path) if val_path.exists() else []
-        test_fixed = self._get_all_images(test_path) if test_path and test_path.exists() else []
-
-        # Verify that the dataset split approximates the expected 70/20/10 ratio
-        self._verify_split_ratio(
-            train_count=len(train_images),
-            val_count=len(val_fixed),
-            test_count=len(test_fixed),
+        split_result = self.splitter.create_incremental_splits(
+            data_yaml_path=config.data.yaml_path,
+            train_init_percentage=train_init_percentage,
+            output_dir=output_dir,
         )
 
-        # Save split metadata
-        metadata = {
-            "train_init_count": len(train_init),
-            "unlabeled_pool_count": len(unlabeled_pool),
-            "val_fixed_count": len(val_fixed),
-            "test_fixed_count": len(test_fixed),
-            "train_init_percentage": train_init_percentage,
-            "random_seed": seed,
-        }
+        def _load_txt(path: str) -> list[str]:
+            return [ln.strip() for ln in Path(path).read_text().splitlines() if ln.strip()]
 
-        metadata_file = Path(output_dir) / "split_metadata.json"
-        with open(metadata_file, "w") as f:
-            import json
-
-            json.dump(metadata, f, indent=2)
-
-        self.logger.info(f"Split metadata saved to {metadata_file}")
-        self.logger.info(f"  train_init: {len(train_init)} images")
-        self.logger.info(f"  unlabeled_pool: {len(unlabeled_pool)} images")
-        self.logger.info(f"  val_fixed: {len(val_fixed)} images")
-        self.logger.info(f"  test_fixed: {len(test_fixed)} images")
-
+        sf = split_result["split_files"]
         splits = {
-            "train_init": train_init,
-            "unlabeled_pool": unlabeled_pool,
-            "val_fixed": val_fixed,
-            "test_fixed": test_fixed,
+            "train_init": _load_txt(sf["train_init"]),
+            "unlabeled_pool": _load_txt(sf["unlabeled_pool"]),
+            "val_fixed": _load_txt(sf["val_fixed"]),
+            "test_fixed": _load_txt(sf["test_fixed"]),
         }
+
+        self.logger.info(f"  train_init: {len(splits['train_init'])} images")
+        self.logger.info(f"  unlabeled_pool: {len(splits['unlabeled_pool'])} images")
+        self.logger.info(f"  val_fixed: {len(splits['val_fixed'])} images")
+        self.logger.info(f"  test_fixed: {len(splits['test_fixed'])} images")
+
+        # Verify that the split approximates the expected 70/20/10 ratio
+        self._verify_split_ratio(
+            train_count=len(splits["train_init"]) + len(splits["unlabeled_pool"]),
+            val_count=len(splits["val_fixed"]),
+            test_count=len(splits["test_fixed"]),
+        )
 
         # Track data.yaml files for each round (populated as rounds execute)
         round_data_yamls: dict[int, str] = {}
@@ -447,6 +423,9 @@ class Experiment_Runner:
         # Track metrics across rounds
         all_round_metrics = []
         best_checkpoint_path = None
+        best_overall_checkpoint_path = None
+        best_overall_map50 = -1.0
+        best_overall_round = -1
         total_training_time = 0.0
 
         # Select device
@@ -541,6 +520,12 @@ class Experiment_Runner:
                 name=f"{config_name}/incremental_round_{round_num}",
                 exist_ok=True,
                 verbose=True,
+                mosaic=config.training.mosaic,
+                scale=config.training.scale,
+                fliplr=config.training.fliplr,
+                hsv_h=config.training.hsv_h,
+                hsv_s=config.training.hsv_s,
+                hsv_v=config.training.hsv_v,
             )
 
             round_training_time = time.time() - round_train_start
@@ -589,7 +574,9 @@ class Experiment_Runner:
             # Load pool statistics from previous round's validation (if available)
             rejected_count = None
             undetected_count = None
+            total_detections = None
             remaining_pool_size = len(unlabeled_pool) if unlabeled_pool else None
+            unlabeled_pool_size_at_round_start = len(unlabeled_pool) if unlabeled_pool else None
 
             if round_num > 1:
                 # Load validation results from previous round (file already opened above for verified count)
@@ -600,6 +587,7 @@ class Experiment_Runner:
                             prev_validation = json.load(f)
                             rejected_count = prev_validation.get("rejected_count")
                             undetected_count = prev_validation.get("undetected_count")
+                            total_detections = prev_validation.get("total_detections")
                     except Exception as e:
                         self.logger.warning(f"Could not load previous validation results: {e}")
 
@@ -614,9 +602,20 @@ class Experiment_Runner:
                 rejected_count=rejected_count,
                 undetected_count=undetected_count,
                 remaining_pool_size=remaining_pool_size,
+                unlabeled_pool_size_at_round_start=unlabeled_pool_size_at_round_start,
+                total_detections=total_detections,
             )
 
             all_round_metrics.append(round_metrics)
+
+            round_map50 = round_metrics["metrics"]["mAP50"]
+            if round_map50 > best_overall_map50:
+                best_overall_map50 = round_map50
+                best_overall_checkpoint_path = best_checkpoint_path
+                best_overall_round = round_num
+                self.logger.info(
+                    f"New best overall checkpoint: Round {round_num} (val mAP50={round_map50:.4f})"
+                )
 
             # Run XAI processing if enabled
             xai_manager = self._get_xai_manager(config)
@@ -630,6 +629,19 @@ class Experiment_Runner:
                     round_num=round_num,
                     model_name=config_name,
                     round_name=f"incremental_round_{round_num}",
+                )
+
+            # Round 5 special case: add all remaining pool images unconditionally
+            if round_num == rounds and len(unlabeled_pool) > 0:
+                self.training_set_manager.add_verified_samples(
+                    current_training_images,
+                    unlabeled_pool.copy(),
+                    unlabeled_pool,
+                    output_dir,
+                    round_num,
+                )
+                self.logger.info(
+                    f"Round 5: added all {len(unlabeled_pool)} remaining pool images unconditionally"
                 )
 
             # If not the last round, run edge-cloud simulation
@@ -668,31 +680,27 @@ class Experiment_Runner:
                 self.logger.info(f"Verified {len(verified_images)} images for next round")
                 self.logger.info(f"Undetected: {len(undetected_images)} images (stay in pool)")
 
-                # For Round N+1, fine-tune on only the newly verified images from this round.
-                # Round 1: train_init only
-                # Round 2: verified images from Round 1 simulation only
-                # Round 3: verified images from Round 2 simulation only, etc.
+                # For Round N+1, add verified images to the cumulative training set.
                 if len(verified_images) > 0:
-                    # Remove verified images from the unlabeled pool and log the transition.
-                    # We do NOT accumulate into current_training_images — next round trains
-                    # on the verified batch only.
-                    self.training_set_manager.remove_from_pool(
-                        verified_images=verified_images,
-                        unlabeled_pool=unlabeled_pool,
-                        output_dir=output_dir,
-                        round_num=round_num + 1,
+                    # Add verified images to the cumulative training set and remove them
+                    # from the unlabeled pool (both lists modified in-place).
+                    self.training_set_manager.add_verified_samples(
+                        current_training_images,
+                        verified_images,
+                        unlabeled_pool,
+                        output_dir,
+                        round_num + 1,
                     )
-                    current_training_images = verified_images.copy()
 
                     self.logger.info(
-                        f"Next round will fine-tune on {len(current_training_images)} newly verified images"
+                        f"Next round will train on {len(current_training_images)} cumulative images"
                     )
                 else:
                     self.logger.warning(
                         f"No verified samples found in Round {round_num}. "
-                        f"Round {round_num + 1} will be skipped."
+                        f"Round {round_num + 1} will train on the same cumulative set "
+                        f"({len(current_training_images)} images)."
                     )
-                    current_training_images = []
 
             # Clean up memory after each round to prevent accumulation
             # Delete model object to free GPU/CPU memory
@@ -704,27 +712,29 @@ class Experiment_Runner:
             self._cleanup_memory()
             self.logger.info(f"Round {round_num} completed, memory cleaned up")
 
-        # After all rounds complete, evaluate final model on test_fixed
+        # After all rounds complete, evaluate final model on test set using the
+        # best checkpoint across all rounds (by val mAP50), not the last round's.
+        final_checkpoint = best_overall_checkpoint_path or best_checkpoint_path
+
         self.logger.info(f"\n{'=' * 60}")
-        self.logger.info("Evaluating final model on test set...")
+        self.logger.info(
+            f"Evaluating final model on test set (best checkpoint from Round {best_overall_round}, "
+            f"val mAP50={best_overall_map50:.4f})..."
+        )
         self.logger.info(f"{'=' * 60}\n")
 
-        if best_checkpoint_path is None:
+        if final_checkpoint is None:
             raise ValueError("No best checkpoint found after training rounds")
-
-        # Type assertion: best_checkpoint_path is guaranteed to be str here
-        assert best_checkpoint_path is not None
 
         if not round_data_yamls:
             raise ValueError(
                 "No round data YAMLs were created during training; cannot perform final evaluation."
             )
 
-        # Use the highest round index for which a data.yaml was actually created
         last_round_with_yaml = max(round_data_yamls.keys())
 
         final_test_metrics = self.metrics_collector.evaluate_final_test(
-            checkpoint_path=best_checkpoint_path,
+            checkpoint_path=final_checkpoint,
             data_yaml=round_data_yamls[last_round_with_yaml],
             output_dir=output_dir,
             config_name=config_name,
@@ -883,16 +893,25 @@ class Experiment_Runner:
             )
 
     def _get_all_images(self, image_dir: Path) -> list[str]:
-        """Get all image files from a directory, returning only filenames."""
+        """Get all image files from a directory, returning only filenames.
+
+        Deduplicates case-insensitively so that on Windows NTFS (where
+        ``*.jpg`` and ``*.JPG`` globs return the same physical files) each
+        file appears exactly once.
+        """
         if not image_dir.exists():
             return []
 
         image_extensions = {".jpg", ".jpeg", ".png", ".bmp", ".tiff", ".tif"}
-        images = []
+        seen: set[str] = set()
+        images: list[str] = []
 
-        for ext in image_extensions:
-            images.extend([p.name for p in image_dir.glob(f"*{ext}")])
-            images.extend([p.name for p in image_dir.glob(f"*{ext.upper()}")])
+        for p in sorted(image_dir.iterdir()):
+            if p.suffix.lower() in image_extensions:
+                key = p.name.lower()
+                if key not in seen:
+                    seen.add(key)
+                    images.append(p.name)
 
         return sorted(images)
 
@@ -919,33 +938,24 @@ class Experiment_Runner:
         val_list = round_dir / "val.txt"
         test_list = round_dir / "test.txt"
 
-        # Write image lists (full paths constructed from filenames)
-        train_image_dir = base_path / "train" / "images"
-        val_image_dir = base_path / "valid" / "images"
-
+        # training_images / val_images / test_images already contain absolute paths
+        # written by Dataset_Splitter.  Write them straight through — do NOT
+        # prepend a hardcoded directory, because images may physically live in
+        # either train/images or valid/images depending on the 70/20/10 split.
         with open(train_list, "w") as f:
-            full_paths = [str((train_image_dir / img).absolute()) for img in training_images]
-            f.write("\n".join(full_paths))
+            f.write("\n".join(str(p) for p in training_images))
 
         with open(val_list, "w") as f:
             if val_images:
-                full_paths = [str((val_image_dir / img).absolute()) for img in val_images]
-                f.write("\n".join(full_paths))
+                f.write("\n".join(str(p) for p in val_images))
             else:
-                # If no val images, use train images for validation
-                full_paths = [str((train_image_dir / img).absolute()) for img in training_images]
-                f.write("\n".join(full_paths))
+                f.write("\n".join(str(p) for p in training_images))
 
         with open(test_list, "w") as f:
             if test_images:
-                # Test images would be in test/images if they existed
-                test_image_dir = base_path / "test" / "images"
-                full_paths = [str((test_image_dir / img).absolute()) for img in test_images]
-                f.write("\n".join(full_paths))
+                f.write("\n".join(str(p) for p in test_images))
             else:
-                # If no test images, use train images for testing
-                full_paths = [str((train_image_dir / img).absolute()) for img in training_images]
-                f.write("\n".join(full_paths))
+                f.write("\n".join(str(p) for p in val_images))
 
         # Update data config with absolute paths
         data_config["train"] = str(train_list.absolute())
@@ -980,8 +990,6 @@ class Experiment_Runner:
 
     def _aggregate_multi_run_results(self, all_metrics: list, config_name: str) -> dict[str, Any]:
         """Aggregate results from multiple runs."""
-
-        import numpy as np
 
         # Extract mAP50 values
         map50_values = [m["metrics"]["mAP50"] for m in all_metrics]

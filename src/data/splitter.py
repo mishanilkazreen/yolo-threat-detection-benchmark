@@ -46,27 +46,42 @@ class Dataset_Splitter:
         output_dir: str = "config/data",
     ) -> dict[str, Any]:
         """
-        Create deterministic train_init, unlabeled_pool, val_fixed, test_fixed splits.
+        Create deterministic train / val / test / train_init / unlabeled_pool splits.
+
+        The Roboflow download provides only ``train/`` and ``valid/`` directories
+        with no separate test set.  This method therefore pools *all* 5,064 images
+        and re-partitions them from scratch using a stratified 70 / 20 / 10 split:
+
+        - train  (70 %) → 3,543 images  → further split into train_init (20 %) and
+                                           unlabeled_pool (80 %)
+        - val    (20 %) → 1,013 images  → val_fixed (unchanged across rounds)
+        - test   (10 %) →   508 images  → test_fixed (unchanged across rounds)
+
+        All splits are stratified by the first class label in each annotation file
+        and are fully deterministic given ``random_seed``.
 
         Args:
-            data_yaml_path: Path to original data.yaml
-            train_init_percentage: Percentage of training data for initial round (default: 0.2)
-            output_dir: Directory to save split metadata and split files
+            data_yaml_path: Path to the project data YAML
+                (must point to a dataset root that contains ``train/images`` and
+                ``valid/images``; a ``test/images`` directory is optional and
+                ignored — the test split is carved out of the full pool here).
+            train_init_percentage: Fraction of the *train* partition used as the
+                initial labelled set (default 0.2 → 709 images).
+            output_dir: Directory where split ``.txt`` files and metadata are saved.
 
         Returns:
-            Dictionary with split paths and metadata
+            Dictionary with keys ``split_files``, ``metadata``, ``metadata_file``.
 
         Raises:
-            FileNotFoundError: If data.yaml or dataset directories not found
-            ValueError: If train_init_percentage is not in (0, 1]
+            FileNotFoundError: If data.yaml or required image directories are missing.
+            ValueError: If ``train_init_percentage`` is outside (0, 1] or the total
+                image count does not equal 5,064.
         """
-        # Validate train_init_percentage
         if not 0 < train_init_percentage <= 1.0:
             raise ValueError(
                 f"train_init_percentage must be in (0, 1], got {train_init_percentage}"
             )
 
-        # Load original data.yaml
         data_yaml_file = Path(data_yaml_path)
         if not data_yaml_file.exists():
             raise FileNotFoundError(f"Data YAML not found: {data_yaml_file}")
@@ -74,73 +89,217 @@ class Dataset_Splitter:
         with open(data_yaml_file) as f:
             data_config = yaml.safe_load(f)
 
-        # Get dataset paths
         dataset_root = Path(data_config.get("path", ""))
-        train_dir = dataset_root / data_config.get("train", "images/train")
-        val_dir = dataset_root / data_config.get("val", "images/val")
-        test_dir = dataset_root / data_config.get("test", "images/test")
 
-        # Verify directories exist
-        for split_name, split_dir in [("train", train_dir), ("val", val_dir), ("test", test_dir)]:
-            if not split_dir.exists():
-                raise FileNotFoundError(f"{split_name} directory not found: {split_dir}")
+        # Collect images from every available split directory.
+        # The Roboflow download uses "train" and "valid"; there is no "test" dir.
+        candidate_dirs = [
+            dataset_root / data_config.get("train", "train/images"),
+            dataset_root / data_config.get("val", "valid/images"),
+        ]
+        # Include a test dir only if it actually exists (future-proofing).
+        test_key = data_config.get("test", "test/images")
+        test_candidate = dataset_root / test_key
+        if test_candidate.exists():
+            candidate_dirs.append(test_candidate)
 
-        # Get all image files
-        train_images = self._get_image_files(train_dir)
-        val_images = self._get_image_files(val_dir)
-        test_images = self._get_image_files(test_dir)
+        # Verify at least the mandatory directories exist
+        for d in candidate_dirs[:2]:
+            if not d.exists():
+                raise FileNotFoundError(f"Image directory not found: {d}")
 
-        logger.info(f"Found {len(train_images)} training images")
-        logger.info(f"Found {len(val_images)} validation images")
-        logger.info(f"Found {len(test_images)} test images")
+        # Gather all images into one deduplicated pool.
+        # We tag each filename with its source labels directory so we can look up
+        # annotations regardless of which Roboflow sub-folder it came from.
+        all_images: list[str] = []
+        # Map filename → labels_dir (first occurrence wins on collision)
+        filename_to_labels: dict[str, Path] = {}
 
-        # Verify no duplicates across splits
-        self._verify_no_duplicates(train_images, val_images, test_images)
+        for img_dir in candidate_dirs:
+            labels_dir = self._get_labels_dir(img_dir)
+            for fname in self._get_image_files(img_dir):
+                if fname not in filename_to_labels:
+                    all_images.append(fname)
+                    filename_to_labels[fname] = labels_dir
 
-        # Split training data into train_init and unlabeled_pool
-        random.shuffle(train_images)  # Shuffle with fixed seed
-        train_init_size = max(1, int(len(train_images) * train_init_percentage))
-        train_init_images = train_images[:train_init_size]
-        unlabeled_pool_images = train_images[train_init_size:]
+        total = len(all_images)
+        logger.info(f"Full image pool: {total} unique images")
+
+        if total != 5064:
+            raise ValueError(
+                f"Dataset total image count is {total}, expected 5064. "
+                "Check that the dataset download is complete and no images are missing."
+            )
+
+        # ── Step 1: stratified 70 / 20 / 10 split of the full pool ──────────
+        # We need a single unified labels lookup for the stratified split.
+        # Build a temporary labels dir that the helper can use by passing a
+        # sentinel; instead we use a thin wrapper approach: create a temporary
+        # merged labels dir mapping or override _stratified_split inline.
+        #
+        # Simpler: build a temporary directory of symlinks / copies is fragile on
+        # Windows.  Instead we inline the grouping here using filename_to_labels.
+
+        # Group images by first class label using the per-file labels mapping.
+        class_groups: dict[int, list[str]] = defaultdict(list)
+        unlabeled_pool_imgs: list[str] = []
+
+        for fname in all_images:
+            labels_dir = filename_to_labels[fname]
+            label_file = labels_dir / Path(fname).with_suffix(".txt").name
+            class_id: int | None = None
+            if label_file.exists():
+                with open(label_file) as f:
+                    for line in f:
+                        line = line.strip()
+                        if line:
+                            parts = line.split()
+                            if parts:
+                                class_id = int(parts[0])
+                                break
+            if class_id is not None:
+                class_groups[class_id].append(fname)
+            else:
+                unlabeled_pool_imgs.append(fname)
+
+        rng = random.Random(self.random_seed)
+
+        train_images: list[str] = []
+        val_images: list[str] = []
+        test_images: list[str] = []
+
+        for cid in sorted(class_groups.keys()):
+            group = class_groups[cid][:]
+            rng.shuffle(group)
+            n = len(group)
+            n_train = round(n * 0.70)
+            n_val = round(n * 0.20)
+            # test gets the remainder so counts always sum to n
+            train_images.extend(group[:n_train])
+            val_images.extend(group[n_train : n_train + n_val])
+            test_images.extend(group[n_train + n_val :])
+
+        # Distribute unlabeled images with the same 70/20/10 proportions
+        if unlabeled_pool_imgs:
+            rng.shuffle(unlabeled_pool_imgs)
+            n = len(unlabeled_pool_imgs)
+            n_train = round(n * 0.70)
+            n_val = round(n * 0.20)
+            train_images.extend(unlabeled_pool_imgs[:n_train])
+            val_images.extend(unlabeled_pool_imgs[n_train : n_train + n_val])
+            test_images.extend(unlabeled_pool_imgs[n_train + n_val :])
 
         logger.info(
-            f"Split training data: {len(train_init_images)} train_init, "
-            f"{len(unlabeled_pool_images)} unlabeled_pool"
+            f"70/20/10 split: {len(train_images)} train, "
+            f"{len(val_images)} val, {len(test_images)} test"
         )
 
-        # Get class distributions
-        labels_dir = self._get_labels_dir(train_dir)
-        train_init_dist = self._get_class_distribution(train_init_images, labels_dir)
-        unlabeled_pool_dist = self._get_class_distribution(unlabeled_pool_images, labels_dir)
+        # ── Step 2: split train into train_init + unlabeled_pool ─────────────
+        # Re-use _stratified_split but we need a unified labels lookup.
+        # Build a temporary merged labels dir is not portable; instead replicate
+        # the stratified logic inline using filename_to_labels.
 
-        val_labels_dir = self._get_labels_dir(val_dir)
-        val_dist = self._get_class_distribution(val_images, val_labels_dir)
+        train_class_groups: dict[int, list[str]] = defaultdict(list)
+        train_unlabeled: list[str] = []
 
-        test_labels_dir = self._get_labels_dir(test_dir)
-        test_dist = self._get_class_distribution(test_images, test_labels_dir)
+        for fname in train_images:
+            labels_dir = filename_to_labels[fname]
+            label_file = labels_dir / Path(fname).with_suffix(".txt").name
+            class_id = None
+            if label_file.exists():
+                with open(label_file) as f:
+                    for line in f:
+                        line = line.strip()
+                        if line:
+                            parts = line.split()
+                            if parts:
+                                class_id = int(parts[0])
+                                break
+            if class_id is not None:
+                train_class_groups[class_id].append(fname)
+            else:
+                train_unlabeled.append(fname)
 
-        # Create output directory
+        rng2 = random.Random(self.random_seed)
+        train_init_images: list[str] = []
+        unlabeled_pool_images: list[str] = []
+
+        for cid in sorted(train_class_groups.keys()):
+            group = train_class_groups[cid][:]
+            rng2.shuffle(group)
+            split_idx = max(1, int(len(group) * train_init_percentage)) if group else 0
+            train_init_images.extend(group[:split_idx])
+            unlabeled_pool_images.extend(group[split_idx:])
+
+        if train_unlabeled:
+            rng2.shuffle(train_unlabeled)
+            split_idx = max(1, int(len(train_unlabeled) * train_init_percentage))
+            train_init_images.extend(train_unlabeled[:split_idx])
+            unlabeled_pool_images.extend(train_unlabeled[split_idx:])
+
+        logger.info(
+            f"train_init: {len(train_init_images)}, unlabeled_pool: {len(unlabeled_pool_images)}"
+        )
+
+        # ── Step 3: compute class distributions ──────────────────────────────
+        def _dist(imgs: list[str]) -> list[int]:
+            counts: dict[int, int] = defaultdict(int)
+            for fname in imgs:
+                ldir = filename_to_labels[fname]
+                lf = ldir / Path(fname).with_suffix(".txt").name
+                if lf.exists():
+                    with open(lf) as f:
+                        for line in f:
+                            line = line.strip()
+                            if line:
+                                parts = line.split()
+                                if len(parts) >= 5:
+                                    counts[int(parts[0])] += 1
+            if not counts:
+                return []
+            return [counts.get(i, 0) for i in range(max(counts) + 1)]
+
+        # ── Step 4: persist split files ───────────────────────────────────────
+        # Write *absolute* image paths so that YOLO (and _create_round_data_yaml)
+        # can locate each file regardless of which Roboflow sub-directory it
+        # physically lives in.  Images from valid/images that were reassigned to
+        # the train partition would be silently skipped if we wrote bare filenames
+        # and the caller prepended train/images/.
         output_path = Path(output_dir)
         output_path.mkdir(parents=True, exist_ok=True)
 
-        # Save split files
-        splits = {
+        # Build a map from filename → absolute image path using the source dirs
+        # we already collected in filename_to_labels.
+        filename_to_img_dir: dict[str, Path] = {}
+        for img_dir in candidate_dirs:
+            for fname in self._get_image_files(img_dir):
+                if fname not in filename_to_img_dir:
+                    filename_to_img_dir[fname] = img_dir.resolve()
+
+        def _abs_path(fname: str) -> str:
+            img_dir = filename_to_img_dir.get(fname)
+            if img_dir is None:
+                # Fallback: shouldn't happen, but keep the bare name so the
+                # caller can surface a clear "not found" error from YOLO.
+                return fname
+            return str(img_dir / fname)
+
+        splits_map = {
             "train_init": train_init_images,
             "unlabeled_pool": unlabeled_pool_images,
             "val_fixed": val_images,
             "test_fixed": test_images,
         }
 
-        split_files = {}
-        for split_name, images in splits.items():
+        split_files: dict[str, str] = {}
+        for split_name, imgs in splits_map.items():
             split_file = output_path / f"{split_name}.txt"
             with open(split_file, "w") as f:
-                for img in images:
-                    f.write(f"{img}\n")
+                for img in imgs:
+                    f.write(f"{_abs_path(img)}\n")
             split_files[split_name] = str(split_file)
-            logger.info(f"Saved {split_name} to {split_file}")
+            logger.info(f"Saved {split_name} ({len(imgs)} images) to {split_file}")
 
-        # Create split metadata
         metadata = {
             "timestamp": self._get_timestamp(),
             "random_seed": self.random_seed,
@@ -149,18 +308,23 @@ class Dataset_Splitter:
             "splits": {
                 "train_init": {
                     "num_images": len(train_init_images),
-                    "class_distribution": train_init_dist,
+                    "class_distribution": _dist(train_init_images),
                 },
                 "unlabeled_pool": {
                     "num_images": len(unlabeled_pool_images),
-                    "class_distribution": unlabeled_pool_dist,
+                    "class_distribution": _dist(unlabeled_pool_images),
                 },
-                "val_fixed": {"num_images": len(val_images), "class_distribution": val_dist},
-                "test_fixed": {"num_images": len(test_images), "class_distribution": test_dist},
+                "val_fixed": {
+                    "num_images": len(val_images),
+                    "class_distribution": _dist(val_images),
+                },
+                "test_fixed": {
+                    "num_images": len(test_images),
+                    "class_distribution": _dist(test_images),
+                },
             },
         }
 
-        # Save metadata
         metadata_file = output_path / "split_metadata.json"
         with open(metadata_file, "w") as f:
             json.dump(metadata, f, indent=2)
@@ -174,22 +338,29 @@ class Dataset_Splitter:
 
     def _get_image_files(self, image_dir: Path) -> list[str]:
         """
-        Get all image files from a directory.
+        Get all image files from a directory, deduplicated case-insensitively.
+
+        On case-insensitive filesystems (e.g. Windows NTFS) globbing for both
+        ``*.jpg`` and ``*.JPG`` returns the same physical files twice.  We
+        normalise by lower-casing the stem before deduplication so that each
+        physical file appears exactly once in the returned list.
 
         Args:
             image_dir: Directory containing images
 
         Returns:
-            List of image file paths (relative to image_dir)
+            Sorted list of unique image filenames (relative to image_dir)
         """
         image_extensions = {".jpg", ".jpeg", ".png", ".bmp", ".tif", ".tiff"}
-        images = []
+        seen: set[str] = set()
+        images: list[str] = []
 
-        for ext in image_extensions:
-            images.extend([str(p.relative_to(image_dir)) for p in image_dir.glob(f"*{ext}")])
-            images.extend(
-                [str(p.relative_to(image_dir)) for p in image_dir.glob(f"*{ext.upper()}")]
-            )
+        for p in sorted(image_dir.iterdir()):
+            if p.suffix.lower() in image_extensions:
+                key = p.name.lower()
+                if key not in seen:
+                    seen.add(key)
+                    images.append(p.name)
 
         return sorted(images)
 
@@ -243,6 +414,73 @@ class Dataset_Splitter:
         distribution = [class_counts.get(i, 0) for i in range(max_class + 1)]
 
         return distribution
+
+    def _stratified_split(
+        self,
+        images: list[str],
+        labels_dir: Path,
+        fraction: float,
+        seed: int,
+    ) -> tuple[list[str], list[str]]:
+        """
+        Split images into two partitions while preserving per-class proportions.
+
+        Groups image filenames by class label (reads the first class ID from each
+        .txt annotation file), shuffles each per-class list with the given seed,
+        takes `fraction` of each class list for the first partition and the
+        remainder for the second, then concatenates and returns both partitions.
+
+        Args:
+            images: List of image filenames to split.
+            labels_dir: Directory containing YOLO .txt annotation files.
+            fraction: Fraction of each class to place in the first partition (0, 1].
+            seed: Random seed for reproducible shuffling.
+
+        Returns:
+            Tuple (first_partition, second_partition) where first_partition contains
+            approximately `fraction` of each class and second_partition the rest.
+        """
+        # Group images by their first class label
+        class_groups: dict[int, list[str]] = defaultdict(list)
+        unlabeled: list[str] = []
+
+        for img_file in images:
+            label_file = labels_dir / Path(img_file).with_suffix(".txt").name
+            class_id: int | None = None
+            if label_file.exists():
+                with open(label_file) as f:
+                    for line in f:
+                        line = line.strip()
+                        if line:
+                            parts = line.split()
+                            if parts:
+                                class_id = int(parts[0])
+                                break
+            if class_id is not None:
+                class_groups[class_id].append(img_file)
+            else:
+                unlabeled.append(img_file)
+
+        first_partition: list[str] = []
+        second_partition: list[str] = []
+
+        rng = random.Random(seed)
+
+        for class_id in sorted(class_groups.keys()):
+            group = class_groups[class_id][:]
+            rng.shuffle(group)
+            split_idx = max(1, int(len(group) * fraction)) if len(group) > 0 else 0
+            first_partition.extend(group[:split_idx])
+            second_partition.extend(group[split_idx:])
+
+        # Distribute unlabeled images proportionally using the same rng
+        if unlabeled:
+            rng.shuffle(unlabeled)
+            split_idx = max(1, int(len(unlabeled) * fraction)) if unlabeled else 0
+            first_partition.extend(unlabeled[:split_idx])
+            second_partition.extend(unlabeled[split_idx:])
+
+        return first_partition, second_partition
 
     def _verify_no_duplicates(
         self, train_images: list[str], val_images: list[str], test_images: list[str]
@@ -322,14 +560,11 @@ class Dataset_Splitter:
         if not train_images:
             raise ValueError(f"No images found in {train_dir}")
 
-        # Shuffle images deterministically
-        train_images_shuffled = train_images.copy()
-        np.random.shuffle(train_images_shuffled)
-
-        # Split into train_init and unlabeled_pool
-        split_idx = int(len(train_images_shuffled) * train_init_percentage)
-        train_init = train_images_shuffled[:split_idx]
-        unlabeled_pool = train_images_shuffled[split_idx:]
+        # Shuffle and split images deterministically using stratified split
+        labels_dir = self._get_labels_dir(train_path)
+        train_init, unlabeled_pool = self._stratified_split(
+            train_images, labels_dir, train_init_percentage, self.random_seed
+        )
 
         # For val_fixed and test_fixed, we need to find val and test directories
         # Assume they are siblings of the train directory

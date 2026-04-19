@@ -1,8 +1,8 @@
 # YOLO12n Training Configuration
 
 training:
-  epochs: 125
-  epochs_per_round: 25
+  epochs: 50
+  epochs_per_round: 10
   rounds: 5
   patience: 10
   image_size: 640
@@ -22,6 +22,14 @@ data:
   yaml_path: "config/data/weapon_detection_data.yaml"
   train_init_percentage: 0.2
   iou_threshold: 0.5
+
+augmentation:
+  mosaic: 1.0
+  scale: 0.5
+  fliplr: 0.5
+  hsv_h: 0.015
+  hsv_s: 0.7
+  hsv_v: 0.4
 
 xai:
   enabled: true

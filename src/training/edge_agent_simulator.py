@@ -313,7 +313,7 @@ class Edge_Agent_Simulator:
 
                     for i in range(len(boxes)):
                         detection = {
-                            "image_id": full_path.name,  # Use just the filename
+                            "image_id": img_filename,
                             "pred_class": int(classes[i]),
                             "bbox": xywhn[i].tolist(),
                             "confidence": float(confidences[i]),
