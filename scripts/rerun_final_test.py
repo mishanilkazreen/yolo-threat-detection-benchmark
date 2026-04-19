@@ -102,7 +102,7 @@ def main():
             print(f"  SKIP: checkpoint not found at {checkpoint}")
             continue
 
-        data_yaml = rebuild_data_yaml_with_val_as_test(model_name, cfg["output_dir"])
+        data_yaml = rebuild_data_yaml_with_val_as_test(cfg["output_dir"])
 
         metrics = collector.evaluate_final_test(
             checkpoint_path=str(checkpoint),
