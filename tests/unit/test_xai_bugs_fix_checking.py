@@ -213,8 +213,7 @@ class TestFixGradcamTargetLayer:
     def test_empty_target_layer_skips_get_target_layer_module(self, tmp_path):
         """When target_layer is empty, get_target_layer_module must NOT be called.
 
-        This is the preservation path (Requirement 3.1): callers that pass an
-        empty string must continue to use the penultimate layer fallback.
+        Callers that pass an empty string must continue to use the penultimate layer fallback.
         """
         import torch
 
@@ -640,9 +639,6 @@ class TestFixLRPLoggerLevel:
 class TestFixSerializerIncludesFields:
     """Fix-checking tests for Bug 1.6 — _xai_to_dict includes lrp_rule and
     gradcam_target_classes when non-default.
-
-    Property 5: _xai_to_dict must include lrp_rule and gradcam_target_classes
-    when non-default.
     """
 
     def test_lrp_rule_included_when_non_default(self):
@@ -710,10 +706,7 @@ class TestFixSerializerIncludesFields:
 
 
 class TestFixParserReadsGradcamTargetClasses:
-    """Fix-checking tests for Bug 1.7 — _parse_xai reads gradcam_target_classes from YAML.
-
-    Property 6: _parse_xai must read gradcam_target_classes from YAML.
-    """
+    """Fix-checking tests for Bug 1.7 — _parse_xai reads gradcam_target_classes from YAML."""
 
     def test_single_value_gradcam_target_classes_parsed(self):
         """_parse_xai({'gradcam_target_classes': ['gun']}) must return config with
@@ -755,10 +748,7 @@ class TestFixParserReadsGradcamTargetClasses:
 
 
 class TestFixParserHandlesTargetLayerString:
-    """Fix-checking tests for Bug 1.8 — _parse_xai handles target_layer as a string.
-
-    Property 7: _parse_xai must handle target_layer as a string.
-    """
+    """Fix-checking tests for Bug 1.8 — _parse_xai handles target_layer as a string."""
 
     _DEFAULT_ARCH_KEYS = ("yolov11", "yolov12", "yolo26", "yolov8")
 
@@ -894,10 +884,10 @@ class TestFixValidateXAIConfigWarning:
 
 
 class TestFixYolo12nEpochs:
-    """Fix-checking tests for Bug 1.9 — yolo12n.yaml has epochs: 25."""
+    """Fix-checking tests for Bug 1.9 — yolo12n.yaml has epochs: 50 (10 per round x 5 rounds)."""
 
     def test_yolo12n_yaml_has_epochs_25(self):
-        """config/models/yolo12n.yaml must have epochs: 25."""
+        """config/models/yolo12n.yaml must have epochs: 50 (paper spec: 10 per round x 5 rounds)."""
         from pathlib import Path
 
         import yaml
@@ -909,17 +899,15 @@ class TestFixYolo12nEpochs:
             data = yaml.safe_load(f)
 
         epochs = data.get("training", {}).get("epochs")
-        assert epochs == 125, (
-            f"Bug 1.9 regression: yolo12n.yaml has epochs={epochs!r}, expected 125. "
-            "All model configs should use 125 epochs (25 per round x 5 rounds)."
+        assert epochs == 50, (
+            f"Bug 1.9 regression: yolo12n.yaml has epochs={epochs!r}, expected 50. "
+            "All model configs should use 50 epochs (10 per round x 5 rounds, per paper spec)."
         )
 
 
 class TestFixCaptumLRPUsesDetectedClass:
     """Fix-checking tests for Bug 1.12 — _generate_lrp_with_captum passes detected
     class as target.
-
-    Property 9: _generate_lrp_with_captum must pass the detected class as target.
     """
 
     def _make_mock_model(self):

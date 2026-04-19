@@ -33,6 +33,13 @@ class TrainingConfig:
     # Baseline fields
     run_baseline: bool = False
     baseline_epochs: int = 50
+    # Augmentation fields (paper defaults)
+    mosaic: float = 1.0
+    scale: float = 0.5
+    fliplr: float = 0.5
+    hsv_h: float = 0.015
+    hsv_s: float = 0.7
+    hsv_v: float = 0.4
 
 
 @dataclass
@@ -267,6 +274,15 @@ class ConfigurationParser:
                 f"baseline_epochs must be a positive integer, got: {data['baseline_epochs']}"
             )
 
+        # Augmentation fields — read from YAML augmentation subsection or top-level, with paper defaults
+        aug_data = data.get("augmentation", {})
+        mosaic = float(aug_data.get("mosaic", data.get("mosaic", 1.0)))
+        scale = float(aug_data.get("scale", data.get("scale", 0.5)))
+        fliplr = float(aug_data.get("fliplr", data.get("fliplr", 0.5)))
+        hsv_h = float(aug_data.get("hsv_h", data.get("hsv_h", 0.015)))
+        hsv_s = float(aug_data.get("hsv_s", data.get("hsv_s", 0.7)))
+        hsv_v = float(aug_data.get("hsv_v", data.get("hsv_v", 0.4)))
+
         return TrainingConfig(
             epochs=epochs,
             patience=patience,
@@ -282,6 +298,12 @@ class ConfigurationParser:
             lrf=lrf,
             run_baseline=run_baseline,
             baseline_epochs=baseline_epochs,
+            mosaic=mosaic,
+            scale=scale,
+            fliplr=fliplr,
+            hsv_h=hsv_h,
+            hsv_s=hsv_s,
+            hsv_v=hsv_v,
         )
 
     @staticmethod

@@ -11,7 +11,13 @@ logger = logging.getLogger(__name__)
 
 
 class Heatmap_Focus_Scorer:
-    """Computes Heatmap Focus Score (HFS) for explainability heatmaps."""
+    """Computes Heatmap Focus Score (HFS) for explainability heatmaps.
+
+    HFS is computed using Definition A, Equation 5 of Kutlu & Emiroğlu 2025:
+    HFS = bbox_intensity / total_intensity, where bbox_intensity is the sum of
+    heatmap pixel intensities inside the ground-truth bounding box and
+    total_intensity is the sum over the entire image.
+    """
 
     def __init__(self):
         self.logger = logging.getLogger(__name__)
@@ -24,9 +30,10 @@ class Heatmap_Focus_Scorer:
         image_height: int,
     ) -> float:
         """
-        Compute HFS for a single image.
+        Compute HFS for a single image using Definition A, Equation 5 of Kutlu & Emiroğlu 2025.
 
-        HFS = sum of heatmap intensity inside ground-truth bbox / total heatmap intensity
+        HFS = bbox_intensity / total_intensity
+        (Definition A, Equation 5: bbox_intensity / total_intensity)
 
         Args:
             heatmap: 2D numpy array of heatmap values (normalized 0-1)
@@ -195,6 +202,7 @@ class Heatmap_Focus_Scorer:
         metrics = {
             "round": round_num,
             "method": method,
+            "hfs_definition": "Definition A (Equation 5): bbox_intensity / total_intensity",
             "mean_hfs": mean_hfs,
             "num_images": len(individual_hfs),
             "individual_hfs": dict(zip(image_ids, individual_hfs, strict=False)),

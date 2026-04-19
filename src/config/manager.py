@@ -210,6 +210,87 @@ class ConfigurationManager:
                     f"got {config.data.iou_threshold}"
                 )
 
+        # Paper-alignment deviation warnings (only fire when the field is present,
+        # i.e. when incremental training is active). No exceptions are raised.
+        training = config.training
+        data = config.data
+
+        if hasattr(training, "rounds") and training.rounds is not None and training.rounds != 5:
+            logger.warning(
+                "training.rounds=%s deviates from paper value 5 "
+                "(Kutlu & Emiroğlu 2025). Results may not be reproducible.",
+                training.rounds,
+            )
+
+        if (
+            hasattr(training, "epochs_per_round")
+            and training.epochs_per_round is not None
+            and training.epochs_per_round != 10
+        ):
+            logger.warning(
+                "training.epochs_per_round=%s deviates from paper value 10 "
+                "(Kutlu & Emiroğlu 2025). Results may not be reproducible.",
+                training.epochs_per_round,
+            )
+
+        if (
+            hasattr(training, "batch_size")
+            and training.batch_size is not None
+            and training.batch_size != 16
+        ):
+            logger.warning(
+                "training.batch_size=%s deviates from paper value 16 "
+                "(Kutlu & Emiroğlu 2025). Results may not be reproducible.",
+                training.batch_size,
+            )
+
+        if (
+            hasattr(training, "optimizer")
+            and training.optimizer is not None
+            and training.optimizer != "AdamW"
+        ):
+            logger.warning(
+                "training.optimizer=%r deviates from paper value 'AdamW' "
+                "(Kutlu & Emiroğlu 2025). Results may not be reproducible.",
+                training.optimizer,
+            )
+
+        if hasattr(training, "lr0") and training.lr0 is not None and training.lr0 != 0.001:
+            logger.warning(
+                "training.lr0=%s deviates from paper value 0.001 "
+                "(Kutlu & Emiroğlu 2025). Results may not be reproducible.",
+                training.lr0,
+            )
+
+        if hasattr(training, "lrf") and training.lrf is not None and training.lrf != 0.1:
+            logger.warning(
+                "training.lrf=%s deviates from paper value 0.1 "
+                "(Kutlu & Emiroğlu 2025). Results may not be reproducible.",
+                training.lrf,
+            )
+
+        if (
+            hasattr(data, "train_init_percentage")
+            and data.train_init_percentage is not None
+            and data.train_init_percentage != 0.2
+        ):
+            logger.warning(
+                "data.train_init_percentage=%s deviates from paper value 0.2 "
+                "(Kutlu & Emiroğlu 2025). Results may not be reproducible.",
+                data.train_init_percentage,
+            )
+
+        if (
+            hasattr(data, "iou_threshold")
+            and data.iou_threshold is not None
+            and data.iou_threshold != 0.5
+        ):
+            logger.warning(
+                "data.iou_threshold=%s deviates from paper value 0.5 "
+                "(Kutlu & Emiroğlu 2025). Results may not be reproducible.",
+                data.iou_threshold,
+            )
+
     @staticmethod
     def _validate_xai_config(config: Configuration, config_path: str | Path) -> None:
         """

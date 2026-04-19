@@ -2,27 +2,33 @@
   "rounds": [
     {
       "round": 2,
-      "training_set_size": 2922,
-      "samples_added": 2922,
-      "unlabeled_remaining": 889
+      "training_set_size": 2233,
+      "samples_added": 1524,
+      "unlabeled_remaining": 1312
     },
     {
       "round": 3,
-      "training_set_size": 169,
-      "samples_added": 169,
-      "unlabeled_remaining": 556
+      "training_set_size": 2584,
+      "samples_added": 351,
+      "unlabeled_remaining": 961
     },
     {
       "round": 4,
-      "training_set_size": 53,
-      "samples_added": 53,
-      "unlabeled_remaining": 454
+      "training_set_size": 2695,
+      "samples_added": 111,
+      "unlabeled_remaining": 850
     },
     {
       "round": 5,
-      "training_set_size": 4,
-      "samples_added": 4,
-      "unlabeled_remaining": 447
+      "training_set_size": 2758,
+      "samples_added": 63,
+      "unlabeled_remaining": 787
+    },
+    {
+      "round": 5,
+      "training_set_size": 3545,
+      "samples_added": 787,
+      "unlabeled_remaining": 0
     }
   ]
 }

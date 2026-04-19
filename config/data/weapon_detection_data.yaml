@@ -7,10 +7,16 @@
 # Or use relative path: "./Weapon_Detection-1"
 path: "./Weapon_Detection-1"
 
-# Split directories (relative to path)
+# Roboflow download directories (used as the source pool for splitting)
 train: train/images
 val: valid/images
-# Note: No separate test split - using validation set for both validation and testing
+# Note: There is no pre-existing test directory in the Roboflow download.
+# Dataset_Splitter pools all 5,064 images from train/ + valid/ and creates
+# a fresh stratified 70/20/10 split:
+#   train  70% → 3,543 images  (further split into train_init 20% + unlabeled_pool 80%)
+#   val    20% → 1,013 images  (val_fixed, unchanged across rounds)
+#   test   10% →   508 images  (test_fixed, unchanged across rounds)
+#   train_init 20% of train → 709 images
 
 # Number of classes
 nc: 2
@@ -23,8 +29,8 @@ names:
 # Dataset fraction (1.0 = use full dataset, 0.1 = use 10%)
 fraction: 1.0
 
-# Dataset statistics
-# Train: 4,085 images with labels
-# Valid: 979 images with labels
-# Total: 5,064 images
+# Dataset statistics (full pool before splitting)
+# train/images: 4,085 images
+# valid/images:   979 images
+# Total pool:   5,064 images
 # Classes: 2 (knife, pistol)

@@ -201,6 +201,8 @@ class Metrics_Collector:
         rejected_count: int | None = None,
         undetected_count: int | None = None,
         remaining_pool_size: int | None = None,
+        unlabeled_pool_size_at_round_start: int | None = None,
+        total_detections: int | None = None,
     ) -> dict[str, Any]:
         """
         Collect metrics for a specific training round.
@@ -216,6 +218,8 @@ class Metrics_Collector:
             rejected_count: Number of rejected samples (optional)
             undetected_count: Number of undetected samples (optional)
             remaining_pool_size: Size of remaining unlabeled pool (optional)
+            unlabeled_pool_size_at_round_start: Pool size before simulation (optional)
+            total_detections: Total detections from edge simulation (optional)
 
         Returns:
             Dictionary of round metrics
@@ -259,6 +263,10 @@ class Metrics_Collector:
             metrics["undetected_count"] = undetected_count
         if remaining_pool_size is not None:
             metrics["remaining_pool_size"] = remaining_pool_size
+        if unlabeled_pool_size_at_round_start is not None:
+            metrics["unlabeled_pool_size_at_round_start"] = unlabeled_pool_size_at_round_start
+        if total_detections is not None:
+            metrics["total_detections"] = total_detections
 
         # Add per-class metrics if available
         if hasattr(results.box, "maps"):

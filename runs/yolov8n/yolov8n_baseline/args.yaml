@@ -12,7 +12,7 @@ save_period: -1
 cache: false
 device: '0'
 workers: 8
-project: C:\Users\manig\Downloads\yolo-improvement-detection-moderation-paper\runs
+project: M:\_Research\yolo-improvement-detection-moderation-paper\.claude\worktrees\silly-archimedes\runs
 name: yolov8n_baseline
 exist_ok: true
 pretrained: true
@@ -106,4 +106,4 @@ auto_augment: randaugment
 erasing: 0.4
 cfg: null
 tracker: botsort.yaml
-save_dir: C:\Users\manig\Downloads\yolo-improvement-detection-moderation-paper\runs\yolov8n\yolov8n_baseline
+save_dir: M:\_Research\yolo-improvement-detection-moderation-paper\.claude\worktrees\silly-archimedes\runs\yolov8n\yolov8n_baseline
