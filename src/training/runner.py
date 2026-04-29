@@ -3,14 +3,14 @@
 import gc
 import json
 import logging
-from pathlib import Path
 import time
+from pathlib import Path
 from typing import Any
 
 import numpy as np
 import torch
-from ultralytics import YOLO
 import yaml
+from ultralytics import YOLO
 
 from ..aggregation.comparison_reporter import Comparison_Reporter
 from ..config.parser import ConfigurationParser
@@ -478,10 +478,10 @@ class Experiment_Runner:
 
             # Initialize model
             if round_num == 1:
-                # Round 1: Start from architecture weights (random init)
-                self.logger.info(
-                    f"Initializing model from architecture weights: {config.model.weights}"
-                )
+                # Round 1: initialise from the configured weights path.
+                # .yaml  → random init (Kutlu & Emiroğlu 2025, §3.2)
+                # .pt    → COCO-pretrained transfer learning
+                self.logger.info(f"Round 1: initialising model from {config.model.weights}")
                 model = YOLO(config.model.weights)
             else:
                 # Round N > 1: Initialize from best checkpoint of Round N-1
