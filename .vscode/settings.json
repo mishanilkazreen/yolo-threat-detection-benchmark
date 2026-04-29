@@ -1,19 +1,17 @@
 {
   "[python]": {
     "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.formatOnSave": true,
     "editor.codeActionsOnSave": {
-      "source.organizeImports": "explicit",
-      "source.fixAll": "explicit"
-    },
-    "editor.formatOnSave": true
+      "source.fixAll": "explicit",
+      "source.organizeImports": "explicit"
+    }
   },
-  "python.testing.pytestEnabled": true,
-  "python.testing.pytestArgs": ["tests"],
-  "python.testing.unittestEnabled": false,
+  "python.analysis.typeCheckingMode": "basic",
+  "pylint.args": ["--fail-under=9.0"],
+  "mypy-type-checker.args": ["--ignore-missing-imports"],
+  "ruff.lint.args": ["--config=pyproject.toml"],
+  "editor.rulers": [100],
   "files.trimTrailingWhitespace": true,
-  "files.insertFinalNewline": true,
-  "markdownlint.config": {
-    "extends": ".markdownlint.json"
-  },
-  "cSpell.import": ["${workspaceFolder}/.cspell.json"]
+  "files.insertFinalNewline": true
 }

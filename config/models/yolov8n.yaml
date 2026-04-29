@@ -18,7 +18,13 @@ training:
 
 model:
   name: "yolov8n"
-  weights: "yolov8n.pt"
+  # Architecture-only config: trains from random initialization (no COCO pretrained weights).
+  # This matches Kutlu & Emiroğlu (2025) Algorithm 1 line 8:
+  #   initialize_model(random_weights=True)
+  # and Section 3.2: "Round 1 was trained from random initialization
+  # (without ImageNet pre-training)".
+  # Use "yolov8n.pt" instead for COCO-pretrained transfer learning.
+  weights: "yolov8n.yaml"
 
 data:
   yaml_path: "config/data/weapon_detection_data.yaml"
