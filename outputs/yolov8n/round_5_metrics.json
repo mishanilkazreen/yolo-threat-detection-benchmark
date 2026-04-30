@@ -1,43 +1,43 @@
 {
   "round": 5,
-  "timestamp": "2026-04-19 20:52:00",
-  "checkpoint_path": "M:\\_Research\\yolo-improvement-detection-moderation-paper\\.claude\\worktrees\\silly-archimedes\\runs\\yolov8n\\incremental_round_5\\weights\\best.pt",
-  "training_set_size": 2758,
-  "verified_samples_added": 63,
-  "training_time_seconds": 324.9806878566742,
-  "validation_time_seconds": 27.668218851089478,
+  "timestamp": "2026-04-29 23:02:38",
+  "checkpoint_path": "C:\\Users\\manig\\Downloads\\yolo-improvement-detection-moderation-paper\\runs\\yolov8n\\incremental_round_5\\weights\\best.pt",
+  "training_set_size": 1594,
+  "verified_samples_added": 169,
+  "training_time_seconds": 221.42626976966858,
+  "validation_time_seconds": 31.8502094745636,
   "metrics": {
-    "mAP50": 0.8960627753141182,
-    "mAP50-95": 0.6469024338409596,
-    "precision": 0.9020436689437956,
-    "recall": 0.812831049007658,
-    "f1_score": 0.855116812911179
+    "mAP50": 0.5308504558199243,
+    "mAP50-95": 0.3282360160856569,
+    "precision": 0.6879134460437862,
+    "recall": 0.45640221024626504,
+    "f1_score": 0.548738830071425
   },
-  "rejected_count": 752,
-  "undetected_count": 178,
-  "remaining_pool_size": 787,
-  "unlabeled_pool_size_at_round_start": 787,
-  "total_detections": 816,
+  "rejected_count": 859,
+  "undetected_count": 1177,
+  "remaining_pool_size": 1951,
+  "unlabeled_pool_size_at_round_start": 1951,
+  "total_detections": 1034,
   "per_class_metrics": {
     "mAP50_per_class": [
-      0.9299431616891544,
-      0.8621823889390818
+      0.4119753487732304,
+      0.6497255628666183
     ],
     "mAP50-95_per_class": [
-      0.6273426609118943,
-      0.6664622067700247
+      0.19807473367870668,
+      0.45839729849260713
     ],
     "precision_per_class": [
-      0.9025842025301929,
-      0.9015031353573983
+      0.6199564809455262,
+      0.7558704111420462
     ],
     "recall_per_class": [
-      0.8699802798334979,
-      0.7556818181818182
+      0.35514018691588783,
+      0.5576642335766423
     ],
     "f1_score_per_class": [
-      0.8859823886840128,
-      0.8221768209620268
+      0.45158899169574884,
+      0.6418131340617445
     ]
   }
 }

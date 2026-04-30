@@ -29,6 +29,36 @@
       "training_set_size": 3545,
       "samples_added": 787,
       "unlabeled_remaining": 0
+    },
+    {
+      "round": 2,
+      "training_set_size": 1044,
+      "samples_added": 335,
+      "unlabeled_remaining": 2501
+    },
+    {
+      "round": 3,
+      "training_set_size": 1151,
+      "samples_added": 107,
+      "unlabeled_remaining": 2394
+    },
+    {
+      "round": 4,
+      "training_set_size": 1425,
+      "samples_added": 274,
+      "unlabeled_remaining": 2120
+    },
+    {
+      "round": 5,
+      "training_set_size": 1594,
+      "samples_added": 169,
+      "unlabeled_remaining": 1951
+    },
+    {
+      "round": 5,
+      "training_set_size": 3545,
+      "samples_added": 1951,
+      "unlabeled_remaining": 0
     }
   ]
 }

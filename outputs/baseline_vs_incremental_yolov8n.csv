@@ -1,0 +1,4 @@
+Approach,mAP@0.5 (test),mAP@0.5:0.95 (test),F1-score (test),HFS (val),Total Training Time (s)
+One-Shot Baseline,0.8074,0.5314,0.7807,0.6886,1315.4811
+Incremental,0.5409,0.3262,0.5553,nan,1005.4172
+Difference (I - B),-0.2666,-0.2052,-0.2253,nan,-310.0640
