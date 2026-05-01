@@ -1,5 +1,6 @@
 ---
 inclusion: auto
+description: Pylint rules, commit conventions, and weight initialization context
 ---
 
 # Pylint and Commit Standards

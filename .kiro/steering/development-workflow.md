@@ -1,5 +1,6 @@
 ---
 inclusion: auto
+description: Standard development workflow including setup, linting, testing, and CI/CD
 ---
 
 # Development Workflow
