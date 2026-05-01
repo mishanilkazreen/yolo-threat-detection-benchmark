@@ -230,6 +230,7 @@ data/downloaded/
 *.pt
 
 # Training outputs
+runs/detect/
 runs/**/*.pt
 runs/**/*.jpg
 explanations/**/*.png
