@@ -1,0 +1,47 @@
+# YOLOv8s Pretrained Training Configuration
+# Small variant with COCO-pretrained weights, same MDPI paper protocol:
+# 10 epochs/round, 5 rounds, AdamW optimizer.
+
+training:
+  epochs: 50
+  epochs_per_round: 10
+  rounds: 5
+  patience: 0  # No early stopping — match MDPI paper protocol
+  image_size: 640
+  batch_size: 16
+  optimizer: "AdamW"
+  lr0: 0.001
+  lrf: 0.1
+  runs: 1
+  seeds: [42]
+  device: "0"
+  run_baseline: false
+
+model:
+  name: "yolov8s"
+  # COCO-pretrained weights for transfer learning
+  weights: "yolov8s.pt"
+
+data:
+  yaml_path: "config/data/weapon_detection_data.yaml"
+  train_init_percentage: 0.2
+  iou_threshold: 0.5
+
+augmentation:
+  mosaic: 1.0
+  scale: 0.5
+  fliplr: 0.5
+  hsv_h: 0.015
+  hsv_s: 0.7
+  hsv_v: 0.4
+
+xai:
+  enabled: false
+  methods:
+    gradcam: true
+    lrp: false
+    shap: false
+  sample_limit: 16
+  target_layer: "model.18"
+  background_set_size: 75
+  output_overlays: true

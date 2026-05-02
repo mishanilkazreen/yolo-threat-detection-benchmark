@@ -1,23 +1,64 @@
 # XplainRescue
 
-> The rapid proliferation of harmful visual content has introduced novel challenges for content
-> moderation on online platforms such as Discord and Reddit, where hateful or harmful imagery can be
-> disseminated at scale. Existing threat detection approaches for flagging such material have
-> predominantly relied on YOLOv8 with limited explainability, leaving moderators without actionable
-> insight into model decisions. This study addresses two open gaps in the literature: (1) the lack of
-> comparative evaluation of post-v8 YOLO architectures for hateful content detection, and (2) the
-> insufficient integration of advanced explainable AI (XAI) techniques beyond coarse Grad-CAM
-> heatmaps. We benchmark YOLOv11, YOLOv12, and YOLO26 on a multiclass harmful-content dataset and
-> systematically apply complementary XAI methods, including Layer-wise Relevance Propagation (LRP)
-> and SHAP, alongside Grad-CAM to provide fine-grained, instance-level attribution maps. Our
-> experimental pipeline evaluates detection accuracy (mAP@0.5, precision, recall, F1-score),
-> inference latency, and explainability fidelity across all architectures. Preliminary results
-> indicate that attention-enhanced backbones in YOLOv11 and YOLOv12 improve localisation of subtle
-> hateful symbols, while YOLO26's NMS-free prediction head reduces post-processing overhead. The
-> hybrid XAI framework yields richer explanations that enable moderators to understand why specific
-> image regions are flagged, supporting transparent and accountable automated moderation. This work
-> provides a practical, deployable framework for platform trust and safety teams seeking accurate,
-> interpretable, and efficient AI-driven content moderation.
+> **Pretrained vs Random Weight Initialization in Incremental YOLO-Based Threat Detection**
+>
+> The Kutlu & Emiroğlu (2025) MDPI paper
+> ([Computers 14(12):511](https://www.mdpi.com/2073-431X/14/12/511)) reports
+> mAP@0.5 = 0.886 using YOLOv8n with "random initialization" across five
+> incremental learning rounds (10 epochs each). Our reproduction with truly
+> random weights yields mAP@0.5 ≈ 0.54 — far below the claimed result
+> ([issue #9](https://github.com/mishanilkazreen/yolo-improvement-detection-moderation-paper/issues/9)).
+>
+> **Hypothesis:** The MDPI paper may have inadvertently used COCO-pretrained
+> weights rather than random initialization.
+>
+> This project performs a systematic comparison to test that hypothesis:
+>
+> | Experiment axis | Values |
+> |---|---|
+> | **Architecture** | YOLOv8, YOLOv12 |
+> | **Model size** | nano (n), small (s) |
+> | **Weight init** | Random (`.yaml`) vs Pretrained (`.pt`) |
+> | **Epoch budget** | 10 epochs/round (MDPI protocol) vs 100 epochs/round (early stopping, patience=10) |
+>
+> For every combination we report the same metrics the MDPI paper reports:
+> F1-score, Precision, mAP@0.5, and per-class (knife / pistol) breakdowns.
+> For the 100-epoch early stopping runs we also report the actual stopping epoch.
+
+## Experiment matrix
+
+### Phase 1 — Nano models
+
+| Config | Arch | Init | Epochs/round | Early stop |
+|---|---|---|---|---|
+| `yolov8n_random.yaml` | v8n | random | 10 | no |
+| `yolov8n_pretrained.yaml` | v8n | COCO | 10 | no |
+| `yolo12n_random.yaml` | v12n | random | 10 | no |
+| `yolo12n_pretrained.yaml` | v12n | COCO | 10 | no |
+| `yolov8n_random_100ep.yaml` | v8n | random | 100 | patience=10 |
+| `yolov8n_pretrained_100ep.yaml` | v8n | COCO | 100 | patience=10 |
+| `yolo12n_random_100ep.yaml` | v12n | random | 100 | patience=10 |
+| `yolo12n_pretrained_100ep.yaml` | v12n | COCO | 100 | patience=10 |
+
+### Phase 2 — Small models
+
+| Config | Arch | Init | Epochs/round | Early stop |
+|---|---|---|---|---|
+| `yolov8s_random.yaml` | v8s | random | 10 | no |
+| `yolov8s_pretrained.yaml` | v8s | COCO | 10 | no |
+| `yolo12s_random.yaml` | v12s | random | 10 | no |
+| `yolo12s_pretrained.yaml` | v12s | COCO | 10 | no |
+| `yolov8s_random_100ep.yaml` | v8s | random | 100 | patience=10 |
+| `yolov8s_pretrained_100ep.yaml` | v8s | COCO | 100 | patience=10 |
+| `yolo12s_random_100ep.yaml` | v12s | random | 100 | patience=10 |
+| `yolo12s_pretrained_100ep.yaml` | v12s | COCO | 100 | patience=10 |
+
+### Metrics reported (per experiment)
+
+- **Overall:** F1-score (at optimal confidence), Precision (at conf=1.0), mAP@0.5
+- **Per-class:** F1-score, Precision, mAP@0.5 for knife and pistol
+- **Per-round:** All of the above for each of the 5 incremental rounds
+- **Early stopping runs:** Actual epoch the training stopped on
 
 ## Prerequisites
 
@@ -68,7 +109,7 @@ git pull origin main
 cd ..
 ```
 
-### 6. Download dataset
+### 4. Download dataset
 
 #### Get your Roboflow credentials
 
@@ -106,7 +147,7 @@ Then run:
 uv run python scripts/download_dataset.py
 ```
 
-### 7. Validate dataset
+### 5. Validate dataset
 
 ```bash
 uv run python scripts/validate_dataset.py
@@ -114,13 +155,38 @@ uv run python scripts/validate_dataset.py
 
 ## Usage
 
-### Full training
+### Running experiments
+
+#### Phase 1 — Nano models (run first)
 
 ```bash
-uv run python scripts/train_model.py config/models/yolov8n.yaml
-uv run python scripts/train_model.py config/models/yolo11n.yaml
-uv run python scripts/train_model.py config/models/yolo12n.yaml
-uv run python scripts/train_model.py config/models/yolo26n.yaml
+# MDPI protocol (10 epochs/round, 5 rounds)
+uv run python scripts/train_model.py config/models/yolov8n_random.yaml
+uv run python scripts/train_model.py config/models/yolov8n_pretrained.yaml
+uv run python scripts/train_model.py config/models/yolo12n_random.yaml
+uv run python scripts/train_model.py config/models/yolo12n_pretrained.yaml
+
+# Extended training (100 epochs/round, early stopping patience=10)
+uv run python scripts/train_model.py config/models/yolov8n_random_100ep.yaml
+uv run python scripts/train_model.py config/models/yolov8n_pretrained_100ep.yaml
+uv run python scripts/train_model.py config/models/yolo12n_random_100ep.yaml
+uv run python scripts/train_model.py config/models/yolo12n_pretrained_100ep.yaml
+```
+
+#### Phase 2 — Small models
+
+```bash
+# MDPI protocol (10 epochs/round, 5 rounds)
+uv run python scripts/train_model.py config/models/yolov8s_random.yaml
+uv run python scripts/train_model.py config/models/yolov8s_pretrained.yaml
+uv run python scripts/train_model.py config/models/yolo12s_random.yaml
+uv run python scripts/train_model.py config/models/yolo12s_pretrained.yaml
+
+# Extended training (100 epochs/round, early stopping patience=10)
+uv run python scripts/train_model.py config/models/yolov8s_random_100ep.yaml
+uv run python scripts/train_model.py config/models/yolov8s_pretrained_100ep.yaml
+uv run python scripts/train_model.py config/models/yolo12s_random_100ep.yaml
+uv run python scripts/train_model.py config/models/yolo12s_pretrained_100ep.yaml
 ```
 
 ## Development
@@ -200,22 +266,22 @@ This project uses GitHub Actions for continuous integration and delivery:
 
 ```text
 ├── .github/workflows/     # CI/CD pipelines
+├── .kiro/steering/        # Agent steering docs (project context and workflow)
 ├── .vscode/               # Recommended extensions and editor settings
 ├── .cspell.json           # Spell-check dictionary
 ├── .pre-commit-config.yaml
-├── .markdownlint.json
 ├── .python-version
 ├── pyproject.toml         # Project metadata, dependencies, and tool config
 ├── yolo_cam/              # YOLO-CAM (EigenCAM) library (vendored from rigvedrs/YOLO-26-CAM@f380b07)
 ├── config/
 │   ├── data/              # Dataset configurations
-│   └── models/            # Model training configurations
+│   └── models/            # Model training configurations (one per experiment)
 ├── src/
 │   ├── config/            # Configuration parsing
 │   ├── data/              # Dataset loading and validation
 │   ├── training/          # Training and evaluation
-│   ├── explainability/    # Explainability methods (future)
-│   └── aggregation/       # Results aggregation (future)
+│   ├── explainability/    # Explainability methods
+│   └── aggregation/       # Results aggregation
 ├── scripts/               # Training and utility scripts
 ├── tests/                 # Unit and property-based tests
 ├── runs/                  # Training outputs (gitignored)
@@ -227,10 +293,17 @@ This project uses GitHub Actions for continuous integration and delivery:
 
 Model configs are in `config/models/`. Each config specifies:
 
-- Model architecture and pretrained weights
-- Training parameters (epochs, image size, patience)
+- Model architecture and weight initialization (`.yaml` = random, `.pt` = pretrained)
+- Training parameters (epochs per round, patience for early stopping)
 - Dataset path
 - Multi-run settings (seeds, number of runs)
+
+Naming convention: `{arch}_{init}[_{epochs}].yaml`
+
+- `yolov8n_random.yaml` — YOLOv8 nano, random init, MDPI protocol
+- `yolov8n_pretrained.yaml` — YOLOv8 nano, COCO pretrained, MDPI protocol
+- `yolov8n_random_100ep.yaml` — YOLOv8 nano, random init, 100 epochs + early stopping
+- `yolo12s_pretrained_100ep.yaml` — YOLO12 small, COCO pretrained, 100 epochs + early stopping
 
 Dataset configs are in `config/data/`:
 
@@ -243,4 +316,10 @@ Training results are saved to:
 
 - `runs/detect/{model_name}/` — Training logs, plots, checkpoints
 - `outputs/{model_name}/` — Evaluation metrics (JSON)
-- `explanations/{model_name}/` — Explainability visualizations (future)
+- `explanations/{model_name}/` — Explainability visualizations
+
+## References
+
+- Kutlu, Z.; Emiroğlu, B.G. Image-Based Threat Detection and Explainability Investigation Using
+  Incremental Learning and Grad-CAM with YOLOv8. *Computers* **2025**, *14*, 511.
+  [doi:10.3390/computers14120511](https://doi.org/10.3390/computers14120511)

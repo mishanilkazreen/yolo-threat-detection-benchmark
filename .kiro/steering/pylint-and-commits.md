@@ -1,6 +1,6 @@
 ---
 inclusion: auto
-description: Pylint rules, commit conventions, and weight initialization context
+description: Pylint rules, commit conventions, and experiment context
 ---
 
 # Pylint and Commit Standards
@@ -57,14 +57,42 @@ Use conventional commits:
 - `test:` test changes
 - `chore:` maintenance
 
-## Weight initialization — important context
+## Project context — pretrained vs random comparison
 
-The Kutlu & Emiroğlu (2025) paper this repo implements states that Round 1
-uses **random initialization** (Algorithm 1 line 8, Section 3.2). The config
-file `config/models/yolov8n.yaml` uses `weights: "yolov8n.yaml"` (architecture
-only, random init). Do NOT change this to `yolov8n.pt` (COCO pretrained)
-unless the paper text is also updated. See GitHub issue #9 for context.
+This project investigates whether the Kutlu & Emiroğlu (2025) MDPI paper
+actually used pretrained weights despite claiming random initialization.
+See GitHub issue #9 for the original discussion.
 
-For the newer models (yolo11n, yolo12n, yolo26n) in our extension paper,
-pretrained weights (`.pt`) are used because our paper's methodology section
-will document this as transfer learning.
+### Key facts from the MDPI paper
+
+- **Architecture:** YOLOv8n (nano, 3.2M params)
+- **Protocol:** 5 incremental rounds, 10 epochs per round (50 total)
+- **Optimizer:** AdamW, lr=0.001, step decay ×0.1 every 5 epochs
+- **Claimed init:** Random (Algorithm 1 line 8, Section 3.2)
+- **Claimed results:** mAP@0.5 = 0.886, F1 = 0.83
+
+### Our reproduction results (random init)
+
+- mAP@0.5 ≈ 0.54, F1 ≈ 0.55 — far below the paper's claims
+
+### Experiment design
+
+We run a 2×2×2×2 comparison matrix:
+
+- **Architecture:** YOLOv8 vs YOLOv12
+- **Size:** nano (n) vs small (s)
+- **Init:** random (`.yaml`) vs pretrained (`.pt`)
+- **Epochs:** 10/round (MDPI protocol) vs 100/round (early stopping, patience=10)
+
+### Config naming convention
+
+`{arch}_{init}[_{epochs}].yaml` — e.g. `yolov8n_pretrained_100ep.yaml`
+
+### Weight initialization rules
+
+- `weights: "yolov8n.yaml"` → random init (architecture only, no pretrained weights)
+- `weights: "yolov8n.pt"` → COCO-pretrained transfer learning
+- Same pattern for v12 and s variants
+
+Do NOT change a config's weights field without understanding the experiment
+it belongs to. Each config is a specific cell in the comparison matrix.

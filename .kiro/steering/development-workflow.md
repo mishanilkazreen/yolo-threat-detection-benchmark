@@ -25,13 +25,38 @@ Or activate the venv manually:
 source .venv/bin/activate
 ```
 
-## Running Training
+## Running Experiments
+
+### Phase 1 — Nano models (run first)
 
 ```bash
-uv run python scripts/train_model.py config/models/yolov8n.yaml
-uv run python scripts/train_model.py config/models/yolo11n.yaml
-uv run python scripts/train_model.py config/models/yolo12n.yaml
-uv run python scripts/train_model.py config/models/yolo26n.yaml
+# MDPI protocol (10 epochs/round, 5 rounds)
+uv run python scripts/train_model.py config/models/yolov8n_random.yaml
+uv run python scripts/train_model.py config/models/yolov8n_pretrained.yaml
+uv run python scripts/train_model.py config/models/yolo12n_random.yaml
+uv run python scripts/train_model.py config/models/yolo12n_pretrained.yaml
+
+# Extended training (100 epochs/round, early stopping patience=10)
+uv run python scripts/train_model.py config/models/yolov8n_random_100ep.yaml
+uv run python scripts/train_model.py config/models/yolov8n_pretrained_100ep.yaml
+uv run python scripts/train_model.py config/models/yolo12n_random_100ep.yaml
+uv run python scripts/train_model.py config/models/yolo12n_pretrained_100ep.yaml
+```
+
+### Phase 2 — Small models
+
+```bash
+# MDPI protocol (10 epochs/round, 5 rounds)
+uv run python scripts/train_model.py config/models/yolov8s_random.yaml
+uv run python scripts/train_model.py config/models/yolov8s_pretrained.yaml
+uv run python scripts/train_model.py config/models/yolo12s_random.yaml
+uv run python scripts/train_model.py config/models/yolo12s_pretrained.yaml
+
+# Extended training (100 epochs/round, early stopping patience=10)
+uv run python scripts/train_model.py config/models/yolov8s_random_100ep.yaml
+uv run python scripts/train_model.py config/models/yolov8s_pretrained_100ep.yaml
+uv run python scripts/train_model.py config/models/yolo12s_random_100ep.yaml
+uv run python scripts/train_model.py config/models/yolo12s_pretrained_100ep.yaml
 ```
 
 ## On Every Change

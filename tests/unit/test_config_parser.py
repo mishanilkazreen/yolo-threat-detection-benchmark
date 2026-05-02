@@ -6,10 +6,7 @@ import tempfile
 import pytest
 import yaml
 
-from src.config.parser import (
-    ConfigurationParseError,
-    ConfigurationParser,
-)
+from src.config.parser import ConfigurationParseError, ConfigurationParser
 
 
 class TestConfigurationParser:
@@ -320,7 +317,7 @@ class TestYolov8nConfig:
 
         # Model section
         assert config.model.name == "yolov8n"
-        assert config.model.weights == "yolov8n.pt"
+        assert config.model.weights == "yolov8n.yaml"
 
         # Data section
         assert config.data.yaml_path == "config/data/weapon_detection_data.yaml"
