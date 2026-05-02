@@ -245,3 +245,6 @@ explanations/**/*.npy
 
 # YOLO-26-CAM Repo
 yolo_cam/
+
+# Paper repo (separate git repository)
+Journal-of-Real-Time-Image-Processing/

@@ -1,0 +1,49 @@
+# YOLOv8n Random Initialization Training Configuration
+# Exactly replicates the MDPI paper protocol: random weights, 10 epochs/round,
+# 5 rounds. This is the control experiment to confirm that random init produces
+# poor results (mAP@0.5 ≈ 0.54), far below the paper's claimed 0.886.
+
+training:
+  epochs: 50
+  epochs_per_round: 10
+  rounds: 5
+  patience: 0  # No early stopping — match MDPI paper protocol
+  image_size: 640
+  batch_size: 16
+  optimizer: "AdamW"
+  lr0: 0.001
+  lrf: 0.1
+  runs: 1
+  seeds: [42]
+  device: "0"
+  run_baseline: false
+
+model:
+  name: "yolov8n"
+  # Architecture-only config: trains from random initialization
+  # Matches MDPI paper Algorithm 1 line 8: initialize_model(random_weights=True)
+  weights: "yolov8n.yaml"
+
+data:
+  yaml_path: "config/data/weapon_detection_data.yaml"
+  train_init_percentage: 0.2
+  iou_threshold: 0.5
+
+augmentation:
+  mosaic: 1.0
+  scale: 0.5
+  fliplr: 0.5
+  hsv_h: 0.015
+  hsv_s: 0.7
+  hsv_v: 0.4
+
+xai:
+  enabled: false
+  methods:
+    gradcam: true
+    lrp: false
+    shap: false
+  sample_limit: 16
+  target_layer: "model.18"
+  background_set_size: 75
+  output_overlays: true

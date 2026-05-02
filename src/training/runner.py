@@ -3,14 +3,14 @@
 import gc
 import json
 import logging
-import time
 from pathlib import Path
+import time
 from typing import Any
 
 import numpy as np
 import torch
-import yaml
 from ultralytics import YOLO
+import yaml
 
 from ..aggregation.comparison_reporter import Comparison_Reporter
 from ..config.parser import ConfigurationParser
@@ -509,7 +509,7 @@ class Experiment_Runner:
                 data=round_data_yamls[round_num],
                 epochs=epochs_per_round,
                 imgsz=config.training.image_size,
-                patience=0,  # Disable early stopping so all epochs_per_round epochs always complete
+                patience=config.training.patience,  # 0 = no early stopping; >0 = early stopping
                 batch=batch_size,
                 optimizer=optimizer,
                 lr0=lr0,
