@@ -343,10 +343,9 @@ class Baseline_Evaluator:
             if results and len(results) > 0:
                 result = results[0]
                 if result.boxes is not None and len(result.boxes) > 0:
-                    for box in result.boxes:
-                        conf = float(box.conf[0])
-                        # xyxy format (absolute pixel coords)
-                        x1, y1, x2, y2 = box.xyxy[0].tolist()
+                    confs = result.boxes.conf.tolist()
+                    xyxys = result.boxes.xyxy.tolist()
+                    for (x1, y1, x2, y2), conf in zip(xyxys, confs, strict=True):
                         x1 = max(0, int(x1))
                         y1 = max(0, int(y1))
                         x2 = min(image_width, int(x2))
