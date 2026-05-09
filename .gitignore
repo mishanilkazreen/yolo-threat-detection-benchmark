@@ -247,6 +247,11 @@ outputs/**/training_set_evolution.json
 outputs/**/split_metadata.json
 outputs/**/*_detections.json
 outputs/**/*_validations.json
+outputs/**/data_round_*.yaml
+outputs/**/train_init.txt
+outputs/**/unlabeled_pool.txt
+outputs/**/val_fixed.txt
+outputs/**/test_fixed.txt
 
 # Local configuration overrides
 *.local.yaml
