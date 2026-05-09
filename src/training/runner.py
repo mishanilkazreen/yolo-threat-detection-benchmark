@@ -216,6 +216,7 @@ class Experiment_Runner:
             lr0=lr0,
             lrf=lrf,
             cos_lr=False,  # Disable cosine LR scheduler to use our custom step decay
+            workers=4,  # Reduce from default 8 to limit Windows pagefile pressure
         )
 
         training_time = time.time() - train_start
@@ -490,6 +491,7 @@ class Experiment_Runner:
                 name=f"{config_name}/incremental_round_{round_num}",
                 exist_ok=True,
                 verbose=True,
+                workers=4,  # Reduce from default 8 to limit Windows pagefile pressure
                 mosaic=config.training.mosaic,
                 scale=config.training.scale,
                 fliplr=config.training.fliplr,
