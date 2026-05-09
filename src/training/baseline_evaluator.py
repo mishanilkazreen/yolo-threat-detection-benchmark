@@ -177,7 +177,7 @@ class Baseline_Evaluator:
         """
         model = YOLO(checkpoint_path)
 
-        kwargs: dict[str, Any] = {"data": data_yaml, "verbose": False}
+        kwargs: dict[str, Any] = {"data": data_yaml, "verbose": False, "plots": False}
         if split == "test":
             kwargs["split"] = "test"
 
