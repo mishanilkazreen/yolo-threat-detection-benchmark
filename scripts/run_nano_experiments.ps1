@@ -1,6 +1,6 @@
 # Runs all 8 nano model experiments sequentially, then generates the report.
 # Each experiment logs to logs/<config>.log.
-# If a config's output directory already has final_test_metrics.json, it is skipped.
+# If a config output directory already has final_test_metrics.json, it is skipped.
 
 $ErrorActionPreference = "Continue"
 $repoRoot = Split-Path -Parent $PSScriptRoot
@@ -10,12 +10,10 @@ $logsDir = Join-Path $repoRoot "logs"
 if (-not (Test-Path $logsDir)) { New-Item -ItemType Directory -Path $logsDir | Out-Null }
 
 $configs = @(
-    # MDPI protocol — 10 epochs/round, no early stopping
     "yolov8n_random",
     "yolov8n_pretrained",
     "yolo12n_random",
     "yolo12n_pretrained",
-    # Extended — 100 epochs/round, early stopping patience=10
     "yolov8n_random_100ep",
     "yolov8n_pretrained_100ep",
     "yolo12n_random_100ep",
@@ -38,7 +36,7 @@ foreach ($cfg in $configs) {
     }
 
     Write-Host ""
-    Write-Host "[RUN ] $cfg — log: $logFile" -ForegroundColor Green
+    Write-Host "[RUN ] $cfg -- log: $logFile" -ForegroundColor Green
     $runStart = Get-Date
 
     uv run python scripts/train_model.py $configPath *>&1 | Tee-Object -FilePath $logFile
@@ -57,4 +55,5 @@ Write-Host "===============================================" -ForegroundColor Cy
 
 Write-Host ""
 Write-Host "Generating report..." -ForegroundColor Cyan
-uv run python scripts/report_results.py --phase nano | Tee-Object -FilePath (Join-Path $logsDir "nano_report.log")
+$reportLog = Join-Path $logsDir "nano_report.log"
+uv run python scripts/report_results.py --phase nano | Tee-Object -FilePath $reportLog
