@@ -61,7 +61,7 @@ class Metrics_Collector:  # pylint: disable=invalid-name
         # Run validation
         self.logger.info("Running validation...")
         val_start = time.time()
-        results = model.val(data=data_yaml, verbose=False, plots=False, workers=2)
+        results = model.val(data=data_yaml, verbose=False, plots=False, workers=0)
         val_time = time.time() - val_start
 
         # Extract metrics
@@ -215,7 +215,7 @@ class Metrics_Collector:  # pylint: disable=invalid-name
         # Run validation
         self.logger.info("Running validation for Round %d...", round_num)
         val_start = time.time()
-        results = model.val(data=data_yaml, verbose=False, plots=False, workers=2)
+        results = model.val(data=data_yaml, verbose=False, plots=False, workers=0)
         val_time = time.time() - val_start
 
         # Extract metrics
@@ -302,7 +302,7 @@ class Metrics_Collector:  # pylint: disable=invalid-name
         # Run validation on test set
         self.logger.info("Running test evaluation...")
         test_start = time.time()
-        results = model.val(data=data_yaml, split="test", verbose=False, plots=False, workers=2)
+        results = model.val(data=data_yaml, split="test", verbose=False, plots=False, workers=0)
         test_time = time.time() - test_start
 
         # Get model info

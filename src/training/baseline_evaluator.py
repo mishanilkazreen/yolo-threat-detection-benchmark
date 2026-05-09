@@ -181,7 +181,7 @@ class Baseline_Evaluator:
             "data": data_yaml,
             "verbose": False,
             "plots": False,
-            "workers": 2,
+            "workers": 0,
         }
         if split == "test":
             kwargs["split"] = "test"
