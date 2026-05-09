@@ -160,33 +160,46 @@ uv run python scripts/validate_dataset.py
 #### Phase 1 — Nano models (run first)
 
 ```bash
-# MDPI protocol (10 epochs/round, 5 rounds)
+# MDPI protocol — 10 epochs/round, no early stopping
 uv run python scripts/train_model.py config/models/yolov8n_random.yaml
 uv run python scripts/train_model.py config/models/yolov8n_pretrained.yaml
 uv run python scripts/train_model.py config/models/yolo12n_random.yaml
 uv run python scripts/train_model.py config/models/yolo12n_pretrained.yaml
 
-# Extended training (100 epochs/round, early stopping patience=10)
+# Extended — 100 epochs/round, early stopping patience=10
 uv run python scripts/train_model.py config/models/yolov8n_random_100ep.yaml
 uv run python scripts/train_model.py config/models/yolov8n_pretrained_100ep.yaml
 uv run python scripts/train_model.py config/models/yolo12n_random_100ep.yaml
 uv run python scripts/train_model.py config/models/yolo12n_pretrained_100ep.yaml
 ```
 
-#### Phase 2 — Small models
+After each run (or all of them), generate the results table:
 
 ```bash
-# MDPI protocol (10 epochs/round, 5 rounds)
+uv run python scripts/report_results.py --phase nano
+```
+
+#### Phase 2 — Small models (heavier compute)
+
+Run these on a machine with more GPU memory — same pattern, just swap `n` → `s`:
+
+```bash
+# MDPI protocol
 uv run python scripts/train_model.py config/models/yolov8s_random.yaml
 uv run python scripts/train_model.py config/models/yolov8s_pretrained.yaml
 uv run python scripts/train_model.py config/models/yolo12s_random.yaml
 uv run python scripts/train_model.py config/models/yolo12s_pretrained.yaml
 
-# Extended training (100 epochs/round, early stopping patience=10)
+# Extended with early stopping
 uv run python scripts/train_model.py config/models/yolov8s_random_100ep.yaml
 uv run python scripts/train_model.py config/models/yolov8s_pretrained_100ep.yaml
 uv run python scripts/train_model.py config/models/yolo12s_random_100ep.yaml
 uv run python scripts/train_model.py config/models/yolo12s_pretrained_100ep.yaml
+```
+
+```bash
+# Report
+uv run python scripts/report_results.py --phase small
 ```
 
 ## Development

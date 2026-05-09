@@ -14,14 +14,14 @@ from .checkpoint import Checkpoint_Selector
 logger = logging.getLogger(__name__)
 
 
-class Metrics_Collector:
+class Metrics_Collector:  # pylint: disable=invalid-name
     """Collects and saves model performance metrics."""
 
     def __init__(self):
         self.logger = logging.getLogger(__name__)
         self.checkpoint_selector = Checkpoint_Selector()
 
-    def evaluate_and_save(
+    def evaluate_and_save(  # pylint: disable=too-many-arguments,too-many-positional-arguments
         self,
         project_dir: str,
         config_name: str,
@@ -46,13 +46,13 @@ class Metrics_Collector:
         Returns:
             Dictionary of evaluation metrics
         """
-        self.logger.info(f"Evaluating model from {project_dir}")
+        self.logger.info("Evaluating model from %s", project_dir)
 
         # Select best checkpoint
         try:
             best_checkpoint = self.checkpoint_selector.select_best_checkpoint(project_dir)
-        except FileNotFoundError as e:
-            self.logger.error(f"Checkpoint selection failed: {e}")
+        except FileNotFoundError as exc:
+            self.logger.error("Checkpoint selection failed: %s", exc)
             raise
 
         # Load model
@@ -86,14 +86,14 @@ class Metrics_Collector:
         else:
             metrics_file = output_path / "evaluation_results.json"
 
-        with open(metrics_file, "w") as f:
-            json.dump(metrics, f, indent=2)
+        with open(metrics_file, "w", encoding="utf-8") as fh:
+            json.dump(metrics, fh, indent=2)
 
-        self.logger.info(f"Metrics saved to {metrics_file}")
+        self.logger.info("Metrics saved to %s", metrics_file)
 
         return metrics
 
-    def _extract_metrics(
+    def _extract_metrics(  # pylint: disable=too-many-arguments,too-many-positional-arguments
         self,
         results: Any,
         model: YOLO,
@@ -110,7 +110,7 @@ class Metrics_Collector:
         model_info = self._get_model_info(model)
 
         # Build metrics dictionary
-        metrics = {
+        metrics: dict[str, Any] = {
             "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             "config_name": config_name,
             "best_checkpoint": best_checkpoint,
@@ -126,7 +126,7 @@ class Metrics_Collector:
 
         # Add per-class metrics if available
         if hasattr(results.box, "maps"):
-            per_class_metrics = {
+            per_class_metrics: dict[str, Any] = {
                 "mAP50_per_class": [float(x) for x in results.box.ap50],
                 "mAP50-95_per_class": [float(x) for x in results.box.ap],
                 "precision_per_class": [float(x) for x in results.box.p]
@@ -163,7 +163,7 @@ class Metrics_Collector:
 
     def _get_model_info(self, model: YOLO) -> dict[str, Any]:
         """Get model architecture information."""
-        info = {}
+        info: dict[str, Any] = {}
 
         try:
             # Get model parameters
@@ -180,16 +180,15 @@ class Metrics_Collector:
                 if isinstance(model_info, dict) and "GFLOPs" in model_info:
                     info["GFLOPs"] = float(model_info["GFLOPs"])
 
-            # Get inference time (approximate)
-            # This will be measured during actual inference
-            info["inference_time_ms"] = None  # To be filled during inference
+            # Inference time is measured during actual inference
+            info["inference_time_ms"] = None
 
-        except Exception as e:
-            self.logger.warning(f"Could not extract all model info: {e}")
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            self.logger.warning("Could not extract all model info: %s", exc)
 
         return info
 
-    def collect_round_metrics(
+    def collect_round_metrics(  # pylint: disable=too-many-arguments,too-many-positional-arguments,too-many-locals
         self,
         checkpoint_path: str,
         data_yaml: str,
@@ -203,6 +202,8 @@ class Metrics_Collector:
         remaining_pool_size: int | None = None,
         unlabeled_pool_size_at_round_start: int | None = None,
         total_detections: int | None = None,
+        actual_stopped_epoch: int | None = None,
+        best_epoch: int | None = None,
     ) -> dict[str, Any]:
         """
         Collect metrics for a specific training round.
@@ -220,23 +221,25 @@ class Metrics_Collector:
             remaining_pool_size: Size of remaining unlabeled pool (optional)
             unlabeled_pool_size_at_round_start: Pool size before simulation (optional)
             total_detections: Total detections from edge simulation (optional)
+            actual_stopped_epoch: Epoch training stopped on (early stopping runs)
+            best_epoch: Epoch with best validation fitness
 
         Returns:
             Dictionary of round metrics
         """
-        self.logger.info(f"Collecting metrics for Round {round_num}...")
+        self.logger.info("Collecting metrics for Round %d...", round_num)
 
         # Load model
         model = YOLO(checkpoint_path)
 
         # Run validation
-        self.logger.info(f"Running validation for Round {round_num}...")
+        self.logger.info("Running validation for Round %d...", round_num)
         val_start = time.time()
         results = model.val(data=data_yaml, verbose=False)
         val_time = time.time() - val_start
 
         # Extract metrics
-        metrics = {
+        metrics: dict[str, Any] = {
             "round": round_num,
             "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             "checkpoint_path": checkpoint_path,
@@ -268,9 +271,15 @@ class Metrics_Collector:
         if total_detections is not None:
             metrics["total_detections"] = total_detections
 
+        # Add early stopping information if provided
+        if actual_stopped_epoch is not None:
+            metrics["actual_stopped_epoch"] = actual_stopped_epoch
+        if best_epoch is not None:
+            metrics["best_epoch"] = best_epoch
+
         # Add per-class metrics if available
         if hasattr(results.box, "maps"):
-            per_class_metrics = {
+            per_class_metrics: dict[str, Any] = {
                 "mAP50_per_class": [float(x) for x in results.box.ap50],
                 "mAP50-95_per_class": [float(x) for x in results.box.ap],
                 "precision_per_class": [float(x) for x in results.box.p]
@@ -294,14 +303,14 @@ class Metrics_Collector:
         output_path = Path(output_dir)
         metrics_file = output_path / f"round_{round_num}_metrics.json"
 
-        with open(metrics_file, "w") as f:
-            json.dump(metrics, f, indent=2)
+        with open(metrics_file, "w", encoding="utf-8") as fh:
+            json.dump(metrics, fh, indent=2)
 
-        self.logger.info(f"Round {round_num} metrics saved to {metrics_file}")
+        self.logger.info("Round %d metrics saved to %s", round_num, metrics_file)
 
         return metrics
 
-    def evaluate_final_test(
+    def evaluate_final_test(  # pylint: disable=too-many-arguments,too-many-positional-arguments
         self,
         checkpoint_path: str,
         data_yaml: str,
@@ -339,7 +348,7 @@ class Metrics_Collector:
         model_info = self._get_model_info(model)
 
         # Extract metrics
-        metrics = {
+        metrics: dict[str, Any] = {
             "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             "config_name": config_name,
             "checkpoint_path": checkpoint_path,
@@ -362,7 +371,7 @@ class Metrics_Collector:
 
         # Add per-class metrics if available
         if hasattr(results.box, "maps"):
-            per_class_metrics = {
+            per_class_metrics: dict[str, Any] = {
                 "mAP50_per_class": [float(x) for x in results.box.ap50],
                 "mAP50-95_per_class": [float(x) for x in results.box.ap],
                 "precision_per_class": [float(x) for x in results.box.p]
@@ -386,10 +395,10 @@ class Metrics_Collector:
         output_path = Path(output_dir)
         metrics_file = output_path / "final_test_metrics.json"
 
-        with open(metrics_file, "w") as f:
-            json.dump(metrics, f, indent=2)
+        with open(metrics_file, "w", encoding="utf-8") as fh:
+            json.dump(metrics, fh, indent=2)
 
-        self.logger.info(f"Final test metrics saved to {metrics_file}")
+        self.logger.info("Final test metrics saved to %s", metrics_file)
 
         return metrics
 

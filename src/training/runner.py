@@ -149,7 +149,10 @@ class Experiment_Runner:
             # Log at step boundaries
             if epoch % step_interval == 0 and epoch > 0:
                 self.logger.info(
-                    f"Applying step decay: LR *= {lrf} at epoch {epoch} (new LR: {expected_lr:.6f})"
+                    "Applying step decay: LR *= %s at epoch %d (new LR: %.6f)",
+                    lrf,
+                    epoch,
+                    expected_lr,
                 )
 
         return on_train_epoch_start
@@ -165,7 +168,7 @@ class Experiment_Runner:
         Returns:
             Dictionary of experiment results
         """
-        self.logger.info(f"Starting experiment with config: {config_path}")
+        self.logger.info("Starting experiment with config: %s", config_path)
 
         # Load configuration
         config = ConfigurationParser.parse(config_path)
@@ -178,8 +181,7 @@ class Experiment_Runner:
         # Check if multi-run experiment
         if config.training.runs > 1:
             return self._run_multi_run_experiment(config, config_name)
-        else:
-            return self._run_single_experiment(config, config_name, run_id=None)
+        return self._run_single_experiment(config, config_name, run_id=None)
 
     def _run_single_experiment(
         self, config: Any, config_name: str, run_id: int | None = None
@@ -202,8 +204,7 @@ class Experiment_Runner:
             and config.training.rounds > 1
         ):
             return self._run_incremental_training(config, config_name, seed, run_id)
-        else:
-            return self._run_standard_training(config, config_name, seed, run_id)
+        return self._run_standard_training(config, config_name, seed, run_id)
 
     def _run_standard_training(
         self, config: Any, config_name: str, seed: int, run_id: int | None = None
@@ -216,14 +217,13 @@ class Experiment_Runner:
                 model_name=config_name, round_name="train", create=True
             )
         )
-        explanations_dir = str(
-            self.output_manager.get_explainability_output_path(
-                model_name=config_name, round_name="train", create=True
-            )
+        # Ensure explainability output directory exists (used by XAI processing)
+        self.output_manager.get_explainability_output_path(
+            model_name=config_name, round_name="train", create=True
         )
 
         # Initialize model
-        self.logger.info(f"Initializing model: {config.model.name}")
+        self.logger.info("Initializing model: %s", config.model.name)
         model = YOLO(config.model.weights)
 
         # Get hyperparameters
@@ -233,16 +233,16 @@ class Experiment_Runner:
         # Create and add step decay LR scheduler callback
         step_decay_callback = self._create_step_decay_callback(lr0, lrf, step_interval=5)
         model.add_callback("on_train_epoch_start", step_decay_callback)
-        self.logger.info(f"Added step decay LR scheduler: lr0={lr0}, lrf={lrf}, step_interval=5")
+        self.logger.info("Added step decay LR scheduler: lr0=%s, lrf=%s, step_interval=5", lr0, lrf)
 
         # Select device
         device = select_device(config.training.device)
 
         # Train model using Output_Manager for project parameter
-        self.logger.info(f"Starting training (seed={seed}, device={device})...")
+        self.logger.info("Starting training (seed=%d, device=%s)...", seed, device)
         train_start = time.time()
 
-        results = model.train(
+        model.train(
             data=config.data.yaml_path,
             epochs=config.training.epochs,
             imgsz=config.training.image_size,
@@ -258,7 +258,7 @@ class Experiment_Runner:
         )
 
         training_time = time.time() - train_start
-        self.logger.info(f"Training completed in {training_time:.2f} seconds")
+        self.logger.info("Training completed in %.2f seconds", training_time)
 
         # Get the actual project directory from Output_Manager
         project_dir = str(
@@ -272,7 +272,7 @@ class Experiment_Runner:
         if not weights_dir.exists() or not (weights_dir / "best.pt").exists():
             raise FileNotFoundError(f"Could not find training results at: {project_dir}")
 
-        self.logger.info(f"Found training results at: {project_dir}")
+        self.logger.info("Found training results at: %s", project_dir)
 
         # Evaluate model
         self.logger.info("Evaluating model...")
@@ -318,7 +318,7 @@ class Experiment_Runner:
         Returns:
             Dictionary of final metrics
         """
-        self.logger.info(f"Starting incremental training: {config.training.rounds} rounds")
+        self.logger.info("Starting incremental training: %d rounds", config.training.rounds)
         self.logger.info(
             "ARCHITECTURE: Cumulative training — each round trains on all verified samples accumulated so far"
         )
@@ -359,15 +359,14 @@ class Experiment_Runner:
             ).parent
         )  # Get parent to have outputs/{config_name}/ for shared metadata
 
-        explanations_dir = str(
-            self.output_manager.get_explainability_output_path(
-                model_name=config_name, round_name=None, create=True
-            ).parent
-        )  # Get parent to have explanations/{config_name}/ base
+        # Ensure explainability base directory exists
+        self.output_manager.get_explainability_output_path(
+            model_name=config_name, round_name=None, create=True
+        )
 
         # Load data.yaml to get dataset paths
-        with open(config.data.yaml_path) as f:
-            data_config = yaml.safe_load(f)
+        with open(config.data.yaml_path, encoding="utf-8") as fh:
+            data_config = yaml.safe_load(fh)
 
         base_path = Path(data_config.get("path", "."))
         train_path = base_path / data_config["train"]
@@ -376,8 +375,9 @@ class Experiment_Runner:
         # Dataset_Splitter.  The Roboflow download has no test directory, so
         # the splitter pools train/ + valid/ and re-partitions from scratch.
         self.logger.info(
-            f"Splitting full image pool into 70/20/10 "
-            f"(train_init={train_init_percentage * 100:.0f}%, seed={seed})..."
+            "Splitting full image pool into 70/20/10 (train_init=%.0f%%, seed=%d)...",
+            train_init_percentage * 100,
+            seed,
         )
 
         split_result = self.splitter.create_incremental_splits(
@@ -397,10 +397,10 @@ class Experiment_Runner:
             "test_fixed": _load_txt(sf["test_fixed"]),
         }
 
-        self.logger.info(f"  train_init: {len(splits['train_init'])} images")
-        self.logger.info(f"  unlabeled_pool: {len(splits['unlabeled_pool'])} images")
-        self.logger.info(f"  val_fixed: {len(splits['val_fixed'])} images")
-        self.logger.info(f"  test_fixed: {len(splits['test_fixed'])} images")
+        self.logger.info("  train_init: %d images", len(splits["train_init"]))
+        self.logger.info("  unlabeled_pool: %d images", len(splits["unlabeled_pool"]))
+        self.logger.info("  val_fixed: %d images", len(splits["val_fixed"]))
+        self.logger.info("  test_fixed: %d images", len(splits["test_fixed"]))
 
         # Verify that the split approximates the expected 70/20/10 ratio
         self._verify_split_ratio(
@@ -433,35 +433,35 @@ class Experiment_Runner:
 
         # Run incremental training rounds
         for round_num in range(1, rounds + 1):
-            self.logger.info(f"\n{'=' * 60}")
-            self.logger.info(f"Round {round_num}/{rounds}")
-            self.logger.info(f"Training set size: {len(current_training_images)} images")
-            self.logger.info(f"Unlabeled pool size: {len(unlabeled_pool)} images")
-            self.logger.info(f"{'=' * 60}\n")
+            self.logger.info("\n%s", "=" * 60)
+            self.logger.info("Round %d/%d", round_num, rounds)
+            self.logger.info("Training set size: %d images", len(current_training_images))
+            self.logger.info("Unlabeled pool size: %d images", len(unlabeled_pool))
+            self.logger.info("%s\n", "=" * 60)
 
             # Skip rounds where the previous simulation produced no verified samples.
             # Round 1 always runs (trains on train_init). Subsequent rounds only run
             # when there are newly verified images to fine-tune on.
             if round_num > 1 and len(current_training_images) == 0:
                 self.logger.warning(
-                    f"Round {round_num} skipped — no verified samples from Round {round_num - 1} simulation. "
-                    f"Checkpoint from Round {round_num - 1} carries forward unchanged."
+                    "Round %d skipped — no verified samples from Round %d simulation. "
+                    "Checkpoint from Round %d carries forward unchanged.",
+                    round_num,
+                    round_num - 1,
+                    round_num - 1,
                 )
                 continue
 
             # Create round-specific directories using Output_Manager
             round_name = f"incremental_round_{round_num}"
 
-            round_project_dir = str(
-                self.output_manager.get_training_output_path(
-                    model_name=config_name, round_name=round_name, create=True
-                )
+            # Ensure training output directory exists
+            self.output_manager.get_training_output_path(
+                model_name=config_name, round_name=round_name, create=True
             )
-
-            round_explanations_dir = str(
-                self.output_manager.get_explainability_output_path(
-                    model_name=config_name, round_name=round_name, create=True
-                )
+            # Ensure explainability output directory exists
+            self.output_manager.get_explainability_output_path(
+                model_name=config_name, round_name=round_name, create=True
             )
 
             # Create data.yaml for this round with current training set
@@ -481,11 +481,11 @@ class Experiment_Runner:
                 # Round 1: initialise from the configured weights path.
                 # .yaml  → random init (Kutlu & Emiroğlu 2025, §3.2)
                 # .pt    → COCO-pretrained transfer learning
-                self.logger.info(f"Round 1: initialising model from {config.model.weights}")
+                self.logger.info("Round 1: initialising model from %s", config.model.weights)
                 model = YOLO(config.model.weights)
             else:
                 # Round N > 1: Initialize from best checkpoint of Round N-1
-                self.logger.info(f"Initializing model from Round {round_num - 1} best checkpoint")
+                self.logger.info("Initializing model from Round %d best checkpoint", round_num - 1)
                 if best_checkpoint_path is None:
                     raise ValueError(f"No checkpoint found from Round {round_num - 1}")
                 model = YOLO(best_checkpoint_path)
@@ -495,14 +495,17 @@ class Experiment_Runner:
             model.add_callback("on_train_epoch_start", step_decay_callback)
             if round_num == 1:
                 self.logger.info(
-                    f"Added step decay LR scheduler: lr0={lr0}, lrf={lrf}, step_interval=5"
+                    "Added step decay LR scheduler: lr0=%s, lrf=%s, step_interval=5", lr0, lrf
                 )
 
             # Train model for this round
             self.logger.info(
-                f"Training Round {round_num} (epochs={epochs_per_round}, device={device})..."
+                "Training Round %d (epochs=%d, device=%s)...",
+                round_num,
+                epochs_per_round,
+                device,
             )
-            self.logger.info(f"  Optimizer: {optimizer}, LR: {lr0}, Batch: {batch_size}")
+            self.logger.info("  Optimizer: %s, LR: %s, Batch: %d", optimizer, lr0, batch_size)
             round_train_start = time.time()
 
             results = model.train(
@@ -531,8 +534,37 @@ class Experiment_Runner:
             round_training_time = time.time() - round_train_start
             total_training_time += round_training_time
             self.logger.info(
-                f"Round {round_num} training completed in {round_training_time:.2f} seconds"
+                "Round %d training completed in %.2f seconds", round_num, round_training_time
             )
+
+            # Capture actual stopping epoch (relevant when early stopping is enabled)
+            actual_stopped_epoch = None
+            best_epoch = None
+            try:
+                trainer = getattr(model, "trainer", None)
+                if trainer is not None:
+                    # trainer.epoch is 0-indexed; add 1 for human-readable epoch number
+                    raw_epoch = getattr(trainer, "epoch", None)
+                    raw_best = getattr(trainer, "best_epoch", None)
+                    if raw_epoch is not None:
+                        actual_stopped_epoch = int(raw_epoch) + 1
+                    if raw_best is not None:
+                        best_epoch = int(raw_best) + 1
+                    if config.training.patience > 0:
+                        self.logger.info(
+                            "Early stopping: stopped at epoch %d/%d (best epoch: %d)",
+                            actual_stopped_epoch,
+                            epochs_per_round,
+                            best_epoch,
+                        )
+                    else:
+                        self.logger.info(
+                            "Training completed all %d epochs (best epoch: %d)",
+                            actual_stopped_epoch,
+                            best_epoch,
+                        )
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                self.logger.warning("Could not read stopping epoch from trainer: %s", exc)
 
             # Find best checkpoint for this round using Output_Manager
             round_name = f"incremental_round_{round_num}"
@@ -542,13 +574,13 @@ class Experiment_Runner:
                         model_name=config_name, round_name=round_name, checkpoint_type="best"
                     )
                 )
-                self.logger.info(f"Found checkpoint at: {best_checkpoint_path}")
-            except FileNotFoundError as e:
-                self.logger.error(f"Checkpoint resolution failed: {e}")
+                self.logger.info("Found checkpoint at: %s", best_checkpoint_path)
+            except FileNotFoundError as exc:
+                self.logger.error("Checkpoint resolution failed: %s", exc)
                 raise
 
             # Evaluate on val_fixed
-            self.logger.info(f"Evaluating Round {round_num} on validation set...")
+            self.logger.info("Evaluating Round %d on validation set...", round_num)
 
             # Calculate verified_samples_added for this round's metrics.
             # Round 1: 0 (training on train_init only, no prior simulation)
@@ -561,14 +593,15 @@ class Experiment_Runner:
                 verified_samples_added = 0
                 if prev_validation_file.exists():
                     try:
-                        with open(prev_validation_file) as f:
-                            prev_validation = json.load(f)
+                        with open(prev_validation_file, encoding="utf-8") as fh:
+                            prev_validation = json.load(fh)
                             verified_samples_added = len(
                                 prev_validation.get("verified_samples", [])
                             )
-                    except Exception as e:
+                    except OSError as exc:
                         self.logger.warning(
-                            f"Could not load previous validation results for verified count: {e}"
+                            "Could not load previous validation results for verified count: %s",
+                            exc,
                         )
 
             # Load pool statistics from previous round's validation (if available)
@@ -583,13 +616,13 @@ class Experiment_Runner:
                 prev_validation_file = Path(output_dir) / f"round_{round_num - 1}_validations.json"
                 if prev_validation_file.exists():
                     try:
-                        with open(prev_validation_file) as f:
-                            prev_validation = json.load(f)
+                        with open(prev_validation_file, encoding="utf-8") as fh:
+                            prev_validation = json.load(fh)
                             rejected_count = prev_validation.get("rejected_count")
                             undetected_count = prev_validation.get("undetected_count")
                             total_detections = prev_validation.get("total_detections")
-                    except Exception as e:
-                        self.logger.warning(f"Could not load previous validation results: {e}")
+                    except OSError as exc:
+                        self.logger.warning("Could not load previous validation results: %s", exc)
 
             round_metrics = self.metrics_collector.collect_round_metrics(
                 checkpoint_path=best_checkpoint_path,
@@ -604,6 +637,8 @@ class Experiment_Runner:
                 remaining_pool_size=remaining_pool_size,
                 unlabeled_pool_size_at_round_start=unlabeled_pool_size_at_round_start,
                 total_detections=total_detections,
+                actual_stopped_epoch=actual_stopped_epoch,
+                best_epoch=best_epoch,
             )
 
             all_round_metrics.append(round_metrics)
@@ -614,7 +649,9 @@ class Experiment_Runner:
                 best_overall_checkpoint_path = best_checkpoint_path
                 best_overall_round = round_num
                 self.logger.info(
-                    f"New best overall checkpoint: Round {round_num} (val mAP50={round_map50:.4f})"
+                    "New best overall checkpoint: Round %d (val mAP50=%.4f)",
+                    round_num,
+                    round_map50,
                 )
 
             # Run XAI processing if enabled
