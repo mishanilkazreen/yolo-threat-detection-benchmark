@@ -229,12 +229,24 @@ data/downloaded/
 # YOLO pretrained weights
 *.pt
 
-# Training outputs
-runs/detect/
-runs/**/*.pt
-runs/**/*.jpg
-explanations/**/*.png
-explanations/**/*.npy
+# Training outputs (YOLO checkpoints, plots — large, regenerable)
+runs/
+!runs/.gitkeep
+
+# Experiment logs (console output from training runs)
+logs/
+
+# Explainability outputs (heatmap images — large, regenerable)
+explanations/
+!explanations/.gitkeep
+
+# Output artifacts that are regenerable (keep JSON metrics + reports)
+outputs/**/*.png
+outputs/**/round_splits/
+outputs/**/training_set_evolution.json
+outputs/**/split_metadata.json
+outputs/**/*_detections.json
+outputs/**/*_validations.json
 
 # Local configuration overrides
 *.local.yaml
