@@ -49,7 +49,7 @@ class Results_Aggregator:
             # Collect metrics for each round
             for round_file in sorted(config_dir.glob("round_*_metrics.json")):
                 try:
-                    with open(round_file) as f:
+                    with open(round_file, encoding="utf-8") as f:
                         metrics = json.load(f)
                     round_metrics.append(metrics)
                 except Exception as e:
@@ -89,7 +89,7 @@ class Results_Aggregator:
 
             if final_test_file.exists():
                 try:
-                    with open(final_test_file) as f:
+                    with open(final_test_file, encoding="utf-8") as f:
                         metrics = json.load(f)
                     final_metrics[config_name] = metrics
                     self.logger.info(f"Collected final test metrics for {config_name}")
@@ -145,7 +145,7 @@ class Results_Aggregator:
 
         # Save as Markdown
         md_file = output_path / "round_comparison_table.md"
-        with open(md_file, "w") as f:
+        with open(md_file, "w", encoding="utf-8") as f:
             f.write("# Per-Round Performance Comparison\n\n")
             f.write(df.to_markdown(index=False, floatfmt=".4f"))
         self.logger.info(f"Round comparison table saved to {md_file}")
@@ -197,7 +197,7 @@ class Results_Aggregator:
 
         # Save as Markdown
         md_file = output_path / "final_comparison_table.md"
-        with open(md_file, "w") as f:
+        with open(md_file, "w", encoding="utf-8") as f:
             f.write("# Final Performance Comparison (Test Set)\n\n")
             f.write(df.to_markdown(index=False, floatfmt=".4f"))
         self.logger.info(f"Final comparison table saved to {md_file}")

@@ -75,8 +75,6 @@ class Configuration:
 class ConfigurationParseError(Exception):
     """Exception raised when configuration parsing fails."""
 
-    pass
-
 
 class ConfigurationParser:
     """Parser for YAML configuration files to Configuration objects."""
@@ -96,14 +94,16 @@ class ConfigurationParser:
             ConfigurationParseError: If parsing fails or validation fails
         """
         try:
-            with open(config_path) as f:
+            with open(config_path, encoding="utf-8") as f:
                 data = yaml.safe_load(f)
-        except FileNotFoundError:
-            raise ConfigurationParseError(f"Configuration file not found: {config_path}")
+        except FileNotFoundError as e:
+            raise ConfigurationParseError(f"Configuration file not found: {config_path}") from e
         except yaml.YAMLError as e:
-            raise ConfigurationParseError(f"Invalid YAML syntax in {config_path}: {e}")
+            raise ConfigurationParseError(f"Invalid YAML syntax in {config_path}: {e}") from e
         except Exception as e:
-            raise ConfigurationParseError(f"Failed to read configuration file {config_path}: {e}")
+            raise ConfigurationParseError(
+                f"Failed to read configuration file {config_path}: {e}"
+            ) from e
 
         if data is None:
             raise ConfigurationParseError(f"Configuration file is empty: {config_path}")
@@ -137,19 +137,19 @@ class ConfigurationParser:
         try:
             training_config = ConfigurationParser._parse_training(data["training"], source)
         except Exception as e:
-            raise ConfigurationParseError(f"Error parsing training section in {source}: {e}")
+            raise ConfigurationParseError(f"Error parsing training section in {source}: {e}") from e
 
         # Parse model configuration
         try:
             model_config = ConfigurationParser._parse_model(data["model"], source)
         except Exception as e:
-            raise ConfigurationParseError(f"Error parsing model section in {source}: {e}")
+            raise ConfigurationParseError(f"Error parsing model section in {source}: {e}") from e
 
         # Parse data configuration
         try:
             data_config = ConfigurationParser._parse_data(data["data"], source)
         except Exception as e:
-            raise ConfigurationParseError(f"Error parsing data section in {source}: {e}")
+            raise ConfigurationParseError(f"Error parsing data section in {source}: {e}") from e
 
         # Parse XAI configuration (optional)
         xai_config = XAIConfig()  # Default configuration
@@ -157,7 +157,7 @@ class ConfigurationParser:
             try:
                 xai_config = ConfigurationParser._parse_xai(data["xai"], source)
             except Exception as e:
-                raise ConfigurationParseError(f"Error parsing xai section in {source}: {e}")
+                raise ConfigurationParseError(f"Error parsing xai section in {source}: {e}") from e
 
         return Configuration(
             training=training_config, model=model_config, data=data_config, xai=xai_config
@@ -187,24 +187,28 @@ class ConfigurationParser:
                 epochs = int(epochs)
                 if epochs <= 0:
                     raise ConfigurationParseError("epochs must be positive")
-            except (ValueError, TypeError):
-                raise ConfigurationParseError(f"epochs must be an integer, got: {data['epochs']}")
+            except (ValueError, TypeError) as e:
+                raise ConfigurationParseError(
+                    f"epochs must be an integer, got: {data['epochs']}"
+                ) from e
 
         try:
             patience = int(data["patience"])
             if patience < 0:
                 raise ConfigurationParseError("patience must be non-negative")
-        except (ValueError, TypeError):
-            raise ConfigurationParseError(f"patience must be an integer, got: {data['patience']}")
+        except (ValueError, TypeError) as e:
+            raise ConfigurationParseError(
+                f"patience must be an integer, got: {data['patience']}"
+            ) from e
 
         try:
             image_size = int(data["image_size"])
             if image_size <= 0:
                 raise ConfigurationParseError("image_size must be positive")
-        except (ValueError, TypeError):
+        except (ValueError, TypeError) as e:
             raise ConfigurationParseError(
                 f"image_size must be an integer, got: {data['image_size']}"
-            )
+            ) from e
 
         # Optional device field (defaults to "auto")
         device = str(data.get("device", "auto"))
@@ -269,10 +273,10 @@ class ConfigurationParser:
             baseline_epochs = int(baseline_epochs)
             if baseline_epochs <= 0:
                 raise ConfigurationParseError("baseline_epochs must be a positive integer")
-        except (ValueError, TypeError):
+        except (ValueError, TypeError) as e:
             raise ConfigurationParseError(
                 f"baseline_epochs must be a positive integer, got: {data['baseline_epochs']}"
-            )
+            ) from e
 
         # Augmentation fields — read from YAML augmentation subsection or top-level, with paper defaults
         aug_data = data.get("augmentation", {})
@@ -344,13 +348,13 @@ class ConfigurationParser:
         train_init_percentage = data.get("train_init_percentage")
         if train_init_percentage is not None:
             train_init_percentage = float(train_init_percentage)
-            if not (0.0 < train_init_percentage <= 1.0):
+            if not 0.0 < train_init_percentage <= 1.0:
                 raise ConfigurationParseError("train_init_percentage must be in (0, 1]")
 
         iou_threshold = data.get("iou_threshold")
         if iou_threshold is not None:
             iou_threshold = float(iou_threshold)
-            if not (0.0 <= iou_threshold <= 1.0):
+            if not 0.0 <= iou_threshold <= 1.0:
                 raise ConfigurationParseError("iou_threshold must be in [0, 1]")
 
         return DataConfig(
@@ -397,10 +401,10 @@ class ConfigurationParser:
                 sample_limit = int(sample_limit)
                 if sample_limit <= 0:
                     raise ConfigurationParseError("xai.sample_limit must be positive")
-            except (ValueError, TypeError):
+            except (ValueError, TypeError) as e:
                 raise ConfigurationParseError(
                     f"xai.sample_limit must be an integer, got: {sample_limit}"
-                )
+                ) from e
 
         # Parse target layer
         _ARCH_KEYS = ("yolov11", "yolov12", "yolo26", "yolov8")
@@ -433,19 +437,19 @@ class ConfigurationParser:
             background_set_size = int(background_set_size)
             if background_set_size <= 0:
                 raise ConfigurationParseError("xai.background_set_size must be positive")
-        except (ValueError, TypeError):
+        except (ValueError, TypeError) as e:
             raise ConfigurationParseError(
                 f"xai.background_set_size must be an integer, got: {background_set_size}"
-            )
+            ) from e
 
         # Parse background set seed
         background_set_seed = data.get("background_set_seed", 42)
         try:
             background_set_seed = int(background_set_seed)
-        except (ValueError, TypeError):
+        except (ValueError, TypeError) as e:
             raise ConfigurationParseError(
                 f"xai.background_set_seed must be an integer, got: {background_set_seed}"
-            )
+            ) from e
 
         # Parse output overlays
         output_overlays = data.get("output_overlays", True)

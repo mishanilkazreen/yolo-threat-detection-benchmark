@@ -11,13 +11,15 @@ and used without dependencies on other XAI methods.
 
 from .config import XAIConfig
 from .gradcam import generate_gradcam_attribution
-from .interfaces import AttributionMethod, XAIResult
+from .interfaces import AttributionMethod, Detection, XAIBatchResult, XAIResult
 from .lrp import generate_lrp_attribution
 from .manager import XAIManager
 from .shap import generate_shap_attribution
 
 __all__ = [
     "AttributionMethod",
+    "Detection",
+    "XAIBatchResult",
     "XAIConfig",
     "XAIManager",
     "XAIResult",

@@ -30,7 +30,6 @@ class Round_Metrics_Tracker:
 
     def __init__(self):
         """Initialize the Round_Metrics_Tracker."""
-        pass
 
     def track_round_metrics(self, round_num: int, metrics: dict[str, Any], output_dir: str) -> None:
         """
@@ -58,7 +57,7 @@ class Round_Metrics_Tracker:
 
         # Save round-specific metrics
         round_file = output_path / f"round_{round_num}_metrics.json"
-        with open(round_file, "w") as f:
+        with open(round_file, "w", encoding="utf-8") as f:
             json.dump(persisted, f, indent=2)
 
         logger.info(f"Saved round {round_num} metrics to {round_file}")
@@ -85,7 +84,7 @@ class Round_Metrics_Tracker:
             round_file = output_path / f"round_{round_num}_metrics.json"
 
             if round_file.exists():
-                with open(round_file) as f:
+                with open(round_file, encoding="utf-8") as f:
                     round_metrics = json.load(f)
                     rounds_data.append(round_metrics)
             else:
@@ -104,7 +103,7 @@ class Round_Metrics_Tracker:
 
         # Save aggregated metrics
         agg_file = output_path / "all_rounds_metrics.json"
-        with open(agg_file, "w") as f:
+        with open(agg_file, "w", encoding="utf-8") as f:
             json.dump(aggregated, f, indent=2)
 
         logger.info(f"Saved aggregated metrics to {agg_file}")
@@ -147,7 +146,7 @@ class Round_Metrics_Tracker:
             "cumulative_training_time_seconds",
         ]
 
-        with open(csv_path, "w", newline="") as f:
+        with open(csv_path, "w", newline="", encoding="utf-8") as f:
             writer = csv.DictWriter(f, fieldnames=columns)
             writer.writeheader()
 
@@ -245,7 +244,7 @@ class Round_Metrics_Tracker:
         # Load existing HFS evolution data
         hfs_file = output_path / "hfs_evolution.json"
         if hfs_file.exists():
-            with open(hfs_file) as f:
+            with open(hfs_file, encoding="utf-8") as f:
                 hfs_data = json.load(f)
         else:
             hfs_data = {"config_name": config_name, "rounds": []}
@@ -255,7 +254,7 @@ class Round_Metrics_Tracker:
         hfs_data["rounds"].append(round_hfs)
 
         # Save updated HFS evolution
-        with open(hfs_file, "w") as f:
+        with open(hfs_file, "w", encoding="utf-8") as f:
             json.dump(hfs_data, f, indent=2)
 
         logger.info(f"Tracked HFS for round {round_num} in {hfs_file}")

@@ -192,6 +192,45 @@ exclude_lines = [
     "@(abc\\.)?abstractmethod",
 ]
 
+[tool.pylint.messages-control]
+disable = [
+    "C0103",  # invalid-name: codebase uses Snake_Case for class names intentionally
+    "C0114",  # missing-module-docstring
+    "C0115",  # missing-class-docstring
+    "C0116",  # missing-function-docstring
+    "C0301",  # line-too-long: handled by ruff formatter
+    "C0411",  # wrong-import-order: handled by ruff/isort
+    "C0413",  # wrong-import-position: lazy imports are intentional
+    "C0415",  # import-outside-toplevel: intentional in tests and optional deps
+    "E1101",  # no-member: false positives for numpy/torch dynamic attributes
+    "R0801",  # duplicate-code
+    "R0902",  # too-many-instance-attributes: config dataclasses legitimately exceed 7
+    "R0903",  # too-few-public-methods: dataclasses and simple containers
+    "R0904",  # too-many-public-methods: large test classes aggregate many cases
+    "R0911",  # too-many-return-statements: mirrors ruff PLR0911 ignore
+    "R0912",  # too-many-branches: mirrors ruff PLR0912 ignore
+    "R0913",  # too-many-arguments: mirrors ruff PLR0913 ignore
+    "R0914",  # too-many-locals: complex pipeline functions
+    "R0915",  # too-many-statements: mirrors ruff PLR0915 ignore
+    "R0917",  # too-many-positional-arguments: mirrors R0913
+    "R1705",  # no-else-return: style preference
+    "W0201",  # attribute-defined-outside-init: pytest fixtures set attrs in setup methods
+    "W0212",  # protected-access: tests legitimately access internal methods
+    "W0404",  # reimported: handled per-file where necessary
+    "W0613",  # unused-argument: required for interface/callback conformance
+    "W0621",  # redefined-outer-name: test fixtures shadow outer names intentionally
+    "W0707",  # raise-missing-from: mirrors ruff B904 ignore
+    "W0718",  # broad-exception-caught: intentional catch-all in pipeline error handling
+    "W1203",  # logging-fstring-interpolation: f-strings are the codebase style
+    "C0302",  # too-many-lines: test files legitimately exceed 1000 lines
+    "R0401",  # cyclic-import: lazy imports in XAI modules prevent actual cycles
+    "R1710",  # inconsistent-return-statements: pytest.skip() raises, never returns
+    "W1117",  # kwarg-superseded-by-positional-arg: false positive on MagicMock(cls=...)
+]
+
+[tool.pylint.typecheck]
+ignored-modules = ["yolo_cam"]  # third-party module with dynamic structure
+
 [dependency-groups]
 dev = [
     "hypothesis>=6.0.0",

@@ -72,7 +72,7 @@ class Checkpoint_Selector:
 
         try:
             # Read the last line of results.csv (final epoch)
-            with open(results_file) as f:
+            with open(results_file, encoding="utf-8") as f:
                 reader = csv.DictReader(f)
                 rows = list(reader)
 

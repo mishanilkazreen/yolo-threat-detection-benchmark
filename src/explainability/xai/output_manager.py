@@ -131,10 +131,8 @@ class XAIOutputManager:
         # Build the overlay image here so _save_gradcam_visualization gets all three inputs
         cam_norm = cam_np.astype(np.float32)
         h, w = image_np.shape[:2]
-        import cv2 as _cv2
-
         if cam_norm.shape != (h, w):
-            cam_norm = _cv2.resize(cam_norm, (w, h), interpolation=_cv2.INTER_LINEAR).astype(
+            cam_norm = cv2.resize(cam_norm, (w, h), interpolation=cv2.INTER_LINEAR).astype(
                 np.float32
             )
         cam_max = cam_norm.max()
@@ -266,7 +264,6 @@ class XAIOutputManager:
             Path to saved CSV file
         """
         import csv
-        from pathlib import Path
 
         if output_dir is None:
             output_dir_path: Path = self.base_output_dir
@@ -289,7 +286,7 @@ class XAIOutputManager:
             "model_name",
         ]
 
-        with open(csv_file, "w", newline="") as f:
+        with open(csv_file, "w", newline="", encoding="utf-8") as f:
             writer = csv.DictWriter(f, fieldnames=columns)
             writer.writeheader()
 
@@ -327,7 +324,6 @@ class XAIOutputManager:
             Path to saved CSV file
         """
         import csv
-        from pathlib import Path
 
         if output_dir is None:
             output_dir_path: Path = self.base_output_dir
@@ -343,7 +339,7 @@ class XAIOutputManager:
             logger.warning("No aggregate data to save")
             # Still create an empty file with headers
             columns = ["round", "num_images_processed", "total_processing_time_seconds"]
-            with open(csv_file, "w", newline="") as f:
+            with open(csv_file, "w", newline="", encoding="utf-8") as f:
                 writer = csv.DictWriter(f, fieldnames=columns)
                 writer.writeheader()
             return str(csv_file)
@@ -364,7 +360,7 @@ class XAIOutputManager:
                 ]
             )
 
-        with open(csv_file, "w", newline="") as f:
+        with open(csv_file, "w", newline="", encoding="utf-8") as f:
             writer = csv.DictWriter(f, fieldnames=columns)
             writer.writeheader()
 
@@ -406,7 +402,6 @@ class XAIOutputManager:
             Path to CSV file
         """
         import csv
-        from pathlib import Path
 
         if output_dir is None:
             output_dir_path: Path = self.base_output_dir
@@ -426,7 +421,7 @@ class XAIOutputManager:
         # Check if file exists and read existing columns
         existing_methods = set()
         if csv_file.exists():
-            with open(csv_file) as f:
+            with open(csv_file, encoding="utf-8") as f:
                 reader = csv.DictReader(f)
                 if reader.fieldnames:
                     # Extract method names from existing columns
@@ -451,12 +446,12 @@ class XAIOutputManager:
         # Read existing data if file exists
         existing_data = []
         if csv_file.exists():
-            with open(csv_file) as f:
+            with open(csv_file, encoding="utf-8") as f:
                 reader = csv.DictReader(f)
                 existing_data = list(reader)
 
         # Write all data with updated columns
-        with open(csv_file, "w", newline="") as f:
+        with open(csv_file, "w", newline="", encoding="utf-8") as f:
             writer = csv.DictWriter(f, fieldnames=columns)
             writer.writeheader()
 

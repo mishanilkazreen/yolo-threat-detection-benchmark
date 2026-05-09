@@ -163,7 +163,7 @@ class Comparison_Reporter:
 
     def _save_csv(self, table: list[dict[str, Any]], path: Path) -> None:
         col_labels = ["Approach"] + [c for c, _ in COMPARISON_COLUMNS]
-        with open(path, "w", newline="") as f:
+        with open(path, "w", newline="", encoding="utf-8") as f:
             writer = csv.DictWriter(f, fieldnames=col_labels)
             writer.writeheader()
             for row in table:
@@ -202,7 +202,7 @@ class Comparison_Reporter:
             return None
 
         try:
-            with open(test_file) as f:
+            with open(test_file, encoding="utf-8") as f:
                 test_data = json.load(f)
         except Exception as exc:
             self.logger.warning("Failed to load %s: %s", test_file, exc)
@@ -234,7 +234,7 @@ class Comparison_Reporter:
         # HFS
         if hfs_file.exists():
             try:
-                with open(hfs_file) as f:
+                with open(hfs_file, encoding="utf-8") as f:
                     hfs_data = json.load(f)
                 metrics["hfs"] = hfs_data.get("mean_hfs", float("nan"))
             except Exception as exc:

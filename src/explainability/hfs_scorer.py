@@ -216,7 +216,7 @@ class Heatmap_Focus_Scorer:
 
         metrics_file = output_path / "hfs_metrics.json"
 
-        with open(metrics_file, "w") as f:
+        with open(metrics_file, "w", encoding="utf-8") as f:
             json.dump(metrics, f, indent=2)
 
         self.logger.info(f"HFS metrics saved to {metrics_file}")
@@ -444,7 +444,7 @@ class Heatmap_Focus_Scorer:
 
         metrics_file = output_path / "bbox_weighted_relevance_metrics.json"
 
-        with open(metrics_file, "w") as f:
+        with open(metrics_file, "w", encoding="utf-8") as f:
             json.dump(metrics, f, indent=2)
 
         self.logger.info(f"Bbox-weighted relevance metrics saved to {metrics_file}")
@@ -479,7 +479,7 @@ class Heatmap_Focus_Scorer:
                 continue
 
             # Read first annotation (assume single object per image for HFS)
-            with open(label_path) as f:
+            with open(label_path, encoding="utf-8") as f:
                 lines = f.readlines()
 
             if not lines:

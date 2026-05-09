@@ -185,7 +185,7 @@ invalid line
         annotation_str = """0 0.5 0.5 0.3 0.4
 1 0.2 0.3 0.1
 2 0.8 0.7 0.15 0.25"""
-        annotations, errors = self.parser.parse_annotation_string(annotation_str)
+        _, errors = self.parser.parse_annotation_string(annotation_str)
 
         assert len(errors) == 1
         assert "Line 2" in errors[0]

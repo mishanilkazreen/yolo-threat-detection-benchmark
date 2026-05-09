@@ -18,13 +18,13 @@ class BoundingBox:
 
     def __post_init__(self):
         """Validate bounding box coordinates."""
-        if not (0 <= self.center_x <= 1):
+        if not 0 <= self.center_x <= 1:
             raise ValueError(f"center_x must be in [0, 1], got {self.center_x}")
-        if not (0 <= self.center_y <= 1):
+        if not 0 <= self.center_y <= 1:
             raise ValueError(f"center_y must be in [0, 1], got {self.center_y}")
-        if not (0 <= self.width <= 1):
+        if not 0 <= self.width <= 1:
             raise ValueError(f"width must be in [0, 1], got {self.width}")
-        if not (0 <= self.height <= 1):
+        if not 0 <= self.height <= 1:
             raise ValueError(f"height must be in [0, 1], got {self.height}")
 
 
@@ -62,7 +62,7 @@ class Annotation_Parser:
 
         # Read file
         try:
-            with open(path) as f:
+            with open(path, encoding="utf-8") as f:
                 lines = f.readlines()
         except Exception as e:
             errors.append(f"Failed to read file: {e}")
@@ -115,7 +115,7 @@ class Annotation_Parser:
             width = float(parts[3])
             height = float(parts[4])
         except ValueError as e:
-            raise ValueError(f"Invalid numeric value: {e}")
+            raise ValueError(f"Invalid numeric value: {e}") from e
 
         # Validate class_id
         if class_id < 0:
@@ -125,7 +125,7 @@ class Annotation_Parser:
         try:
             bbox = BoundingBox(center_x=center_x, center_y=center_y, width=width, height=height)
         except ValueError as e:
-            raise ValueError(f"Invalid bounding box: {e}")
+            raise ValueError(f"Invalid bounding box: {e}") from e
 
         return Annotation(class_id=class_id, bbox=bbox)
 

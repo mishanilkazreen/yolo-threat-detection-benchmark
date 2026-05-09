@@ -40,7 +40,7 @@ class Dataset_Loader:
         self.logger.info(f"Preparing dataset from {data_yaml_path}")
 
         # Load data.yaml
-        with open(data_yaml_path) as f:
+        with open(data_yaml_path, encoding="utf-8") as f:
             data_config = yaml.safe_load(f)
 
         # Get base path
@@ -105,7 +105,7 @@ class Dataset_Loader:
 
             # Create subset file list
             subset_file_path = base_path / f"{split}_subset.txt"
-            with open(subset_file_path, "w") as f:
+            with open(subset_file_path, "w", encoding="utf-8") as f:
                 for img_path in subset_images:
                     f.write(f"{img_path}\n")
 
@@ -119,7 +119,7 @@ class Dataset_Loader:
 
         # Save subset config
         subset_yaml_path = base_path / "data_subset.yaml"
-        with open(subset_yaml_path, "w") as f:
+        with open(subset_yaml_path, "w", encoding="utf-8") as f:
             yaml.dump(subset_config, f, default_flow_style=False, sort_keys=False)
 
         self.logger.info(f"Created subset configuration at {subset_yaml_path}")
@@ -155,7 +155,7 @@ class Dataset_Loader:
         Returns:
             Tuple of (train_path, val_path, test_path)
         """
-        with open(data_yaml_path) as f:
+        with open(data_yaml_path, encoding="utf-8") as f:
             data_config = yaml.safe_load(f)
 
         base_path = Path(data_config.get("path", Path(data_yaml_path).parent))
@@ -185,7 +185,7 @@ class Dataset_Loader:
         Returns:
             True if no duplicates found, False otherwise
         """
-        with open(data_yaml_path) as f:
+        with open(data_yaml_path, encoding="utf-8") as f:
             data_config = yaml.safe_load(f)
 
         base_path = Path(data_config.get("path", Path(data_yaml_path).parent))

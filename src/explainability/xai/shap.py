@@ -112,7 +112,7 @@ def generate_shap_attribution(
                 )
                 grad_holder: list[torch.Tensor | None] = [None]
 
-                def hook_fn(g, holder=grad_holder):
+                def hook_fn(g, holder=grad_holder):  # pylint: disable=dangerous-default-value
                     holder[0] = g.detach().clone()
 
                 hook = interp.register_hook(hook_fn)

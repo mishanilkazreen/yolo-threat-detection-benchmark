@@ -27,7 +27,6 @@ class Training_Set_Manager:
 
     def __init__(self):
         """Initialize the Training_Set_Manager."""
-        pass
 
     def expand_training_set(
         self,
@@ -67,7 +66,7 @@ class Training_Set_Manager:
         if not current_train_path.exists():
             raise FileNotFoundError(f"Current training set not found: {current_train_path}")
 
-        with open(current_train_path) as f:
+        with open(current_train_path, encoding="utf-8") as f:
             current_train_images = [line.strip() for line in f if line.strip()]
 
         # Load unlabeled pool
@@ -75,7 +74,7 @@ class Training_Set_Manager:
         if not unlabeled_pool_path.exists():
             raise FileNotFoundError(f"Unlabeled pool not found: {unlabeled_pool_path}")
 
-        with open(unlabeled_pool_path) as f:
+        with open(unlabeled_pool_path, encoding="utf-8") as f:
             unlabeled_pool_images = [line.strip() for line in f if line.strip()]
 
         # Verify verified samples are in unlabeled pool
@@ -102,7 +101,7 @@ class Training_Set_Manager:
         output_train_path = Path(output_train_path)
         output_train_path.parent.mkdir(parents=True, exist_ok=True)
 
-        with open(output_train_path, "w") as f:
+        with open(output_train_path, "w", encoding="utf-8") as f:
             for img in expanded_train_images:
                 f.write(f"{img}\n")
 
@@ -117,7 +116,7 @@ class Training_Set_Manager:
             if round_num
             else unlabeled_pool_path
         )
-        with open(updated_pool_path, "w") as f:
+        with open(updated_pool_path, "w", encoding="utf-8") as f:
             for img in updated_unlabeled_pool:
                 f.write(f"{img}\n")
 
@@ -169,7 +168,7 @@ class Training_Set_Manager:
 
         # Load existing log if it exists
         if log_file.exists():
-            with open(log_file) as f:
+            with open(log_file, encoding="utf-8") as f:
                 log_data = json.load(f)
         else:
             log_data = {"rounds": []}
@@ -185,7 +184,7 @@ class Training_Set_Manager:
         log_data["rounds"].append(round_data)
 
         # Save updated log
-        with open(log_file, "w") as f:
+        with open(log_file, "w", encoding="utf-8") as f:
             json.dump(log_data, f, indent=2)
 
         logger.info(f"Logged training set size for round {round_num} to {log_file}")
@@ -250,7 +249,7 @@ class Training_Set_Manager:
         if not train_path.exists():
             raise FileNotFoundError(f"Training set file not found: {train_path}")
 
-        with open(train_path) as f:
+        with open(train_path, encoding="utf-8") as f:
             images = [line.strip() for line in f if line.strip()]
 
         num_annotations = 0
@@ -260,7 +259,7 @@ class Training_Set_Manager:
             label_file = labels_dir / Path(img_file).with_suffix(".txt").name
 
             if label_file.exists():
-                with open(label_file) as f:
+                with open(label_file, encoding="utf-8") as f:
                     for line in f:
                         line = line.strip()
                         if line:

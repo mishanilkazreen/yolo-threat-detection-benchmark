@@ -2,20 +2,20 @@
 
 import numpy as np
 
-from src.explainability.xai.interfaces import AttributionMethod, BoundingBox, XAIResult
+from src.explainability.xai.interfaces import AttributionMethod, Detection, XAIResult
 
 
-class TestBoundingBox:
-    """Test BoundingBox data model."""
+class TestDetection:
+    """Test Detection data model."""
 
     def test_to_tuple(self):
         """Test conversion to tuple format."""
-        bbox = BoundingBox(0.5, 0.3, 0.4, 0.6, class_id=1, confidence=0.9)
+        bbox = Detection(0.5, 0.3, 0.4, 0.6, class_id=1, confidence=0.9)
         assert bbox.to_tuple() == (0.5, 0.3, 0.4, 0.6)
 
     def test_to_pixel_coords(self):
         """Test conversion to pixel coordinates."""
-        bbox = BoundingBox(0.5, 0.5, 0.4, 0.6, class_id=1)  # Center box
+        bbox = Detection(0.5, 0.5, 0.4, 0.6, class_id=1)
         x1, y1, x2, y2 = bbox.to_pixel_coords(100, 200)
 
         # Expected: center at (50, 100), size 40x120
@@ -26,8 +26,7 @@ class TestBoundingBox:
 
     def test_to_pixel_coords_edge_cases(self):
         """Test pixel coordinate conversion with edge cases."""
-        # Box at image boundary
-        bbox = BoundingBox(0.0, 0.0, 0.2, 0.2, class_id=1)
+        bbox = Detection(0.0, 0.0, 0.2, 0.2, class_id=1)
         x1, y1, x2, y2 = bbox.to_pixel_coords(100, 100)
 
         assert x1 >= 0

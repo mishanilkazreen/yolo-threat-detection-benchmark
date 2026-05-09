@@ -56,7 +56,7 @@ def generate_lrp_attribution(
     try:
         # Try to import zennit (preferred) or fall back to captum
         try:
-            import zennit  # noqa: F401
+            import zennit  # noqa: F401  # pylint: disable=unused-import
 
             return _generate_lrp_with_zennit(
                 model,
@@ -72,7 +72,9 @@ def generate_lrp_attribution(
         except ImportError:
             logger.warning("zennit not available, falling back to captum")
             try:
-                from captum.attr import LRP as CaptumLRP  # noqa: F401
+                from captum.attr import (
+                    LRP as CaptumLRP,  # noqa: F401  # pylint: disable=unused-import
+                )
 
                 return _generate_lrp_with_captum(
                     model,
@@ -84,11 +86,11 @@ def generate_lrp_attribution(
                     output_manager,
                     start_time,
                 )
-            except ImportError:
+            except ImportError as e:
                 raise ImportError(
                     "Neither zennit nor captum is available. "
                     "Please install one of them: 'pip install zennit' or 'pip install captum'"
-                )
+                ) from e
 
     except Exception as e:
         logger.error(f"Failed to generate LRP attribution for {image_path}: {e}")

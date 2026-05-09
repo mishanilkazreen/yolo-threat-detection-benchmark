@@ -117,7 +117,7 @@ class TestBaselineEvaluatorOutputStructure:
         metrics_file = output_dir / "final_test_metrics.json"
         assert metrics_file.exists(), "final_test_metrics.json must be created"
 
-        with open(metrics_file) as f:
+        with open(metrics_file, encoding="utf-8") as f:
             saved = json.load(f)
 
         required_fields = [
@@ -232,7 +232,7 @@ class TestBaselineEvaluatorOutputStructure:
                 epochs=50,
             )
 
-        with open(output_dir / "final_test_metrics.json") as f:
+        with open(output_dir / "final_test_metrics.json", encoding="utf-8") as f:
             saved = json.load(f)
 
         assert saved["config_name"] == "yolov8s"

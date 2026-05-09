@@ -39,16 +39,11 @@ class XAIResult:
 
 
 @dataclass
-class BoundingBox:
-    """Bounding box in YOLO format (normalized coordinates).
+class Detection:
+    """A single model detection in YOLO format (normalized coordinates).
 
-    Attributes:
-        x_center: Center x coordinate (0-1)
-        y_center: Center y coordinate (0-1)
-        width: Box width (0-1)
-        height: Box height (0-1)
-        class_id: Object class identifier
-        confidence: Detection confidence score
+    Distinct from annotation BoundingBox (ground truth): carries class_id
+    and confidence from the model output.
     """
 
     x_center: float
@@ -59,11 +54,11 @@ class BoundingBox:
     confidence: float = 1.0
 
     def to_tuple(self) -> tuple[float, float, float, float]:
-        """Convert to tuple format (x_center, y_center, width, height)."""
+        """Return (x_center, y_center, width, height)."""
         return (self.x_center, self.y_center, self.width, self.height)
 
     def to_pixel_coords(self, image_width: int, image_height: int) -> tuple[int, int, int, int]:
-        """Convert to pixel coordinates (x1, y1, x2, y2)."""
+        """Convert to pixel bounding box (x1, y1, x2, y2)."""
         x_center_abs = self.x_center * image_width
         y_center_abs = self.y_center * image_height
         w_abs = self.width * image_width

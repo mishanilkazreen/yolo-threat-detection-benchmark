@@ -101,7 +101,7 @@ class TestGenerateComparison:
         )
         import csv
 
-        with open(tmp_path / "baseline_vs_incremental_cfg.csv") as f:
+        with open(tmp_path / "baseline_vs_incremental_cfg.csv", encoding="utf-8") as f:
             reader = csv.DictReader(f)
             fieldnames = reader.fieldnames
         expected = ["Approach"] + [c for c, _ in COMPARISON_COLUMNS]

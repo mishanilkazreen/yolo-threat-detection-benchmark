@@ -167,7 +167,7 @@ class Detection_Validator:
             output_path_obj = Path(output_path)
             output_path_obj.parent.mkdir(parents=True, exist_ok=True)
 
-            with open(output_path_obj, "w") as f:
+            with open(output_path_obj, "w", encoding="utf-8") as f:
                 json.dump(results, f, indent=2)
 
             logger.info(f"Saved validation results to {output_path_obj}")
@@ -190,7 +190,7 @@ class Detection_Validator:
         """
         annotations = []
 
-        with open(gt_file) as f:
+        with open(gt_file, encoding="utf-8") as f:
             for line in f:
                 line = line.strip()
                 if not line:

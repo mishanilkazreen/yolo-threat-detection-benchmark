@@ -172,7 +172,7 @@ def test_round_metrics_tracker_csv_export():
         assert csv_path.exists(), "CSV file should be created"
 
         # Read and verify CSV content
-        with open(csv_path) as f:
+        with open(csv_path, encoding="utf-8") as f:
             content = f.read()
             assert "round" in content
             assert "mAP50" in content

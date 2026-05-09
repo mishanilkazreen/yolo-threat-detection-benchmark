@@ -261,7 +261,7 @@ class TestGenerateSHAPAttribution:
 
         with patch("shap.GradientExplainer", return_value=mock_explainer):
             try:
-                attribution_map, hfs_score, output_path = generate_shap_attribution(
+                attribution_map, hfs_score, _ = generate_shap_attribution(
                     model=model,
                     image_path=image_path,
                     detections={},

@@ -205,10 +205,7 @@ class TestFixGradcamTargetLayer:
                     target_layer=layer_str,
                 )
 
-            (
-                mock_get_layer.assert_called_once_with(mock_model, layer_str),
-                (f"get_target_layer_module was not called with target_layer={layer_str!r}"),
-            )
+            mock_get_layer.assert_called_once_with(mock_model, layer_str)
 
     def test_empty_target_layer_skips_get_target_layer_module(self, tmp_path):
         """When target_layer is empty, get_target_layer_module must NOT be called.
@@ -895,7 +892,7 @@ class TestFixYolo12nEpochs:
         yaml_path = Path("config/models/yolo12n.yaml")
         assert yaml_path.exists(), f"yolo12n.yaml not found at {yaml_path}"
 
-        with open(yaml_path) as f:
+        with open(yaml_path, encoding="utf-8") as f:
             data = yaml.safe_load(f)
 
         epochs = data.get("training", {}).get("epochs")

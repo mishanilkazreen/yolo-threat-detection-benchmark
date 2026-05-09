@@ -243,7 +243,7 @@ class TestHeatmapFocusScorer:
             assert metrics_file.exists()
 
             # Check file contents
-            with open(metrics_file) as f:
+            with open(metrics_file, encoding="utf-8") as f:
                 metrics = json.load(f)
 
             assert metrics["round"] == round_num
@@ -263,7 +263,7 @@ class TestHeatmapFocusScorer:
             metrics_file = Path(temp_dir) / "hfs_metrics.json"
             assert metrics_file.exists()
 
-            with open(metrics_file) as f:
+            with open(metrics_file, encoding="utf-8") as f:
                 metrics = json.load(f)
 
             assert metrics["num_images"] == 0
@@ -464,7 +464,7 @@ class TestHeatmapFocusScorer:
             assert metrics_file.exists()
 
             # Check file contents
-            with open(metrics_file) as f:
+            with open(metrics_file, encoding="utf-8") as f:
                 metrics = json.load(f)
 
             assert metrics["round"] == round_num

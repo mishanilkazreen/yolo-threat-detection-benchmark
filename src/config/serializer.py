@@ -29,10 +29,10 @@ class ConfigurationSerializer:
             output_path = Path(output_path)
             output_path.parent.mkdir(parents=True, exist_ok=True)
 
-            with open(output_path, "w") as f:
+            with open(output_path, "w", encoding="utf-8") as f:
                 yaml.safe_dump(data, f, default_flow_style=False, sort_keys=False)
         except Exception as e:
-            raise OSError(f"Failed to write configuration to {output_path}: {e}")
+            raise OSError(f"Failed to write configuration to {output_path}: {e}") from e
 
     @staticmethod
     def to_dict(config: Configuration) -> dict[str, Any]:

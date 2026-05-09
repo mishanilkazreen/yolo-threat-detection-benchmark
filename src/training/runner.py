@@ -348,7 +348,11 @@ class Experiment_Runner:
         )
 
         def _load_txt(path: str) -> list[str]:
-            return [ln.strip() for ln in Path(path).read_text().splitlines() if ln.strip()]
+            return [
+                ln.strip()
+                for ln in Path(path).read_text(encoding="utf-8").splitlines()
+                if ln.strip()
+            ]
 
         sf = split_result["split_files"]
         splits = {
@@ -935,7 +939,7 @@ class Experiment_Runner:
         """Create data.yaml for a specific round with updated training set."""
 
         # Load original data.yaml
-        with open(original_data_yaml) as f:
+        with open(original_data_yaml, encoding="utf-8") as f:
             data_config = yaml.safe_load(f)
 
         # Create temporary directories for this round's splits
@@ -950,16 +954,16 @@ class Experiment_Runner:
         # written by Dataset_Splitter.  Write them straight through — do NOT
         # prepend a hardcoded directory, because images may physically live in
         # either train/images or valid/images depending on the 70/20/10 split.
-        with open(train_list, "w") as f:
+        with open(train_list, "w", encoding="utf-8") as f:
             f.write("\n".join(str(p) for p in training_images))
 
-        with open(val_list, "w") as f:
+        with open(val_list, "w", encoding="utf-8") as f:
             if val_images:
                 f.write("\n".join(str(p) for p in val_images))
             else:
                 f.write("\n".join(str(p) for p in training_images))
 
-        with open(test_list, "w") as f:
+        with open(test_list, "w", encoding="utf-8") as f:
             if test_images:
                 f.write("\n".join(str(p) for p in test_images))
             else:
@@ -971,7 +975,7 @@ class Experiment_Runner:
         data_config["test"] = str(test_list.absolute())
 
         # Save round-specific data.yaml
-        with open(round_data_yaml, "w") as f:
+        with open(round_data_yaml, "w", encoding="utf-8") as f:
             yaml.dump(data_config, f, default_flow_style=False)
 
         self.logger.debug(f"Created round data.yaml at {round_data_yaml}")
@@ -1022,7 +1026,7 @@ class Experiment_Runner:
             / "aggregated_results.json"
         )
 
-        with open(output_path, "w") as f:
+        with open(output_path, "w", encoding="utf-8") as f:
             json.dump(aggregated, f, indent=2)
 
         self.logger.info(f"Aggregated results saved to {output_path}")
@@ -1035,7 +1039,7 @@ class Experiment_Runner:
         self.logger.info("Validating dataset...")
 
         # Load data.yaml
-        with open(data_yaml_path) as f:
+        with open(data_yaml_path, encoding="utf-8") as f:
             data_config = yaml.safe_load(f)
 
         # Get base path

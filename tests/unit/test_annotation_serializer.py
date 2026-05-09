@@ -103,7 +103,7 @@ class TestAnnotationSerializer:
             assert output_path.exists()
 
             # Verify content
-            with open(output_path) as f:
+            with open(output_path, encoding="utf-8") as f:
                 content = f.read()
 
             parts = content.split()

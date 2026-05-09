@@ -314,7 +314,7 @@ class TestGradcamPreservationProperty8:
 
         captured_layers = []
 
-        def fake_eigencam(model, target_layers, **kwargs):
+        def fake_eigencam2(model, target_layers, **kwargs):
             captured_layers.extend(target_layers)
             cam_instance = MagicMock()
             cam_instance.return_value = np.zeros((1, 64, 64), dtype=np.float32)
@@ -324,7 +324,7 @@ class TestGradcamPreservationProperty8:
             patch("src.explainability.xai.gradcam.get_target_layer_module") as mock_get_layer,
             patch(
                 "src.explainability.xai.gradcam.EigenCAM",
-                side_effect=fake_eigencam,
+                side_effect=fake_eigencam2,
             ),
             patch(
                 "src.explainability.xai.gradcam._has_target_class_detections",
@@ -570,7 +570,7 @@ class TestLRPRuleFlowsThrough:
         }
 
         yaml_path = tmp_path / "test_config.yaml"
-        with open(yaml_path, "w") as f:
+        with open(yaml_path, "w", encoding="utf-8") as f:
             yaml.safe_dump(yaml_content, f)
 
         config = ConfigurationParser.parse(yaml_path)

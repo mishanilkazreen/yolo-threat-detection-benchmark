@@ -94,7 +94,7 @@ class TestLRPAttribution:
 
         try:
             for rule in rules:
-                relevance_map, bbox_score, output_path = generate_lrp_attribution(
+                relevance_map, *_ = generate_lrp_attribution(
                     model=mock_model,
                     image_path=sample_image,
                     detections=sample_detections,
@@ -115,7 +115,7 @@ class TestLRPAttribution:
         """Test LRP with output directory for saving visualizations."""
         with tempfile.TemporaryDirectory() as temp_dir:
             try:
-                relevance_map, bbox_score, output_path = generate_lrp_attribution(
+                _, _bbox_score, output_path = generate_lrp_attribution(
                     model=mock_model,
                     image_path=sample_image,
                     detections=sample_detections,

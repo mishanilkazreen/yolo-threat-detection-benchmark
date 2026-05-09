@@ -84,7 +84,7 @@ class Edge_Agent_Simulator:
         model = YOLO(str(model_checkpoint_path))
 
         # Load unlabeled pool images
-        with open(unlabeled_pool_file) as f:
+        with open(unlabeled_pool_file, encoding="utf-8") as f:
             unlabeled_images = [line.strip() for line in f if line.strip()]
 
         logger.info(f"Running inference on {len(unlabeled_images)} unlabeled images")
@@ -162,7 +162,7 @@ class Edge_Agent_Simulator:
         output_path_obj = Path(output_path)
         output_path_obj.parent.mkdir(parents=True, exist_ok=True)
 
-        with open(output_path_obj, "w") as f:
+        with open(output_path_obj, "w", encoding="utf-8") as f:
             json.dump(all_detections, f, indent=2)
 
         logger.info(f"Saved detections to {output_path_obj}")
@@ -253,8 +253,6 @@ class Edge_Agent_Simulator:
         Returns:
             List of detections
         """
-        from ultralytics import YOLO
-
         # Load model
         logger.info(f"Loading model from {model_path}")
         model = YOLO(model_path)
@@ -329,7 +327,7 @@ class Edge_Agent_Simulator:
         output_path.mkdir(parents=True, exist_ok=True)
 
         detections_file = output_path / f"round_{round_num}_detections.json"
-        with open(detections_file, "w") as f:
+        with open(detections_file, "w", encoding="utf-8") as f:
             json.dump(all_detections, f, indent=2)
 
         logger.info(f"Saved detections to {detections_file}")

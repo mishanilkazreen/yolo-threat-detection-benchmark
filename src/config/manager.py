@@ -191,7 +191,7 @@ class ConfigurationManager:
                     f"Configuration {config_path}: data.train_init_percentage must be a number, "
                     f"got {type(config.data.train_init_percentage).__name__}"
                 )
-            if not (0.0 < config.data.train_init_percentage <= 1.0):
+            if not 0.0 < config.data.train_init_percentage <= 1.0:
                 raise ConfigurationParseError(
                     f"Configuration {config_path}: data.train_init_percentage must be in (0, 1], "
                     f"got {config.data.train_init_percentage}"
@@ -204,7 +204,7 @@ class ConfigurationManager:
                     f"Configuration {config_path}: data.iou_threshold must be a number, "
                     f"got {type(config.data.iou_threshold).__name__}"
                 )
-            if not (0.0 <= config.data.iou_threshold <= 1.0):
+            if not 0.0 <= config.data.iou_threshold <= 1.0:
                 raise ConfigurationParseError(
                     f"Configuration {config_path}: data.iou_threshold must be in [0, 1], "
                     f"got {config.data.iou_threshold}"
@@ -347,16 +347,18 @@ class ConfigurationManager:
             ConfigurationParseError: If configuration is invalid
         """
         try:
-            with open(config_path) as f:
+            with open(config_path, encoding="utf-8") as f:
                 data = yaml.safe_load(f)
-        except FileNotFoundError:
-            raise ConfigurationParseError(f"Explainer configuration file not found: {config_path}")
+        except FileNotFoundError as e:
+            raise ConfigurationParseError(
+                f"Explainer configuration file not found: {config_path}"
+            ) from e
         except yaml.YAMLError as e:
-            raise ConfigurationParseError(f"Invalid YAML syntax in {config_path}: {e}")
+            raise ConfigurationParseError(f"Invalid YAML syntax in {config_path}: {e}") from e
         except Exception as e:
             raise ConfigurationParseError(
                 f"Failed to read explainer configuration {config_path}: {e}"
-            )
+            ) from e
 
         if data is None:
             raise ConfigurationParseError(f"Explainer configuration file is empty: {config_path}")
@@ -408,7 +410,7 @@ class ConfigurationManager:
             )
 
         # Validate confidence threshold
-        if not (0.0 <= config.confidence_threshold <= 1.0):
+        if not 0.0 <= config.confidence_threshold <= 1.0:
             raise ConfigurationParseError(
                 f"Explainer configuration {config_path}: confidence_threshold must be between 0.0 and 1.0"
             )

@@ -86,7 +86,7 @@ class Dataset_Splitter:
         if not data_yaml_file.exists():
             raise FileNotFoundError(f"Data YAML not found: {data_yaml_file}")
 
-        with open(data_yaml_file) as f:
+        with open(data_yaml_file, encoding="utf-8") as f:
             data_config = yaml.safe_load(f)
 
         dataset_root = Path(data_config.get("path", ""))
@@ -149,7 +149,7 @@ class Dataset_Splitter:
             label_file = labels_dir / Path(fname).with_suffix(".txt").name
             class_id: int | None = None
             if label_file.exists():
-                with open(label_file) as f:
+                with open(label_file, encoding="utf-8") as f:
                     for line in f:
                         line = line.strip()
                         if line:
@@ -207,7 +207,7 @@ class Dataset_Splitter:
             label_file = labels_dir / Path(fname).with_suffix(".txt").name
             class_id = None
             if label_file.exists():
-                with open(label_file) as f:
+                with open(label_file, encoding="utf-8") as f:
                     for line in f:
                         line = line.strip()
                         if line:
@@ -248,7 +248,7 @@ class Dataset_Splitter:
                 ldir = filename_to_labels[fname]
                 lf = ldir / Path(fname).with_suffix(".txt").name
                 if lf.exists():
-                    with open(lf) as f:
+                    with open(lf, encoding="utf-8") as f:
                         for line in f:
                             line = line.strip()
                             if line:
@@ -294,7 +294,7 @@ class Dataset_Splitter:
         split_files: dict[str, str] = {}
         for split_name, imgs in splits_map.items():
             split_file = output_path / f"{split_name}.txt"
-            with open(split_file, "w") as f:
+            with open(split_file, "w", encoding="utf-8") as f:
                 for img in imgs:
                     f.write(f"{_abs_path(img)}\n")
             split_files[split_name] = str(split_file)
@@ -326,7 +326,7 @@ class Dataset_Splitter:
         }
 
         metadata_file = output_path / "split_metadata.json"
-        with open(metadata_file, "w") as f:
+        with open(metadata_file, "w", encoding="utf-8") as f:
             json.dump(metadata, f, indent=2)
         logger.info(f"Saved split metadata to {metadata_file}")
 
@@ -397,7 +397,7 @@ class Dataset_Splitter:
             label_file = labels_dir / Path(img_file).with_suffix(".txt").name
 
             if label_file.exists():
-                with open(label_file) as f:
+                with open(label_file, encoding="utf-8") as f:
                     for line in f:
                         line = line.strip()
                         if line:
@@ -448,7 +448,7 @@ class Dataset_Splitter:
             label_file = labels_dir / Path(img_file).with_suffix(".txt").name
             class_id: int | None = None
             if label_file.exists():
-                with open(label_file) as f:
+                with open(label_file, encoding="utf-8") as f:
                     for line in f:
                         line = line.strip()
                         if line:
@@ -599,7 +599,7 @@ class Dataset_Splitter:
         }
 
         metadata_file = output_path / "split_metadata.json"
-        with open(metadata_file, "w") as f:
+        with open(metadata_file, "w", encoding="utf-8") as f:
             json.dump(metadata, f, indent=2)
 
         logger.info(f"Split metadata saved to {metadata_file}")

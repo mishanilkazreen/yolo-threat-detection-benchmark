@@ -67,7 +67,7 @@ class Annotation_Serializer:
         path.parent.mkdir(parents=True, exist_ok=True)
 
         # Write to file
-        with open(path, "w") as f:
+        with open(path, "w", encoding="utf-8") as f:
             f.write(annotation_str)
 
         self.logger.debug(f"Saved {len(annotations)} annotations to {output_path}")
