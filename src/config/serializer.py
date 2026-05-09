@@ -5,7 +5,8 @@ from typing import Any
 
 import yaml
 
-from .parser import Configuration, DataConfig, ModelConfig, TrainingConfig, XAIConfig
+from .parser import Configuration, DataConfig, ModelConfig, TrainingConfig
+from .xai_config import XAIConfig
 
 
 class ConfigurationSerializer:

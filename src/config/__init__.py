@@ -11,6 +11,7 @@ from .parser import (
 )
 from .path_utils import PathResolver
 from .serializer import ConfigurationSerializer
+from .xai_config import XAIConfig
 
 __all__ = [
     "Configuration",
@@ -23,4 +24,5 @@ __all__ = [
     "ModelConfig",
     "PathResolver",
     "TrainingConfig",
+    "XAIConfig",
 ]

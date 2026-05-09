@@ -7,7 +7,7 @@ from typing import Any
 
 import yaml
 
-from src.explainability.xai.config import XAIConfig
+from .xai_config import XAIConfig
 
 logger = logging.getLogger(__name__)
 
