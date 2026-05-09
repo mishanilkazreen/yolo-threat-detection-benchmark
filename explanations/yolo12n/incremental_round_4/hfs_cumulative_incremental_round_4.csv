@@ -1,3 +1,0 @@
-round,num_images_processed,total_processing_time_seconds,gradcam_mean_hfs,gradcam_num_images,lrp_mean_hfs,lrp_num_images,shap_mean_hfs,shap_num_images
-4,16,46.04121446609497,0.45283667956079754,14,0.3150454219430685,16,0.19188626809045672,16
-4,16,45.33818459510803,0.0,0,0.0,0,0.0,0
