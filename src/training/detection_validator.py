@@ -129,8 +129,17 @@ class Detection_Validator:
 
         # Validate each image's detections
         for img_id, img_detections in detections_by_image.items():
-            # Load ground truth for this image
-            gt_file = gt_dir_path / Path(img_id).with_suffix(".txt").name
+            # Load ground truth for this image.
+            # First try deriving label path from image path (handles images from
+            # multiple source directories like train/images/ and valid/images/).
+            img_path = Path(img_id)
+            label_name = img_path.with_suffix(".txt").name
+            derived_label_dir = img_path.parent.parent / "labels"
+            gt_file = derived_label_dir / label_name
+
+            # Fallback to the provided ground_truth_dir if derived path doesn't exist
+            if not gt_file.exists():
+                gt_file = gt_dir_path / label_name
 
             if not gt_file.exists():
                 logger.warning(f"Ground truth not found for {img_id}, rejecting all detections")
