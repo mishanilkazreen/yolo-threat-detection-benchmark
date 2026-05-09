@@ -261,6 +261,7 @@ class Metrics_Collector:  # pylint: disable=invalid-name
 
         # Save round metrics
         output_path = Path(output_dir)
+        output_path.mkdir(parents=True, exist_ok=True)
         metrics_file = output_path / f"round_{round_num}_metrics.json"
 
         with open(metrics_file, "w", encoding="utf-8") as fh:
@@ -333,6 +334,7 @@ class Metrics_Collector:  # pylint: disable=invalid-name
 
         # Save final test metrics
         output_path = Path(output_dir)
+        output_path.mkdir(parents=True, exist_ok=True)
         metrics_file = output_path / "final_test_metrics.json"
 
         with open(metrics_file, "w", encoding="utf-8") as fh:
