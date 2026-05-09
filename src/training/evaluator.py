@@ -124,27 +124,7 @@ class Metrics_Collector:  # pylint: disable=invalid-name
             },
         }
 
-        # Add per-class metrics if available
-        if hasattr(results.box, "maps"):
-            per_class_metrics: dict[str, Any] = {
-                "mAP50_per_class": [float(x) for x in results.box.ap50],
-                "mAP50-95_per_class": [float(x) for x in results.box.ap],
-                "precision_per_class": [float(x) for x in results.box.p]
-                if hasattr(results.box, "p")
-                else [],
-                "recall_per_class": [float(x) for x in results.box.r]
-                if hasattr(results.box, "r")
-                else [],
-            }
-
-            # Calculate F1 score per class if precision and recall are available
-            if hasattr(results.box, "p") and hasattr(results.box, "r"):
-                f1_per_class = []
-                for p, r in zip(results.box.p, results.box.r, strict=False):
-                    f1_per_class.append(self._compute_f1(float(p), float(r)))
-                per_class_metrics["f1_score_per_class"] = f1_per_class
-
-            metrics["per_class_metrics"] = per_class_metrics
+        self._attach_per_class_metrics(metrics, results)
 
         # Add run information
         if run_id is not None:
@@ -277,27 +257,7 @@ class Metrics_Collector:  # pylint: disable=invalid-name
         if best_epoch is not None:
             metrics["best_epoch"] = best_epoch
 
-        # Add per-class metrics if available
-        if hasattr(results.box, "maps"):
-            per_class_metrics: dict[str, Any] = {
-                "mAP50_per_class": [float(x) for x in results.box.ap50],
-                "mAP50-95_per_class": [float(x) for x in results.box.ap],
-                "precision_per_class": [float(x) for x in results.box.p]
-                if hasattr(results.box, "p")
-                else [],
-                "recall_per_class": [float(x) for x in results.box.r]
-                if hasattr(results.box, "r")
-                else [],
-            }
-
-            # Calculate F1 score per class if precision and recall are available
-            if hasattr(results.box, "p") and hasattr(results.box, "r"):
-                f1_per_class = []
-                for p, r in zip(results.box.p, results.box.r, strict=False):
-                    f1_per_class.append(self._compute_f1(float(p), float(r)))
-                per_class_metrics["f1_score_per_class"] = f1_per_class
-
-            metrics["per_class_metrics"] = per_class_metrics
+        self._attach_per_class_metrics(metrics, results)
 
         # Save round metrics
         output_path = Path(output_dir)
@@ -369,27 +329,7 @@ class Metrics_Collector:  # pylint: disable=invalid-name
             },
         }
 
-        # Add per-class metrics if available
-        if hasattr(results.box, "maps"):
-            per_class_metrics: dict[str, Any] = {
-                "mAP50_per_class": [float(x) for x in results.box.ap50],
-                "mAP50-95_per_class": [float(x) for x in results.box.ap],
-                "precision_per_class": [float(x) for x in results.box.p]
-                if hasattr(results.box, "p")
-                else [],
-                "recall_per_class": [float(x) for x in results.box.r]
-                if hasattr(results.box, "r")
-                else [],
-            }
-
-            # Calculate F1 score per class if precision and recall are available
-            if hasattr(results.box, "p") and hasattr(results.box, "r"):
-                f1_per_class = []
-                for p, r in zip(results.box.p, results.box.r, strict=False):
-                    f1_per_class.append(self._compute_f1(float(p), float(r)))
-                per_class_metrics["f1_score_per_class"] = f1_per_class
-
-            metrics["per_class_metrics"] = per_class_metrics
+        self._attach_per_class_metrics(metrics, results)
 
         # Save final test metrics
         output_path = Path(output_dir)
@@ -401,6 +341,27 @@ class Metrics_Collector:  # pylint: disable=invalid-name
         self.logger.info("Final test metrics saved to %s", metrics_file)
 
         return metrics
+
+    def _attach_per_class_metrics(self, metrics: dict, results: Any) -> None:
+        """Attach per-class metrics to a metrics dict if results carry them."""
+        if not hasattr(results.box, "maps"):
+            return
+        per_class: dict[str, Any] = {
+            "mAP50_per_class": [float(x) for x in results.box.ap50],
+            "mAP50-95_per_class": [float(x) for x in results.box.ap],
+            "precision_per_class": [float(x) for x in results.box.p]
+            if hasattr(results.box, "p")
+            else [],
+            "recall_per_class": [float(x) for x in results.box.r]
+            if hasattr(results.box, "r")
+            else [],
+        }
+        if hasattr(results.box, "p") and hasattr(results.box, "r"):
+            per_class["f1_score_per_class"] = [
+                self._compute_f1(float(p), float(r))
+                for p, r in zip(results.box.p, results.box.r, strict=False)
+            ]
+        metrics["per_class_metrics"] = per_class
 
     def _compute_f1(self, precision: float, recall: float) -> float:
         """Compute F1 score from precision and recall."""

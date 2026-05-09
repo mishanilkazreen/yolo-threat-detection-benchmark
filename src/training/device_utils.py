@@ -2,7 +2,34 @@
 Device selection utilities for training.
 """
 
+from collections.abc import Callable
+import logging
+
 import torch
+
+logger = logging.getLogger(__name__)
+
+
+def create_step_decay_callback(lr0: float, lrf: float, step_interval: int = 5) -> Callable:
+    """Return a YOLO on_train_epoch_start callback that applies step-decay LR.
+
+    Formula: LR[epoch] = lr0 * (lrf ** (epoch // step_interval))
+    """
+
+    def on_train_epoch_start(trainer):
+        epoch = trainer.epoch
+        expected_lr = lr0 * (lrf ** (epoch // step_interval))
+        for param_group in trainer.optimizer.param_groups:
+            param_group["lr"] = expected_lr
+        if epoch % step_interval == 0 and epoch > 0:
+            logger.info(
+                "Step decay: LR *= %s at epoch %d (new LR: %.6f)",
+                lrf,
+                epoch,
+                expected_lr,
+            )
+
+    return on_train_epoch_start
 
 
 def select_device(device_config: str = "auto") -> str:

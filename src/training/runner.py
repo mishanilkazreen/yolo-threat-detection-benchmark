@@ -19,7 +19,7 @@ from ..explainability.xai.manager import XAIManager
 from ..utils.output_manager import Output_Manager
 from .baseline_evaluator import Baseline_Evaluator
 from .baseline_trainer import Baseline_Trainer
-from .device_utils import select_device
+from .device_utils import create_step_decay_callback, select_device
 from .evaluator import Metrics_Collector
 from .seed_manager import Seed_Manager
 
@@ -118,45 +118,6 @@ class Experiment_Runner:
 
         self.logger.debug("Memory cleanup completed")
 
-    def _create_step_decay_callback(self, lr0: float, lrf: float, step_interval: int = 5):
-        """
-        Create a callback for step decay learning rate schedule.
-
-        Implements step decay: multiply LR by lrf every step_interval epochs.
-        Formula: LR[epoch] = lr0 * (lrf ** (epoch // step_interval))
-
-        Args:
-            lr0: Initial learning rate
-            lrf: Decay factor (e.g., 0.1 means multiply by 0.1)
-            step_interval: Number of epochs between decay steps (default: 5)
-
-        Returns:
-            Callback function compatible with Ultralytics YOLO
-        """
-
-        def on_train_epoch_start(trainer):
-            """Apply step decay to learning rate at the start of each epoch."""
-            epoch = trainer.epoch
-
-            # Calculate expected LR based on step decay formula
-            decay_steps = epoch // step_interval
-            expected_lr = lr0 * (lrf**decay_steps)
-
-            # Update optimizer learning rates
-            for param_group in trainer.optimizer.param_groups:
-                param_group["lr"] = expected_lr
-
-            # Log at step boundaries
-            if epoch % step_interval == 0 and epoch > 0:
-                self.logger.info(
-                    "Applying step decay: LR *= %s at epoch %d (new LR: %.6f)",
-                    lrf,
-                    epoch,
-                    expected_lr,
-                )
-
-        return on_train_epoch_start
-
     def run_experiment(self, config_path: str, validate_dataset: bool = True) -> dict[str, Any]:
         """
         Run complete experiment: training and evaluation.
@@ -231,7 +192,7 @@ class Experiment_Runner:
         lrf = getattr(config.training, "lrf", 0.1)
 
         # Create and add step decay LR scheduler callback
-        step_decay_callback = self._create_step_decay_callback(lr0, lrf, step_interval=5)
+        step_decay_callback = create_step_decay_callback(lr0, lrf, step_interval=5)
         model.add_callback("on_train_epoch_start", step_decay_callback)
         self.logger.info("Added step decay LR scheduler: lr0=%s, lrf=%s, step_interval=5", lr0, lrf)
 
@@ -491,7 +452,7 @@ class Experiment_Runner:
                 model = YOLO(best_checkpoint_path)
 
             # Create and add step decay LR scheduler callback
-            step_decay_callback = self._create_step_decay_callback(lr0, lrf, step_interval=5)
+            step_decay_callback = create_step_decay_callback(lr0, lrf, step_interval=5)
             model.add_callback("on_train_epoch_start", step_decay_callback)
             if round_num == 1:
                 self.logger.info(
@@ -657,7 +618,7 @@ class Experiment_Runner:
             # Run XAI processing if enabled
             xai_manager = self._get_xai_manager(config)
             if xai_manager is not None:
-                self.logger.info(f"Running XAI processing for Round {round_num}...")
+                self.logger.info("Running XAI processing for Round %s...", round_num)
                 self._run_xai_processing(
                     xai_manager=xai_manager,
                     model_path=best_checkpoint_path,
@@ -678,7 +639,8 @@ class Experiment_Runner:
                     round_num,
                 )
                 self.logger.info(
-                    f"Round 5: added all {len(unlabeled_pool)} remaining pool images unconditionally"
+                    "Round 5: added all %s remaining pool images unconditionally",
+                    len(unlabeled_pool),
                 )
 
             # If not the last round, run edge-cloud simulation
@@ -695,10 +657,10 @@ class Experiment_Runner:
                     device=device,
                 )
 
-                self.logger.info(f"Edge agents generated {len(detections)} detections")
+                self.logger.info("Edge agents generated %s detections", len(detections))
 
                 # Validate detections against ground truth
-                self.logger.info(f"Validating detections (IoU threshold={iou_threshold})...")
+                self.logger.info("Validating detections (IoU threshold=%s)...", iou_threshold)
 
                 # Ground truth labels are in the same structure as training images
                 ground_truth_dir = str(train_path.parent / "labels")
@@ -714,8 +676,8 @@ class Experiment_Runner:
 
                 verified_images = validation_results["verified_samples"]
                 undetected_images = validation_results.get("undetected_images", [])
-                self.logger.info(f"Verified {len(verified_images)} images for next round")
-                self.logger.info(f"Undetected: {len(undetected_images)} images (stay in pool)")
+                self.logger.info("Verified %s images for next round", len(verified_images))
+                self.logger.info("Undetected: %s images (stay in pool)", len(undetected_images))
 
                 # For Round N+1, add verified images to the cumulative training set.
                 if len(verified_images) > 0:
@@ -730,13 +692,16 @@ class Experiment_Runner:
                     )
 
                     self.logger.info(
-                        f"Next round will train on {len(current_training_images)} cumulative images"
+                        "Next round will train on %s cumulative images",
+                        len(current_training_images),
                     )
                 else:
                     self.logger.warning(
-                        f"No verified samples found in Round {round_num}. "
-                        f"Round {round_num + 1} will train on the same cumulative set "
-                        f"({len(current_training_images)} images)."
+                        "No verified samples found in Round %s. "
+                        "Round %s will train on the same cumulative set (%s images).",
+                        round_num,
+                        round_num + 1,
+                        len(current_training_images),
                     )
 
             # Clean up memory after each round to prevent accumulation
@@ -747,18 +712,19 @@ class Experiment_Runner:
 
             # Aggressive memory cleanup
             self._cleanup_memory()
-            self.logger.info(f"Round {round_num} completed, memory cleaned up")
+            self.logger.info("Round %s completed, memory cleaned up", round_num)
 
         # After all rounds complete, evaluate final model on test set using the
         # best checkpoint across all rounds (by val mAP50), not the last round's.
         final_checkpoint = best_overall_checkpoint_path or best_checkpoint_path
 
-        self.logger.info(f"\n{'=' * 60}")
+        self.logger.info("\n%s", "=" * 60)
         self.logger.info(
-            f"Evaluating final model on test set (best checkpoint from Round {best_overall_round}, "
-            f"val mAP50={best_overall_map50:.4f})..."
+            "Evaluating final model on test set (best checkpoint from Round %s, val mAP50=%.4f)...",
+            best_overall_round,
+            best_overall_map50,
         )
-        self.logger.info(f"{'=' * 60}\n")
+        self.logger.info("%s\n", "=" * 60)
 
         if final_checkpoint is None:
             raise ValueError("No best checkpoint found after training rounds")
@@ -800,10 +766,10 @@ class Experiment_Runner:
                 ).parent
             )  # Get parent to have outputs/{config_name}_baseline/
 
-            self.logger.info(f"{'=' * 60}")
+            self.logger.info("%s", "=" * 60)
             self.logger.info("Running one-shot baseline training")
-            self.logger.info(f"Baseline output directory: {baseline_output_dir}")
-            self.logger.info(f"{'=' * 60}")
+            self.logger.info("Baseline output directory: %s", baseline_output_dir)
+            self.logger.info("%s", "=" * 60)
 
             # Combine train_init + unlabeled_pool for the full training partition
             full_training_images = splits["train_init"] + splits["unlabeled_pool"]
@@ -856,11 +822,11 @@ class Experiment_Runner:
             incremental_hfs_file = Path(output_dir) / "hfs_metrics.json"
             if incremental_hfs_file.exists():
                 try:
-                    with open(incremental_hfs_file) as f:
+                    with open(incremental_hfs_file, encoding="utf-8") as f:
                         hfs_data = json.load(f)
                     incremental_hfs = hfs_data.get("mean_hfs", float("nan"))
-                except Exception as e:
-                    self.logger.warning(f"Could not load incremental HFS metrics: {e}")
+                except Exception as e:  # pylint: disable=broad-except
+                    self.logger.warning("Could not load incremental HFS metrics: %s", e)
 
             incremental_flat = {
                 "mAP50": incremental_metrics_inner.get("mAP50", float("nan")),
@@ -917,16 +883,21 @@ class Experiment_Runner:
         expected = {"train": 0.70, "valid": 0.20, "test": 0.10}
         actuals = {"train": actual_train, "valid": actual_val, "test": actual_test}
 
-        deviations = {split: abs(actuals[split] - expected[split]) for split in expected}
+        deviations = {split: abs(actual - expected[split]) for split, actual in actuals.items()}
 
         if any(dev > tolerance for dev in deviations.values()):
             self.logger.warning(
-                f"Dataset split ratio deviates from expected 70/20/10 "
-                f"(tolerance={tolerance:.0%}): "
-                f"train={actual_train:.1%} (expected 70%), "
-                f"valid={actual_val:.1%} (expected 20%), "
-                f"test={actual_test:.1%} (expected 10%). "
-                f"Counts: train={train_count}, valid={val_count}, test={test_count}."
+                "Dataset split ratio deviates from expected 70/20/10 "
+                "(tolerance=%.0f%%): train=%.1f%% (expected 70%%), "
+                "valid=%.1f%% (expected 20%%), test=%.1f%% (expected 10%%). "
+                "Counts: train=%s, valid=%s, test=%s.",
+                tolerance * 100,
+                actual_train * 100,
+                actual_val * 100,
+                actual_test * 100,
+                train_count,
+                val_count,
+                test_count,
             )
 
     def _get_all_images(self, image_dir: Path) -> list[str]:
@@ -1119,15 +1090,15 @@ class Experiment_Runner:
             # Apply sample limit if configured
             if config.xai.sample_limit is not None:
                 validation_images = validation_images[: config.xai.sample_limit]
-                self.logger.info(f"Limited XAI processing to {len(validation_images)} images")
+                self.logger.info("Limited XAI processing to %s images", len(validation_images))
 
             # Run inference on validation images to get detections
-            self.logger.info(f"Running inference on {len(validation_images)} validation images...")
+            self.logger.info("Running inference on %s validation images...", len(validation_images))
             detections = {}
             gt_boxes = {}
 
             # Load data.yaml to get paths
-            with open(config.data.yaml_path) as f:
+            with open(config.data.yaml_path, encoding="utf-8") as f:
                 data_config = yaml.safe_load(f)
             base_path = Path(data_config.get("path", "."))
             val_image_dir = base_path / "valid" / "images"
@@ -1158,15 +1129,15 @@ class Experiment_Runner:
                 gt_boxes_list = []
                 if label_path.exists():
                     try:
-                        with open(label_path) as f:
+                        with open(label_path, encoding="utf-8") as f:
                             for line in f:
                                 parts = line.strip().split()
                                 if len(parts) >= 5:
                                     # YOLO format: class x_center y_center width height (normalized)
                                     _, x_center, y_center, width, height = map(float, parts[:5])
                                     gt_boxes_list.append((x_center, y_center, width, height))
-                    except Exception as e:
-                        self.logger.warning(f"Failed to load ground truth for {image_name}: {e}")
+                    except Exception as e:  # pylint: disable=broad-except
+                        self.logger.warning("Failed to load ground truth for %s: %s", image_name, e)
 
                 gt_boxes[image_path] = gt_boxes_list
 
@@ -1186,19 +1157,20 @@ class Experiment_Runner:
 
             if xai_results:
                 self.logger.info(
-                    f"XAI processing completed: {xai_results.num_images_processed} images processed, "
-                    f"{len(xai_results.failed_images)} failures"
+                    "XAI processing completed: %s images processed, %s failures",
+                    xai_results.num_images_processed,
+                    len(xai_results.failed_images),
                 )
 
                 # Log aggregate HFS scores
                 if xai_results.aggregate_hfs:
                     for method, hfs in xai_results.aggregate_hfs.items():
-                        self.logger.info(f"  {method.upper()} mean HFS: {hfs:.4f}")
+                        self.logger.info("  %s mean HFS: %.4f", method.upper(), hfs)
             else:
                 self.logger.info("XAI processing completed (no results generated)")
 
-        except Exception as e:
-            self.logger.error(f"XAI processing failed: {e}")
+        except Exception as e:  # pylint: disable=broad-except
+            self.logger.error("XAI processing failed: %s", e)
             # Don't raise - XAI failure shouldn't stop the main pipeline
 
     def _get_validation_images(self, data_yaml_path: str) -> list[str]:
@@ -1212,7 +1184,7 @@ class Experiment_Runner:
             List of validation image filenames
         """
         try:
-            with open(data_yaml_path) as f:
+            with open(data_yaml_path, encoding="utf-8") as f:
                 data_config = yaml.safe_load(f)
 
             base_path = Path(data_config.get("path", "."))
@@ -1231,6 +1203,6 @@ class Experiment_Runner:
 
             return sorted(images)
 
-        except Exception as e:
-            self.logger.error(f"Failed to get validation images: {e}")
+        except Exception as e:  # pylint: disable=broad-except
+            self.logger.error("Failed to get validation images: %s", e)
             return []

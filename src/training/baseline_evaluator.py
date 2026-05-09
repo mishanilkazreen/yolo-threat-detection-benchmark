@@ -85,8 +85,8 @@ class Baseline_Evaluator:
             create=True,
         )
 
-        self.logger.info(f"Evaluating baseline model: {baseline_name}")
-        self.logger.info(f"  Checkpoint: {checkpoint_path}")
+        self.logger.info("Evaluating baseline model: %s", baseline_name)
+        self.logger.info("  Checkpoint: %s", checkpoint_path)
 
         # --- 1. Evaluate on val_fixed ---
         self.logger.info("Evaluating on val_fixed...")
@@ -96,9 +96,9 @@ class Baseline_Evaluator:
             split="val",
         )
         val_metrics_path = output_dir / "val_metrics.json"
-        with open(val_metrics_path, "w") as f:
+        with open(val_metrics_path, "w", encoding="utf-8") as f:
             json.dump(val_metrics, f, indent=2)
-        self.logger.info(f"Val metrics saved to {val_metrics_path}")
+        self.logger.info("Val metrics saved to %s", val_metrics_path)
 
         # --- 2. Evaluate on test_fixed ---
         self.logger.info("Evaluating on test_fixed...")
@@ -133,12 +133,12 @@ class Baseline_Evaluator:
         }
 
         final_test_metrics_path = output_dir / "final_test_metrics.json"
-        with open(final_test_metrics_path, "w") as f:
+        with open(final_test_metrics_path, "w", encoding="utf-8") as f:
             json.dump(final_test_metrics, f, indent=2)
-        self.logger.info(f"Final test metrics saved to {final_test_metrics_path}")
+        self.logger.info("Final test metrics saved to %s", final_test_metrics_path)
 
         # --- 3. Compute HFS on the fixed image subset ---
-        self.logger.info(f"Computing HFS on {len(hfs_image_subset)} fixed images...")
+        self.logger.info("Computing HFS on %s fixed images...", len(hfs_image_subset))
         hfs_metrics = self._compute_hfs(
             checkpoint_path=checkpoint_path,
             hfs_image_subset=hfs_image_subset,
@@ -147,9 +147,9 @@ class Baseline_Evaluator:
         )
 
         hfs_metrics_path = output_dir / "hfs_metrics.json"
-        with open(hfs_metrics_path, "w") as f:
+        with open(hfs_metrics_path, "w", encoding="utf-8") as f:
             json.dump(hfs_metrics, f, indent=2)
-        self.logger.info(f"HFS metrics saved to {hfs_metrics_path}")
+        self.logger.info("HFS metrics saved to %s", hfs_metrics_path)
 
         return {
             "val_metrics": val_metrics,
@@ -185,7 +185,7 @@ class Baseline_Evaluator:
 
         precision = float(results.box.mp) if hasattr(results.box, "mp") else 0.0
         recall = float(results.box.mr) if hasattr(results.box, "mr") else 0.0
-        f1 = self._compute_f1(precision, recall)
+        f1 = self.metrics_collector._compute_f1(precision, recall)
 
         metrics: dict[str, Any] = {
             "mAP50": float(results.box.map50) if hasattr(results.box, "map50") else 0.0,
@@ -260,8 +260,8 @@ class Baseline_Evaluator:
                 with PILImage.open(path) as img:
                     w, h = img.size
                 image_sizes.append((w, h))
-            except Exception as e:
-                self.logger.warning(f"Could not read image size for {img_path}: {e}")
+            except Exception as e:  # pylint: disable=broad-except
+                self.logger.warning("Could not read image size for %s: %s", img_path, e)
                 image_sizes.append((640, 640))
                 w, h = 640, 640
 
@@ -343,8 +343,7 @@ class Baseline_Evaluator:
             if results and len(results) > 0:
                 result = results[0]
                 if result.boxes is not None and len(result.boxes) > 0:
-                    for i in range(len(result.boxes)):
-                        box = result.boxes[i]
+                    for box in result.boxes:
                         conf = float(box.conf[0])
                         # xyxy format (absolute pixel coords)
                         x1, y1, x2, y2 = box.xyxy[0].tolist()
@@ -353,16 +352,9 @@ class Baseline_Evaluator:
                         x2 = min(image_width, int(x2))
                         y2 = min(image_height, int(y2))
                         heatmap[y1:y2, x1:x2] = np.maximum(heatmap[y1:y2, x1:x2], conf)
-        except Exception as e:
-            self.logger.warning(f"Heatmap generation failed for {image_path}: {e}")
+        except Exception as e:  # pylint: disable=broad-except
+            self.logger.warning("Heatmap generation failed for %s: %s", image_path, e)
             # Return uniform heatmap as fallback
             heatmap = np.ones((image_height, image_width), dtype=np.float32) * 0.1
 
         return heatmap
-
-    @staticmethod
-    def _compute_f1(precision: float, recall: float) -> float:
-        """Compute F1 score from precision and recall."""
-        if precision + recall == 0:
-            return 0.0
-        return 2 * (precision * recall) / (precision + recall)

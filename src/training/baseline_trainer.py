@@ -9,11 +9,13 @@ from ultralytics import YOLO
 import yaml
 
 from ..config.parser import Configuration
+from ..utils.output_manager import Output_Manager
+from .device_utils import create_step_decay_callback, select_device
 
 logger = logging.getLogger(__name__)
 
 
-class Baseline_Trainer:
+class Baseline_Trainer:  # pylint: disable=too-few-public-methods
     """
     Trains a YOLO model on the full training partition in a single pass.
 
@@ -24,8 +26,6 @@ class Baseline_Trainer:
 
     def __init__(self):
         self.logger = logging.getLogger(__name__)
-        from ..utils.output_manager import Output_Manager
-
         self.output_manager = Output_Manager()
 
     def train(
@@ -58,11 +58,11 @@ class Baseline_Trainer:
             model_name=config_name, round_name=baseline_name, create=True
         )
 
-        self.logger.info(f"Starting one-shot baseline training: {baseline_name}")
-        self.logger.info(f"  Full training partition size: {len(full_training_images)} images")
-        self.logger.info(f"  Val set size: {len(val_images)} images")
-        self.logger.info(f"  Epochs: {config.training.baseline_epochs}")
-        self.logger.info(f"  Seed: {seed}")
+        self.logger.info("Starting one-shot baseline training: %s", baseline_name)
+        self.logger.info("  Full training partition size: %s images", len(full_training_images))
+        self.logger.info("  Val set size: %s images", len(val_images))
+        self.logger.info("  Epochs: %s", config.training.baseline_epochs)
+        self.logger.info("  Seed: %s", seed)
 
         # Write data.yaml for baseline training
         data_yaml_path = Path(output_dir) / "data_baseline.yaml"
@@ -84,22 +84,24 @@ class Baseline_Trainer:
         baseline_epochs = config.training.baseline_epochs
 
         # Initialize YOLO from same weights as incremental Round 1
-        self.logger.info(f"Initializing model from weights: {config.model.weights}")
+        self.logger.info("Initializing model from weights: %s", config.model.weights)
         model = YOLO(config.model.weights)
 
         # Add step decay LR callback (same as incremental runner)
-        step_decay_callback = self._create_step_decay_callback(lr0, lrf, step_interval=5)
+        step_decay_callback = create_step_decay_callback(lr0, lrf, step_interval=5)
         model.add_callback("on_train_epoch_start", step_decay_callback)
-        self.logger.info(f"Added step decay LR scheduler: lr0={lr0}, lrf={lrf}, step_interval=5")
-
-        # Select device
-        from .device_utils import select_device
+        self.logger.info("Added step decay LR scheduler: lr0=%s, lrf=%s, step_interval=5", lr0, lrf)
 
         device = select_device(config.training.device)
 
         self.logger.info(
-            f"Training baseline (epochs={baseline_epochs}, device={device}, "
-            f"optimizer={optimizer}, lr0={lr0}, lrf={lrf}, batch={batch_size})"
+            "Training baseline (epochs=%s, device=%s, optimizer=%s, lr0=%s, lrf=%s, batch=%s)",
+            baseline_epochs,
+            device,
+            optimizer,
+            lr0,
+            lrf,
+            batch_size,
         )
 
         train_start = time.time()
@@ -131,14 +133,14 @@ class Baseline_Trainer:
         )
 
         training_time = time.time() - train_start
-        self.logger.info(f"Baseline training completed in {training_time:.2f} seconds")
+        self.logger.info("Baseline training completed in %.2f seconds", training_time)
 
         # Use Output_Manager to resolve checkpoint path
         checkpoint_path = self.output_manager.resolve_checkpoint_path(
             model_name=config_name, round_name=f"{config_name}_baseline", checkpoint_type="best"
         )
 
-        self.logger.info(f"Baseline checkpoint: {checkpoint_path}")
+        self.logger.info("Baseline checkpoint: %s", checkpoint_path)
 
         return {
             "checkpoint_path": checkpoint_path,
@@ -146,31 +148,6 @@ class Baseline_Trainer:
             "training_set_size": len(full_training_images),
             "epochs": baseline_epochs,
         }
-
-    def _create_step_decay_callback(self, lr0: float, lrf: float, step_interval: int = 5):
-        """
-        Create a callback for step decay learning rate schedule.
-
-        Mirrors the implementation in Experiment_Runner to ensure identical
-        LR schedules between baseline and incremental training.
-
-        Args:
-            lr0: Initial learning rate
-            lrf: Decay factor (e.g., 0.1 means multiply by 0.1)
-            step_interval: Number of epochs between decay steps (default: 5)
-
-        Returns:
-            Callback function compatible with Ultralytics YOLO
-        """
-
-        def on_train_epoch_start(trainer):
-            epoch = trainer.epoch
-            decay_steps = epoch // step_interval
-            expected_lr = lr0 * (lrf**decay_steps)
-            for param_group in trainer.optimizer.param_groups:
-                param_group["lr"] = expected_lr
-
-        return on_train_epoch_start
 
     def _write_data_yaml(
         self,
@@ -183,7 +160,7 @@ class Baseline_Trainer:
     ) -> None:
         """Write a data.yaml pointing to the full training partition and val_fixed."""
         # Load original data.yaml for class names and metadata
-        with open(original_data_yaml) as f:
+        with open(original_data_yaml, encoding="utf-8") as f:
             data_config = yaml.safe_load(f)
 
         # Create split list directory
@@ -197,12 +174,12 @@ class Baseline_Trainer:
         val_image_dir = base_path / "valid" / "images"
 
         # Write train image list
-        with open(train_list, "w") as f:
+        with open(train_list, "w", encoding="utf-8") as f:
             full_paths = [str((train_image_dir / img).absolute()) for img in training_images]
             f.write("\n".join(full_paths))
 
         # Write val image list
-        with open(val_list, "w") as f:
+        with open(val_list, "w", encoding="utf-8") as f:
             if val_images:
                 full_paths = [str((val_image_dir / img).absolute()) for img in val_images]
                 f.write("\n".join(full_paths))
@@ -218,7 +195,7 @@ class Baseline_Trainer:
         # Remove test key if present (not needed for baseline training)
         data_config.pop("test", None)
 
-        with open(output_yaml_path, "w") as f:
+        with open(output_yaml_path, "w", encoding="utf-8") as f:
             yaml.dump(data_config, f, default_flow_style=False)
 
-        self.logger.debug(f"Wrote baseline data.yaml to {output_yaml_path}")
+        self.logger.debug("Wrote baseline data.yaml to %s", output_yaml_path)

@@ -146,11 +146,42 @@ class Output_Manager:
 
         return sanitized
 
+    def _validate_and_sanitize(self, name: str, label: str) -> str:
+        """Validate and sanitize a name for filesystem use.
+
+        Raises:
+            ValueError: If name is empty or sanitizes to empty.
+        """
+        if not name or not name.strip():
+            raise ValueError(f"{label} cannot be empty")
+        sanitized = self.sanitize_name(name)
+        if not sanitized:
+            raise ValueError(f"{label} contains no valid characters")
+        return sanitized
+
+    def _mkdir(self, path: Path) -> None:
+        """Create directory with standardized error handling.
+
+        Raises:
+            PermissionError: If the directory cannot be created due to permissions.
+            OSError: If directory creation fails for any other reason.
+        """
+        try:
+            path.mkdir(parents=True, exist_ok=True, mode=0o755)
+            self.logger.debug(f"Created directory: {path}")
+        except PermissionError as e:
+            error_msg = f"Permission denied creating directory {path}"
+            self.logger.error(error_msg)
+            raise PermissionError(error_msg) from e
+        except OSError as e:
+            error_msg = f"Failed to create directory {path}: {e}"
+            self.logger.error(error_msg)
+            raise OSError(error_msg) from e
+
     def get_training_output_path(
         self, model_name: str, round_name: str | None = None, create: bool = True
     ) -> Path:
-        """
-        Get standardized training output path.
+        """Get standardized training output path: runs/{model_name}/{round_name}/
 
         Args:
             model_name: Model identifier
@@ -164,47 +195,17 @@ class Output_Manager:
             ValueError: If model_name is empty or invalid
             OSError: If directory creation fails
         """
-        # Validate model_name
-        if not model_name or not model_name.strip():
-            raise ValueError("model_name cannot be empty")
-
-        # Apply sanitization
-        sanitized_model_name = self.sanitize_name(model_name)
-        if not sanitized_model_name:
-            raise ValueError("model_name contains no valid characters")
-
-        # Use default round name if not provided
-        if round_name is None:
-            round_name = "train"
-
-        sanitized_round_name = self.sanitize_name(round_name)
-        if not sanitized_round_name:
-            raise ValueError("round_name contains no valid characters")
-
-        # Construct path: runs/{model_name}/{round_name}/
-        output_path = self.base_dir / "runs" / sanitized_model_name / sanitized_round_name
-
-        # Create directory if requested
+        sm = self._validate_and_sanitize(model_name, "model_name")
+        sr = self._validate_and_sanitize(round_name or "train", "round_name")
+        output_path = self.base_dir / "runs" / sm / sr
         if create:
-            try:
-                output_path.mkdir(parents=True, exist_ok=True, mode=0o755)
-                self.logger.debug(f"Created directory: {output_path}")
-            except PermissionError as e:
-                error_msg = f"Permission denied creating directory {output_path}"
-                self.logger.error(error_msg)
-                raise PermissionError(error_msg) from e
-            except OSError as e:
-                error_msg = f"Failed to create directory {output_path}: {e}"
-                self.logger.error(error_msg)
-                raise OSError(error_msg) from e
-
+            self._mkdir(output_path)
         return output_path
 
     def get_evaluation_output_path(
         self, model_name: str, round_name: str | None = None, create: bool = True
     ) -> Path:
-        """
-        Get standardized evaluation output path.
+        """Get standardized evaluation output path: outputs/{model_name}/{round_name}/
 
         Args:
             model_name: Model identifier
@@ -218,40 +219,11 @@ class Output_Manager:
             ValueError: If model_name is empty or invalid
             OSError: If directory creation fails
         """
-        # Validate model_name
-        if not model_name or not model_name.strip():
-            raise ValueError("model_name cannot be empty")
-
-        # Apply sanitization
-        sanitized_model_name = self.sanitize_name(model_name)
-        if not sanitized_model_name:
-            raise ValueError("model_name contains no valid characters")
-
-        # Use default round name if not provided
-        if round_name is None:
-            round_name = "train"
-
-        sanitized_round_name = self.sanitize_name(round_name)
-        if not sanitized_round_name:
-            raise ValueError("round_name contains no valid characters")
-
-        # Construct path: outputs/{model_name}/{round_name}/
-        output_path = self.base_dir / "outputs" / sanitized_model_name / sanitized_round_name
-
-        # Create directory if requested
+        sm = self._validate_and_sanitize(model_name, "model_name")
+        sr = self._validate_and_sanitize(round_name or "train", "round_name")
+        output_path = self.base_dir / "outputs" / sm / sr
         if create:
-            try:
-                output_path.mkdir(parents=True, exist_ok=True, mode=0o755)
-                self.logger.debug(f"Created directory: {output_path}")
-            except PermissionError as e:
-                error_msg = f"Permission denied creating directory {output_path}"
-                self.logger.error(error_msg)
-                raise PermissionError(error_msg) from e
-            except OSError as e:
-                error_msg = f"Failed to create directory {output_path}: {e}"
-                self.logger.error(error_msg)
-                raise OSError(error_msg) from e
-
+            self._mkdir(output_path)
         return output_path
 
     def get_explainability_output_path(
@@ -261,8 +233,10 @@ class Output_Manager:
         method: str | None = None,
         create: bool = True,
     ) -> Path:
-        """
-        Get standardized explainability output path.
+        """Get standardized explainability output path.
+
+        Returns explanations/{model_name}/{round_name}/ or
+        explanations/{model_name}/{round_name}/{method}/ when method is given.
 
         Args:
             model_name: Model identifier
@@ -270,55 +244,17 @@ class Output_Manager:
             method: XAI method name (e.g., "gradcam", "lrp", "shap")
             create: Whether to create the directory if it doesn't exist
 
-        Returns:
-            Path object for explanations/{model_name}/{round_name}/{method}/
-            If method is None, returns explanations/{model_name}/{round_name}/
-
         Raises:
             ValueError: If model_name is empty or invalid
             OSError: If directory creation fails
         """
-        # Validate model_name
-        if not model_name or not model_name.strip():
-            raise ValueError("model_name cannot be empty")
-
-        # Apply sanitization
-        sanitized_model_name = self.sanitize_name(model_name)
-        if not sanitized_model_name:
-            raise ValueError("model_name contains no valid characters")
-
-        # Use default round name if not provided
-        if round_name is None:
-            round_name = "train"
-
-        sanitized_round_name = self.sanitize_name(round_name)
-        if not sanitized_round_name:
-            raise ValueError("round_name contains no valid characters")
-
-        # Construct base path: explanations/{model_name}/{round_name}/
-        output_path = self.base_dir / "explanations" / sanitized_model_name / sanitized_round_name
-
-        # Add method subdirectory if provided
+        sm = self._validate_and_sanitize(model_name, "model_name")
+        sr = self._validate_and_sanitize(round_name or "train", "round_name")
+        output_path = self.base_dir / "explanations" / sm / sr
         if method is not None:
-            sanitized_method = self.sanitize_name(method)
-            if not sanitized_method:
-                raise ValueError("method contains no valid characters")
-            output_path = output_path / sanitized_method
-
-        # Create directory if requested
+            output_path = output_path / self._validate_and_sanitize(method, "method")
         if create:
-            try:
-                output_path.mkdir(parents=True, exist_ok=True, mode=0o755)
-                self.logger.debug(f"Created directory: {output_path}")
-            except PermissionError as e:
-                error_msg = f"Permission denied creating directory {output_path}"
-                self.logger.error(error_msg)
-                raise PermissionError(error_msg) from e
-            except OSError as e:
-                error_msg = f"Failed to create directory {output_path}: {e}"
-                self.logger.error(error_msg)
-                raise OSError(error_msg) from e
-
+            self._mkdir(output_path)
         return output_path
 
     def get_yolo_project_parameter(self, model_name: str) -> str:
@@ -342,182 +278,69 @@ class Output_Manager:
         return str((self.base_dir / "runs").resolve())
 
     def ensure_unique_round_name(self, model_name: str, round_name: str) -> str:
-        """
-        Ensure round name is unique within model directory.
+        """Ensure round name is unique within model directory.
 
-        Checks if runs/{model_name}/{round_name}/ exists. If it does,
-        appends a timestamp suffix to ensure uniqueness.
-
-        Args:
-            model_name: Model identifier
-            round_name: Proposed round name
-
-        Returns:
-            Unique round name (appends timestamp if collision detected)
+        Returns the sanitized round_name unchanged if the directory does not
+        yet exist, otherwise appends a timestamp suffix.
 
         Raises:
             ValueError: If model_name or round_name is empty or invalid
-
-        Examples:
-            >>> om = Output_Manager()
-            >>> om.ensure_unique_round_name("yolov11n", "round_1")
-            'round_1'  # If directory doesn't exist
-            >>> om.ensure_unique_round_name("yolov11n", "round_1")
-            'round_1_20240115_143022'  # If directory exists
         """
         from datetime import datetime
 
-        # Validate model_name
-        if not model_name or not model_name.strip():
-            raise ValueError("model_name cannot be empty")
+        sm = self._validate_and_sanitize(model_name, "model_name")
+        sr = self._validate_and_sanitize(round_name, "round_name")
 
-        # Validate round_name
-        if not round_name or not round_name.strip():
-            raise ValueError("round_name cannot be empty")
-
-        # Apply sanitization
-        sanitized_model_name = self.sanitize_name(model_name)
-        if not sanitized_model_name:
-            raise ValueError("model_name contains no valid characters")
-
-        sanitized_round_name = self.sanitize_name(round_name)
-        if not sanitized_round_name:
-            raise ValueError("round_name contains no valid characters")
-
-        # Check if runs/{model_name}/{round_name}/ exists
-        round_path = self.base_dir / "runs" / sanitized_model_name / sanitized_round_name
+        round_path = self.base_dir / "runs" / sm / sr
 
         if not round_path.exists():
-            # Directory doesn't exist, return original round name
-            self.logger.debug(
-                f"Round directory does not exist: {round_path}. "
-                f"Using original round name: {sanitized_round_name}"
-            )
-            return sanitized_round_name
+            self.logger.debug(f"Round directory does not exist: {round_path}. Using: {sr}")
+            return sr
 
-        # Directory exists, append timestamp suffix
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        unique_round_name = f"{sanitized_round_name}_{timestamp}"
-
-        self.logger.info(
-            f"Round directory already exists: {round_path}. "
-            f"Appending timestamp suffix. New round name: {unique_round_name}"
-        )
-
-        return unique_round_name
+        unique = f"{sr}_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+        self.logger.info(f"Round directory exists: {round_path}. New name: {unique}")
+        return unique
 
     def resolve_checkpoint_path(
         self, model_name: str, round_name: str | None = None, checkpoint_type: str = "best"
     ) -> Path:
-        """
-        Resolve checkpoint path with fallback to legacy patterns.
+        """Resolve checkpoint path with fallback to legacy patterns.
 
-        Searches for checkpoints in the following order:
-        1. Standardized path: runs/{model_name}/{round_name}/weights/{checkpoint_type}.pt
-        2. Legacy nested path: runs/detect/runs/detect/{model_name}/{round_name}/weights/{checkpoint_type}.pt
-        3. Legacy flat path: runs/detect/{model_name}/weights/{checkpoint_type}.pt
-        4. Legacy baseline path: runs/detect/{model_name}_baseline/weights/{checkpoint_type}.pt
-
-        Args:
-            model_name: Model identifier
-            round_name: Training round identifier (default: "train")
-            checkpoint_type: Type of checkpoint ("best" or "last")
-
-        Returns:
-            Absolute path to checkpoint file
+        Search order:
+        1. runs/{model_name}/{round_name}/weights/{type}.pt  (standardized)
+        2. runs/detect/runs/detect/{model_name}/{round_name}/weights/{type}.pt  (legacy nested)
+        3. runs/detect/{model_name}/weights/{type}.pt  (legacy flat)
+        4. runs/detect/{model_name}_baseline/weights/{type}.pt  (legacy baseline)
 
         Raises:
-            ValueError: If model_name is empty or invalid, or checkpoint_type is invalid
+            ValueError: If model_name is empty/invalid or checkpoint_type is invalid
             FileNotFoundError: If checkpoint not found in any searched location
-
-        Examples:
-            >>> om = Output_Manager()
-            >>> om.resolve_checkpoint_path("yolov11n", "round_1", "best")
-            PosixPath('/absolute/path/to/runs/yolov11n/round_1/weights/best.pt')
         """
-        # Validate model_name
-        if not model_name or not model_name.strip():
-            raise ValueError("model_name cannot be empty")
-
-        # Apply sanitization
-        sanitized_model_name = self.sanitize_name(model_name)
-        if not sanitized_model_name:
-            raise ValueError("model_name contains no valid characters")
-
-        # Use default round name if not provided
-        if round_name is None:
-            round_name = "train"
-
-        sanitized_round_name = self.sanitize_name(round_name)
-        if not sanitized_round_name:
-            raise ValueError("round_name contains no valid characters")
-
-        # Validate checkpoint_type
-        if checkpoint_type not in ["best", "last"]:
+        if checkpoint_type not in ("best", "last"):
             raise ValueError("checkpoint_type must be 'best' or 'last'")
 
-        # Define search patterns
-        checkpoint_filename = f"{checkpoint_type}.pt"
+        sm = self._validate_and_sanitize(model_name, "model_name")
+        sr = self._validate_and_sanitize(round_name or "train", "round_name")
+        ckpt = f"{checkpoint_type}.pt"
 
-        # Pattern 1: Standardized path
-        standardized_path = (
-            self.base_dir
-            / "runs"
-            / sanitized_model_name
-            / sanitized_round_name
-            / "weights"
-            / checkpoint_filename
-        )
-
-        # Pattern 2: Legacy nested path
-        legacy_nested_path = (
-            self.base_dir
-            / "runs"
-            / "detect"
-            / "runs"
-            / "detect"
-            / sanitized_model_name
-            / sanitized_round_name
-            / "weights"
-            / checkpoint_filename
-        )
-
-        # Pattern 3: Legacy flat path
-        legacy_flat_path = (
-            self.base_dir
-            / "runs"
-            / "detect"
-            / sanitized_model_name
-            / "weights"
-            / checkpoint_filename
-        )
-
-        # Pattern 4: Legacy baseline path
-        legacy_baseline_path = (
-            self.base_dir
-            / "runs"
-            / "detect"
-            / f"{sanitized_model_name}_baseline"
-            / "weights"
-            / checkpoint_filename
-        )
-
-        # Search in order
         search_patterns = [
-            ("standardized", standardized_path),
-            ("legacy_nested", legacy_nested_path),
-            ("legacy_flat", legacy_flat_path),
-            ("legacy_baseline", legacy_baseline_path),
+            ("standardized", self.base_dir / "runs" / sm / sr / "weights" / ckpt),
+            (
+                "legacy_nested",
+                self.base_dir / "runs" / "detect" / "runs" / "detect" / sm / sr / "weights" / ckpt,
+            ),
+            ("legacy_flat", self.base_dir / "runs" / "detect" / sm / "weights" / ckpt),
+            (
+                "legacy_baseline",
+                self.base_dir / "runs" / "detect" / f"{sm}_baseline" / "weights" / ckpt,
+            ),
         ]
 
         searched_paths = []
-
         for pattern_name, path in search_patterns:
             searched_paths.append(path)
             self.logger.debug(f"Searching for checkpoint at {pattern_name} path: {path}")
-
             if path.exists():
-                # Log warning for legacy paths
                 if "legacy" in pattern_name:
                     self.logger.warning(
                         f"Checkpoint found at legacy path ({pattern_name}): {path}. "
@@ -525,11 +348,8 @@ class Output_Manager:
                     )
                 else:
                     self.logger.info(f"Checkpoint found at {pattern_name} path: {path}")
-
-                # Return absolute path
                 return path.resolve()
 
-        # Checkpoint not found in any location
         searched_paths_str = "\n  ".join(str(p) for p in searched_paths)
         error_msg = (
             f"Checkpoint not found for model '{model_name}', round '{round_name}', "

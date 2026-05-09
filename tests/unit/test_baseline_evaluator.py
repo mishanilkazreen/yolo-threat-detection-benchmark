@@ -6,6 +6,7 @@ from unittest.mock import patch
 
 from src.config.parser import Configuration, DataConfig, ModelConfig, TrainingConfig
 from src.training.baseline_evaluator import Baseline_Evaluator
+from src.training.evaluator import Metrics_Collector
 
 
 def _make_config(
@@ -246,9 +247,10 @@ class TestBaselineEvaluatorOutputStructure:
 
     def test_f1_score_computation(self):
         """Verify F1 score is computed correctly from precision and recall."""
-        assert abs(Baseline_Evaluator._compute_f1(0.8, 0.6) - (2 * 0.8 * 0.6 / (0.8 + 0.6))) < 1e-9
-        assert Baseline_Evaluator._compute_f1(0.0, 0.0) == 0.0
-        assert Baseline_Evaluator._compute_f1(1.0, 1.0) == 1.0
+        collector = Metrics_Collector()
+        assert abs(collector._compute_f1(0.8, 0.6) - (2 * 0.8 * 0.6 / (0.8 + 0.6))) < 1e-9
+        assert collector._compute_f1(0.0, 0.0) == 0.0
+        assert collector._compute_f1(1.0, 1.0) == 1.0
 
     def test_empty_hfs_subset_returns_zero(self, tmp_path: Path):
         """Verify that an empty HFS subset returns zero HFS without crashing."""
