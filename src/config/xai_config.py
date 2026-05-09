@@ -1,7 +1,15 @@
 """XAI configuration dataclass and architecture layer mapping."""
 
 from dataclasses import dataclass, field
-from typing import Any
+from typing import TypedDict
+
+
+class ArchLayerConfig(TypedDict):
+    """Architecture-specific layer paths for GradCAM / LRP and backbone enumeration."""
+
+    gradcam_target: str
+    lrp_target: str
+    backbone_layers: list[str]
 
 
 @dataclass
@@ -110,7 +118,7 @@ class XAIConfig:
 
 
 # Architecture-specific layer mapping for different YOLO versions
-ARCHITECTURE_LAYER_MAPPING: dict[str, dict[str, Any]] = {
+ARCHITECTURE_LAYER_MAPPING: dict[str, ArchLayerConfig] = {
     "yolov11": {
         "gradcam_target": "model.22",  # C3k2 [1024] — neck P5, 20x20 (last neck block before Detect)
         "lrp_target": "model.22",

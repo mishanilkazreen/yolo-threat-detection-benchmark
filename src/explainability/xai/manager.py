@@ -7,6 +7,7 @@ from typing import Any
 
 import numpy as np
 import torch
+from ultralytics import YOLO
 
 from src.utils.output_manager import Output_Manager
 
@@ -48,7 +49,7 @@ class XAIManager:
 
     def process_batch(
         self,
-        model: Any,
+        model: YOLO,
         image_paths: list[str],
         detections: dict[str, Any],
         gt_boxes: dict[str, list[tuple[float, float, float, float]]],
@@ -238,7 +239,7 @@ class XAIManager:
 
     def _process_single_image(
         self,
-        model: Any,
+        model: YOLO,
         image_path: str,
         detections: dict[str, Any],
         gt_boxes: list[tuple[float, float, float, float]],
@@ -319,7 +320,7 @@ class XAIManager:
             self.logger.error(f"Failed to construct XAIResult for {image_path} with {method}: {e}")
             return None
 
-    def _get_target_layer(self, model: Any) -> str:
+    def _get_target_layer(self, model: YOLO) -> str:
         """Get target layer for the model architecture."""
         model_name = getattr(model, "model_name", None)
         if not isinstance(model_name, str):
@@ -356,7 +357,7 @@ class XAIManager:
 
     def generate_final_aggregate_report(
         self,
-        all_round_data: list[dict],
+        all_round_data: list[dict[str, Any]],
         config_name: str,
         output_dir: str,
     ) -> str:

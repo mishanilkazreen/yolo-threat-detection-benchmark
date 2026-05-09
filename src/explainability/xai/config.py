@@ -1,13 +1,11 @@
 """Configuration classes for XAI functionality."""
 
-from typing import Any
-
-from src.config.xai_config import ARCHITECTURE_LAYER_MAPPING, XAIConfig
+from src.config.xai_config import ARCHITECTURE_LAYER_MAPPING, ArchLayerConfig, XAIConfig
 
 __all__ = ["ARCHITECTURE_LAYER_MAPPING", "XAIConfig"]
 
 
-def get_architecture_config(model_name: str) -> dict[str, Any]:
+def get_architecture_config(model_name: str) -> ArchLayerConfig:
     """Get architecture-specific configuration for a YOLO model.
 
     Args:

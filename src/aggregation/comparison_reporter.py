@@ -4,7 +4,6 @@ import csv
 import json
 import logging
 from pathlib import Path
-from typing import Any
 
 # Metric columns in display order
 COMPARISON_COLUMNS = [
@@ -29,8 +28,8 @@ class Comparison_Reporter:
     def generate_comparison(
         self,
         config_name: str,
-        incremental_metrics: dict[str, Any],
-        baseline_metrics: dict[str, Any],
+        incremental_metrics: dict[str, float],
+        baseline_metrics: dict[str, float],
         output_dir: str = "outputs",
     ) -> None:
         """
@@ -103,22 +102,22 @@ class Comparison_Reporter:
 
     def _build_table(
         self,
-        incremental_metrics: dict[str, Any],
-        baseline_metrics: dict[str, Any],
-    ) -> list[dict[str, Any]]:
+        incremental_metrics: dict[str, float],
+        baseline_metrics: dict[str, float],
+    ) -> list[dict[str, str | float]]:
         """Return three rows: baseline, incremental, difference."""
-        rows = []
+        rows: list[dict[str, str | float]] = []
         for label, src in [
             ("One-Shot Baseline", baseline_metrics),
             ("Incremental", incremental_metrics),
         ]:
-            row: dict[str, Any] = {"Approach": label}
+            row: dict[str, str | float] = {"Approach": label}
             for col_label, key in COMPARISON_COLUMNS:
                 row[col_label] = src.get(key, float("nan"))
             rows.append(row)
 
         # Difference row: incremental - baseline
-        diff_row: dict[str, Any] = {"Approach": "Difference (I - B)"}
+        diff_row: dict[str, str | float] = {"Approach": "Difference (I - B)"}
         for col_label, key in COMPARISON_COLUMNS:
             inc_val = incremental_metrics.get(key, float("nan"))
             base_val = baseline_metrics.get(key, float("nan"))
@@ -129,7 +128,7 @@ class Comparison_Reporter:
 
     def _save_markdown(
         self,
-        table: list[dict[str, Any]],
+        table: list[dict[str, str | float]],
         path: Path,
         config_name: str,
     ) -> None:
@@ -141,7 +140,7 @@ class Comparison_Reporter:
             for col in col_labels:
                 widths[col] = max(widths[col], len(self._fmt(row.get(col, ""))))
 
-        def row_str(row: dict[str, Any]) -> str:
+        def row_str(row: dict[str, str | float]) -> str:
             cells = [self._fmt(row.get(col, "")).ljust(widths[col]) for col in col_labels]
             return "| " + " | ".join(cells) + " |"
 
@@ -161,7 +160,7 @@ class Comparison_Reporter:
         with open(path, "w", newline="\n", encoding="utf-8") as f:
             f.write("\n".join(lines))
 
-    def _save_csv(self, table: list[dict[str, Any]], path: Path) -> None:
+    def _save_csv(self, table: list[dict[str, str | float]], path: Path) -> None:
         col_labels = ["Approach"] + [c for c, _ in COMPARISON_COLUMNS]
         with open(path, "w", newline="", encoding="utf-8") as f:
             writer = csv.DictWriter(f, fieldnames=col_labels)
@@ -170,7 +169,7 @@ class Comparison_Reporter:
                 writer.writerow({col: self._fmt(row.get(col, "")) for col in col_labels})
 
     @staticmethod
-    def _fmt(value: Any) -> str:
+    def _fmt(value: object) -> str:
         """Format a cell value for display."""
         if isinstance(value, str):
             return value
@@ -187,7 +186,7 @@ class Comparison_Reporter:
         config_dir: Path,
         config_name: str,
         is_baseline: bool,
-    ) -> dict[str, Any] | None:
+    ) -> dict[str, float] | None:
         """
         Load metrics from a config output directory.
 
@@ -223,7 +222,7 @@ class Comparison_Reporter:
         if training_time is None:
             training_time = float("nan")
 
-        metrics: dict[str, Any] = {
+        metrics: dict[str, float] = {
             "mAP50": test_metrics.get("mAP50", float("nan")),
             "mAP50-95": test_metrics.get("mAP50-95", float("nan")),
             "f1_score": test_metrics.get("f1_score", float("nan")),

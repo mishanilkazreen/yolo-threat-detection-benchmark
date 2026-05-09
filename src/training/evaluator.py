@@ -342,7 +342,7 @@ class Metrics_Collector:  # pylint: disable=invalid-name
 
         return metrics
 
-    def _attach_per_class_metrics(self, metrics: dict, results: Any) -> None:
+    def _attach_per_class_metrics(self, metrics: dict[str, Any], results: Any) -> None:
         """Attach per-class metrics to a metrics dict if results carry them."""
         if not hasattr(results.box, "maps"):
             return

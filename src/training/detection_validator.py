@@ -7,7 +7,39 @@ Validates edge agent detections against ground truth using IoU and class matchin
 import json
 import logging
 from pathlib import Path
-from typing import Any
+from typing import Any, TypedDict
+
+
+class EdgeDetection(TypedDict):
+    """Single detection from the edge agent simulator."""
+
+    image_id: str
+    pred_class: int
+    bbox: list[float]  # [x_center, y_center, width, height] normalised
+    confidence: float
+
+
+class GTAnnotation(TypedDict):
+    """Ground-truth annotation in YOLO xywh format."""
+
+    class_id: int
+    bbox: list[float]  # [x_center, y_center, width, height] normalised
+
+
+class ValidationResults(TypedDict):
+    """Return value of Detection_Validator.validate_detections()."""
+
+    verified_samples: list[str]
+    verified_detections: list[dict[str, Any]]  # EdgeDetection + gt_class / iou / gt_bbox
+    rejected_detections: list[dict[str, Any]]  # EdgeDetection + rejection_reason / best_iou
+    undetected_images: list[str]
+    total_detections: int
+    verified_count: int
+    rejected_count: int
+    undetected_count: int
+    verification_rate: float
+    iou_threshold: float
+
 
 logger = logging.getLogger(__name__)
 
@@ -35,11 +67,11 @@ class Detection_Validator:
 
     def validate_detections(
         self,
-        detections: list[dict[str, Any]],
+        detections: list[EdgeDetection],
         ground_truth_dir: str,
         unlabeled_pool: list[str] | None = None,
         output_path: str | None = None,
-    ) -> dict[str, Any]:
+    ) -> ValidationResults:
         """
         Validate edge agent detections against ground truth.
 
@@ -81,7 +113,7 @@ class Detection_Validator:
         verified_image_ids = set()
 
         # Group detections by image
-        detections_by_image: dict[str, list[dict[str, Any]]] = {}
+        detections_by_image: dict[str, list[EdgeDetection]] = {}
         for det in detections:
             img_id = det["image_id"]
             if img_id not in detections_by_image:
@@ -149,7 +181,7 @@ class Detection_Validator:
         logger.info(f"Verified samples from {len(verified_image_ids)} unique images")
         logger.info(f"Undetected images: {undetected_count}")
 
-        results = {
+        results: ValidationResults = {
             "verified_samples": sorted(verified_image_ids),
             "verified_detections": verified_detections,
             "rejected_detections": rejected_detections,
@@ -174,7 +206,7 @@ class Detection_Validator:
 
         return results
 
-    def _load_ground_truth(self, gt_file: Path) -> list[dict[str, Any]]:
+    def _load_ground_truth(self, gt_file: Path) -> list[GTAnnotation]:
         """
         Load ground truth annotations from YOLO format file.
 
@@ -188,7 +220,7 @@ class Detection_Validator:
                     'bbox': [x_center, y_center, width, height]  # normalized
                 }
         """
-        annotations = []
+        annotations: list[GTAnnotation] = []
 
         with open(gt_file, encoding="utf-8") as f:
             for line in f:
@@ -206,7 +238,7 @@ class Detection_Validator:
         return annotations
 
     def _validate_single_detection(
-        self, detection: dict[str, Any], gt_annotations: list[dict[str, Any]]
+        self, detection: EdgeDetection, gt_annotations: list[GTAnnotation]
     ) -> tuple[bool, dict[str, Any]]:
         """
         Validate a single detection against ground truth annotations.
@@ -298,7 +330,7 @@ class Detection_Validator:
         iou = inter_area / union_area
         return iou
 
-    def get_validation_summary(self, validation_results: dict[str, Any]) -> str:
+    def get_validation_summary(self, validation_results: ValidationResults) -> str:
         """
         Get a human-readable summary of validation results.
 

@@ -7,9 +7,21 @@ Simulates edge agents performing inference on unlabeled data pool.
 import json
 import logging
 from pathlib import Path
-from typing import Any
+from typing import TypedDict
 
 from ultralytics import YOLO
+
+from .detection_validator import EdgeDetection
+
+
+class DetectionStats(TypedDict):
+    """Return value of Edge_Agent_Simulator.get_detection_statistics()."""
+
+    total_detections: int
+    images_with_detections: int
+    detections_per_class: dict[int, int]
+    avg_confidence: float
+
 
 logger = logging.getLogger(__name__)
 
@@ -42,7 +54,7 @@ class Edge_Agent_Simulator:
         output_path: str,
         conf_threshold: float = 0.25,
         iou_threshold: float = 0.45,
-    ) -> list[dict[str, Any]]:
+    ) -> list[EdgeDetection]:
         """
         Simulate edge agents performing inference on unlabeled_pool.
 
@@ -90,7 +102,7 @@ class Edge_Agent_Simulator:
         logger.info(f"Running inference on {len(unlabeled_images)} unlabeled images")
 
         # Run inference on all images
-        all_detections = []
+        all_detections: list[EdgeDetection] = []
 
         for img_file in unlabeled_images:
             img_path = image_dir_path / img_file
@@ -146,7 +158,7 @@ class Edge_Agent_Simulator:
                         confidences = confidences_data
 
                     for i in range(len(boxes)):
-                        detection = {
+                        detection: EdgeDetection = {
                             "image_id": img_file,
                             "pred_class": int(classes[i]),
                             "bbox": xywhn[i].tolist(),  # [x_center, y_center, width, height]
@@ -191,7 +203,7 @@ class Edge_Agent_Simulator:
 
         return xywhn
 
-    def get_detection_statistics(self, detections: list[dict[str, Any]]) -> dict[str, Any]:
+    def get_detection_statistics(self, detections: list[EdgeDetection]) -> DetectionStats:
         """
         Get statistics for a set of detections.
 
@@ -238,7 +250,7 @@ class Edge_Agent_Simulator:
         output_dir: str,
         round_num: int,
         device: str = "cuda",
-    ) -> list[dict[str, Any]]:
+    ) -> list[EdgeDetection]:
         """
         Simulate inference on unlabeled pool (simplified interface for runner).
 
@@ -258,7 +270,7 @@ class Edge_Agent_Simulator:
         model = YOLO(model_path)
 
         # Run inference on all unlabeled images
-        all_detections = []
+        all_detections: list[EdgeDetection] = []
 
         for img_filename in unlabeled_images:
             # Construct full path: base_path / train / images / filename
@@ -310,7 +322,7 @@ class Edge_Agent_Simulator:
                         confidences = confidences_data
 
                     for i in range(len(boxes)):
-                        detection = {
+                        detection: EdgeDetection = {
                             "image_id": img_filename,
                             "pred_class": int(classes[i]),
                             "bbox": xywhn[i].tolist(),

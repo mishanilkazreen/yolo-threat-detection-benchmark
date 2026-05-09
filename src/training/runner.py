@@ -13,7 +13,7 @@ from ultralytics import YOLO
 import yaml
 
 from ..aggregation.comparison_reporter import Comparison_Reporter
-from ..config.parser import ConfigurationParser
+from ..config.parser import Configuration, ConfigurationParser
 from ..data.validator import Dataset_Validator
 from ..explainability.xai.manager import XAIManager
 from ..utils.output_manager import Output_Manager
@@ -91,7 +91,7 @@ class Experiment_Runner:
             self._round_metrics_tracker = Round_Metrics_Tracker()
         return self._round_metrics_tracker
 
-    def _get_xai_manager(self, config: Any) -> XAIManager | None:
+    def _get_xai_manager(self, config: Configuration) -> XAIManager | None:
         """Get XAI manager if XAI is enabled, otherwise return None."""
         if not hasattr(config, "xai") or not config.xai.enabled:
             return None
@@ -145,7 +145,7 @@ class Experiment_Runner:
         return self._run_single_experiment(config, config_name, run_id=None)
 
     def _run_single_experiment(
-        self, config: Any, config_name: str, run_id: int | None = None
+        self, config: Configuration, config_name: str, run_id: int | None = None
     ) -> dict[str, Any]:
         """Run a single training and evaluation."""
 
@@ -168,7 +168,7 @@ class Experiment_Runner:
         return self._run_standard_training(config, config_name, seed, run_id)
 
     def _run_standard_training(
-        self, config: Any, config_name: str, seed: int, run_id: int | None = None
+        self, config: Configuration, config_name: str, seed: int, run_id: int | None = None
     ) -> dict[str, Any]:
         """Run standard single-round training."""
 
@@ -264,7 +264,7 @@ class Experiment_Runner:
         return metrics
 
     def _run_incremental_training(
-        self, config: Any, config_name: str, seed: int, run_id: int | None = None
+        self, config: Configuration, config_name: str, seed: int, run_id: int | None = None
     ) -> dict[str, Any]:
         """Run 5-round incremental training with edge-cloud simulation.
 
@@ -286,6 +286,8 @@ class Experiment_Runner:
 
         # Get incremental training parameters
         rounds = config.training.rounds
+        if rounds is None:
+            raise ValueError("training.rounds must be configured for incremental training")
         epochs_per_round = getattr(config.training, "epochs_per_round", None)
 
         # If epochs_per_round not set, calculate from total epochs
@@ -980,7 +982,7 @@ class Experiment_Runner:
 
         self.logger.debug(f"Created round data.yaml at {round_data_yaml}")
 
-    def _run_multi_run_experiment(self, config: Any, config_name: str) -> dict[str, Any]:
+    def _run_multi_run_experiment(self, config: Configuration, config_name: str) -> dict[str, Any]:
         """Run multiple training runs with different seeds."""
 
         self.logger.info(f"Starting multi-run experiment: {config.training.runs} runs")
@@ -1000,7 +1002,9 @@ class Experiment_Runner:
 
         return aggregated
 
-    def _aggregate_multi_run_results(self, all_metrics: list, config_name: str) -> dict[str, Any]:
+    def _aggregate_multi_run_results(
+        self, all_metrics: list[dict[str, Any]], config_name: str
+    ) -> dict[str, Any]:
         """Aggregate results from multiple runs."""
 
         # Extract mAP50 values
@@ -1062,7 +1066,7 @@ class Experiment_Runner:
         self,
         xai_manager: XAIManager,
         model_path: str,
-        config: Any,
+        config: Configuration,
         output_dir: str,
         round_num: int,
         model_name: str | None = None,
