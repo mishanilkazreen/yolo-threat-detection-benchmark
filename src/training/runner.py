@@ -476,29 +476,39 @@ class Experiment_Runner:
             self.logger.info("  Optimizer: %s, LR: %s, Batch: %d", optimizer, lr0, batch_size)
             round_train_start = time.time()
 
-            results = model.train(
-                data=round_data_yamls[round_num],
-                epochs=epochs_per_round,
-                imgsz=config.training.image_size,
-                patience=config.training.patience,  # 0 = no early stopping; >0 = early stopping
-                batch=batch_size,
-                optimizer=optimizer,
-                lr0=lr0,
-                lrf=lrf,
-                cos_lr=False,  # Disable cosine LR scheduler to use our custom step decay
-                device=device,
-                project=self.output_manager.get_yolo_project_parameter(config_name),
-                name=f"{config_name}/incremental_round_{round_num}",
-                exist_ok=True,
-                verbose=True,
-                workers=0,  # Run dataloader in main process (Windows pagefile safety)
-                mosaic=config.training.mosaic,
-                scale=config.training.scale,
-                fliplr=config.training.fliplr,
-                hsv_h=config.training.hsv_h,
-                hsv_s=config.training.hsv_s,
-                hsv_v=config.training.hsv_v,
-            )
+            # Build train kwargs so we only pass freeze when set (avoids Ultralytics
+            # interpreting None as "freeze none explicitly" vs "use default").
+            train_kwargs: dict[str, Any] = {
+                "data": round_data_yamls[round_num],
+                "epochs": epochs_per_round,
+                "imgsz": config.training.image_size,
+                "patience": config.training.patience,  # 0 = no early stopping; >0 = early stopping
+                "batch": batch_size,
+                "optimizer": optimizer,
+                "lr0": lr0,
+                "lrf": lrf,
+                "cos_lr": False,  # Disable cosine LR scheduler; use our custom step decay
+                "device": device,
+                "project": self.output_manager.get_yolo_project_parameter(config_name),
+                "name": f"{config_name}/incremental_round_{round_num}",
+                "exist_ok": True,
+                "verbose": True,
+                "workers": 0,  # Run dataloader in main process (Windows pagefile safety)
+                "mosaic": config.training.mosaic,
+                "scale": config.training.scale,
+                "fliplr": config.training.fliplr,
+                "hsv_h": config.training.hsv_h,
+                "hsv_s": config.training.hsv_s,
+                "hsv_v": config.training.hsv_v,
+            }
+            if config.training.freeze is not None:
+                train_kwargs["freeze"] = config.training.freeze
+                self.logger.info(
+                    "Freezing first %d layers (transfer learning head-only or partial)",
+                    config.training.freeze,
+                )
+
+            results = model.train(**train_kwargs)
 
             round_training_time = time.time() - round_train_start
             total_training_time += round_training_time
