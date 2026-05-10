@@ -7,68 +7,97 @@ description: Pretrained vs random weight comparison experiment plan and task tra
 
 ## Background
 
-The Kutlu & Emiroğlu (2025) MDPI paper claims mAP@0.5 = 0.886 with YOLOv8n
+The Kutlu & Emiroglu (2025) MDPI paper claims mAP@0.5 = 0.886 with YOLOv8n
 using random initialization and 5 incremental rounds of 10 epochs each. Our
-reproduction yields mAP@0.5 ≈ 0.54 with truly random weights. This project
+reproduction yields mAP@0.5 = 0.561 with truly random weights. This project
 tests whether pretrained (COCO) weights explain the discrepancy.
 
-## MDPI paper parameters (verified from paper text)
+## Current status (May 2026)
 
-- Architecture: YOLOv8n (3.2M params)
-- Rounds: 5 incremental
-- Epochs per round: 10
-- Batch size: 16
-- Optimizer: AdamW
-- Learning rate: 0.001, step decay ×0.1 every 5 epochs
-- Dataset: 5064 images, 70/20/10 split, 20% of train for Round 1
-- Augmentation: mosaic, scale ±50%, horizontal flip 50%, HSV jitter
+### Completed nano experiments (main branch)
 
-## Metrics to report (matching MDPI paper)
+| Config | R1 | R5 | Test mAP |
+|---|---|---|---|
+| yolov8n_random | 0.197 | 0.534 | 0.561 |
+| yolov8n_pretrained | 0.707 | 0.892 | 0.894 |
+| yolo12n_random | 0.170 | 0.416 | 0.398 |
+| yolo12n_pretrained | 0.660 | 0.905 | 0.890 |
+| yolov8n_random_100ep | 0.603 | 0.827 | 0.843 |
+| yolov8n_pretrained_100ep | 0.801 | 0.919 | 0.910 |
+| yolo12n_random_100ep | 0.448 | 0.821 | 0.812 |
+| yolo12n_pretrained_100ep | 0.803 | 0.895 | 0.906 |
 
-For every experiment, report:
+### Completed frozen experiments (frozen_embeddings branch)
 
-1. **Per-round (rounds 1–5):**
-   - F1-score (all classes, at optimal confidence threshold)
-   - Precision (all classes, at conf=1.0)
-   - mAP@0.5 (all classes)
-   - Per-class F1-score (knife, pistol)
-   - Per-class Precision (knife, pistol)
-   - Per-class mAP@0.5 (knife, pistol)
+| Config | R1 | R5 | Test mAP |
+|---|---|---|---|
+| yolov8n_pretrained_headonly (freeze=22) | 0.581 | 0.762 | 0.776 |
+| yolov8n_pretrained_frozen_backbone (freeze=10) | 0.746 | running | running |
+| yolo12n_pretrained_headonly | pending | pending | pending |
+| yolo12n_pretrained_frozen_backbone | pending | pending | pending |
 
-2. **Final test set evaluation:**
-   - Same metrics as above on the held-out test set
+### MDPI paper reference values
 
-3. **For early stopping runs only:**
-   - Actual epoch the training stopped on (per round)
+| Round | mAP@0.5 | knife mAP | pistol mAP |
+|---|---|---|---|
+| R1 | 0.518 | 0.263 | 0.772 |
+| R2 | 0.600 | 0.325 | 0.876 |
+| R3 | 0.833 | 0.800 | 0.867 |
+| R4 | 0.881 | 0.884 | 0.878 |
+| R5 | 0.886 | 0.884 | 0.889 |
 
-## Task list
+## Experiment design (full matrix)
 
-### Phase 1 — Nano models
+### Axis 1: YOLO version
+- YOLOv8 (nano first, then small)
+- YOLOv12 (nano first, then small)
 
-- [ ] Run `yolov8n_random.yaml` (MDPI protocol, random init)
-- [ ] Run `yolov8n_pretrained.yaml` (MDPI protocol, COCO pretrained)
-- [ ] Run `yolo12n_random.yaml` (MDPI protocol, random init)
-- [ ] Run `yolo12n_pretrained.yaml` (MDPI protocol, COCO pretrained)
-- [ ] Run `yolov8n_random_100ep.yaml` (100 ep/round, early stopping, random)
-- [ ] Run `yolov8n_pretrained_100ep.yaml` (100 ep/round, early stopping, COCO)
-- [ ] Run `yolo12n_random_100ep.yaml` (100 ep/round, early stopping, random)
-- [ ] Run `yolo12n_pretrained_100ep.yaml` (100 ep/round, early stopping, COCO)
-- [ ] Compile Phase 1 results into comparison table
+### Axis 2: Weight initialisation
+- Random (`.yaml` architecture only)
+- Pretrained (`.pt` COCO weights)
 
-### Phase 2 — Small models
+### Axis 3: Fine-tuning strategy
+- Full model (no freeze)
+- Frozen backbone (freeze=10): backbone frozen, neck+head train
+- Head-only (freeze=22): backbone+neck frozen, only detect head trains
 
-- [ ] Run `yolov8s_random.yaml` (MDPI protocol, random init)
-- [ ] Run `yolov8s_pretrained.yaml` (MDPI protocol, COCO pretrained)
-- [ ] Run `yolo12s_random.yaml` (MDPI protocol, random init)
-- [ ] Run `yolo12s_pretrained.yaml` (MDPI protocol, COCO pretrained)
-- [ ] Run `yolov8s_random_100ep.yaml` (100 ep/round, early stopping, random)
-- [ ] Run `yolov8s_pretrained_100ep.yaml` (100 ep/round, early stopping, COCO)
-- [ ] Run `yolo12s_random_100ep.yaml` (100 ep/round, early stopping, random)
-- [ ] Run `yolo12s_pretrained_100ep.yaml` (100 ep/round, early stopping, COCO)
-- [ ] Compile Phase 2 results into comparison table
+### Axis 4: Epoch budget
+- 10 epochs/round (MDPI protocol)
+- 100 epochs/round (early stopping, patience=10)
 
-### Analysis
+## Next tasks (priority order)
 
-- [ ] Compare random vs pretrained for each architecture/size
-- [ ] Determine if pretrained v8n results match MDPI paper claims
-- [ ] Write up findings for the latex paper
+### 1. Literature search (GitHub issue #10)
+Find papers using the same Joshi weapon detection dataset from Roboflow.
+Compare their results to ours and the MDPI paper. Use Google Scholar
+search prompts documented in the issue.
+
+### 2. Complete frozen experiments (GitHub issue #11)
+Wait for frozen_backbone and yolo12n headonly to finish. Compare all
+frozen configs against main branch results and MDPI paper trajectory.
+Nano results must make sense before running small models.
+
+### 3. Structure paper Results section (GitHub issue #12)
+Report all experiments in a clear factorial design. Tables needed:
+- Per-round trajectory (all configs vs MDPI paper)
+- Per-class breakdown (knife/pistol)
+- Extended training with early stopping
+- Cross-condition factorial analysis
+
+### 4. Small models (after nano is validated)
+Run `scripts/run_small_experiments.ps1` on main branch.
+Run frozen variants for small models if nano results warrant it.
+
+### 5. Random-init frozen experiments (if needed)
+Currently we only have pretrained + frozen configs. If reviewers ask,
+we may need random + frozen configs to show that freezing random
+features is useless (expected: very poor results).
+
+## Key findings so far
+
+1. **Random init cannot reach 0.886 in 50 epochs.** Best: 0.561 (v8n), 0.398 (v12n).
+2. **Pretrained matches MDPI paper almost exactly.** v8n pretrained R5=0.892 vs paper 0.886.
+3. **Head-only plateaus at ~0.76.** Frozen features limit adaptation.
+4. **Frozen backbone R1 = 0.746** — higher than fully pretrained R1 (0.707) due to regularization.
+5. **Extended training (100ep) closes the gap partially.** Random 100ep reaches 0.843.
+6. **The MDPI paper's results are inconsistent with random init as claimed.**
