@@ -1,0 +1,223 @@
+{
+  "config_name": "yolo12n_random_100ep",
+  "num_rounds": 5,
+  "rounds": [
+    {
+      "round": 1,
+      "timestamp": "2026-05-10 07:11:35",
+      "checkpoint_path": "C:\\Users\\manig\\Downloads\\yolo-improvement-detection-moderation-paper\\runs\\yolo12n_random_100ep\\incremental_round_1\\weights\\best.pt",
+      "training_set_size": 709,
+      "verified_samples_added": 0,
+      "training_time_seconds": 2151.9404878616333,
+      "validation_time_seconds": 8.044504642486572,
+      "metrics": {
+        "mAP50": 0.4477569107605015,
+        "mAP50-95": 0.26697954180579686,
+        "precision": 0.5583090906482793,
+        "recall": 0.41334862917884563,
+        "f1_score": 0.47501562035366385
+      },
+      "remaining_pool_size": 2836,
+      "unlabeled_pool_size_at_round_start": 2836,
+      "actual_stopped_epoch": 100,
+      "per_class_metrics": {
+        "mAP50_per_class": [
+          0.2760246018633677,
+          0.6194892196576354
+        ],
+        "mAP50-95_per_class": [
+          0.10906233976233845,
+          0.4248967438492552
+        ],
+        "precision_per_class": [
+          0.4147481710222743,
+          0.7018700102742842
+        ],
+        "recall_per_class": [
+          0.2733644859813084,
+          0.5533327723763828
+        ],
+        "f1_score_per_class": [
+          0.3295315655924681,
+          0.6188126476469034
+        ]
+      }
+    },
+    {
+      "round": 2,
+      "timestamp": "2026-05-10 08:27:21",
+      "checkpoint_path": "C:\\Users\\manig\\Downloads\\yolo-improvement-detection-moderation-paper\\runs\\yolo12n_random_100ep\\incremental_round_2\\weights\\best.pt",
+      "training_set_size": 1983,
+      "verified_samples_added": 1274,
+      "training_time_seconds": 4501.09601020813,
+      "validation_time_seconds": 9.16628909111023,
+      "metrics": {
+        "mAP50": 0.6693776847281133,
+        "mAP50-95": 0.4574879853127988,
+        "precision": 0.7854159238489968,
+        "recall": 0.5704345453305136,
+        "f1_score": 0.6608816910131263
+      },
+      "rejected_count": 548,
+      "undetected_count": 1192,
+      "remaining_pool_size": 1562,
+      "unlabeled_pool_size_at_round_start": 1562,
+      "total_detections": 1857,
+      "actual_stopped_epoch": 100,
+      "per_class_metrics": {
+        "mAP50_per_class": [
+          0.593436766683137,
+          0.7453186027730896
+        ],
+        "mAP50-95_per_class": [
+          0.3428223468153546,
+          0.5721536238102429
+        ],
+        "precision_per_class": [
+          0.7410760184593387,
+          0.8297558292386549
+        ],
+        "recall_per_class": [
+          0.4766355140186916,
+          0.6642335766423357
+        ],
+        "f1_score_per_class": [
+          0.5801425700001163,
+          0.7378254223563389
+        ]
+      }
+    },
+    {
+      "round": 3,
+      "timestamp": "2026-05-10 09:21:50",
+      "checkpoint_path": "C:\\Users\\manig\\Downloads\\yolo-improvement-detection-moderation-paper\\runs\\yolo12n_random_100ep\\incremental_round_3\\weights\\best.pt",
+      "training_set_size": 2654,
+      "verified_samples_added": 671,
+      "training_time_seconds": 3241.189614057541,
+      "validation_time_seconds": 7.95970344543457,
+      "metrics": {
+        "mAP50": 0.7425038600932342,
+        "mAP50-95": 0.506231182830279,
+        "precision": 0.8410851258454175,
+        "recall": 0.6296927394669165,
+        "f1_score": 0.7201973996338409
+      },
+      "rejected_count": 671,
+      "undetected_count": 522,
+      "remaining_pool_size": 891,
+      "unlabeled_pool_size_at_round_start": 891,
+      "total_detections": 1370,
+      "actual_stopped_epoch": 56,
+      "per_class_metrics": {
+        "mAP50_per_class": [
+          0.7073729547027026,
+          0.7776347654837659
+        ],
+        "mAP50-95_per_class": [
+          0.4169846432866614,
+          0.5954777223738966
+        ],
+        "precision_per_class": [
+          0.8346128198027998,
+          0.8475574318880352
+        ],
+        "recall_per_class": [
+          0.5659548219995265,
+          0.6934306569343066
+        ],
+        "f1_score_per_class": [
+          0.6745167256072928,
+          0.7627863071061436
+        ]
+      }
+    },
+    {
+      "round": 4,
+      "timestamp": "2026-05-10 11:04:36",
+      "checkpoint_path": "C:\\Users\\manig\\Downloads\\yolo-improvement-detection-moderation-paper\\runs\\yolo12n_random_100ep\\incremental_round_4\\weights\\best.pt",
+      "training_set_size": 2861,
+      "verified_samples_added": 207,
+      "training_time_seconds": 6146.000277996063,
+      "validation_time_seconds": 8.577099800109863,
+      "metrics": {
+        "mAP50": 0.8095896994723174,
+        "mAP50-95": 0.5708122785441974,
+        "precision": 0.8975859310532008,
+        "recall": 0.7123563853977911,
+        "f1_score": 0.7943155017360936
+      },
+      "rejected_count": 427,
+      "undetected_count": 380,
+      "remaining_pool_size": 684,
+      "unlabeled_pool_size_at_round_start": 684,
+      "total_detections": 640,
+      "actual_stopped_epoch": 100,
+      "per_class_metrics": {
+        "mAP50_per_class": [
+          0.7923655154842006,
+          0.8268138834604342
+        ],
+        "mAP50-95_per_class": [
+          0.5065780977191964,
+          0.6350464593691985
+        ],
+        "precision_per_class": [
+          0.9025678700723003,
+          0.8926039920341012
+        ],
+        "recall_per_class": [
+          0.6845794392523364,
+          0.7401333315432458
+        ],
+        "f1_score_per_class": [
+          0.7786037285274939,
+          0.8092495428787246
+        ]
+      }
+    },
+    {
+      "round": 5,
+      "timestamp": "2026-05-10 12:34:20",
+      "checkpoint_path": "C:\\Users\\manig\\Downloads\\yolo-improvement-detection-moderation-paper\\runs\\yolo12n_random_100ep\\incremental_round_5\\weights\\best.pt",
+      "training_set_size": 3021,
+      "verified_samples_added": 160,
+      "training_time_seconds": 5365.402426481247,
+      "validation_time_seconds": 8.915757656097412,
+      "metrics": {
+        "mAP50": 0.82058765133819,
+        "mAP50-95": 0.5807584367447147,
+        "precision": 0.8719644303548275,
+        "recall": 0.7430740531634996,
+        "f1_score": 0.8023761044587037
+      },
+      "rejected_count": 294,
+      "undetected_count": 317,
+      "remaining_pool_size": 524,
+      "unlabeled_pool_size_at_round_start": 524,
+      "total_detections": 456,
+      "actual_stopped_epoch": 63,
+      "per_class_metrics": {
+        "mAP50_per_class": [
+          0.8193598493268308,
+          0.8218154533495493
+        ],
+        "mAP50-95_per_class": [
+          0.5259614099804877,
+          0.6355554635089417
+        ],
+        "precision_per_class": [
+          0.892183144060535,
+          0.8517457166491199
+        ],
+        "recall_per_class": [
+          0.7313084112149533,
+          0.7548396951120458
+        ],
+        "f1_score_per_class": [
+          0.8037750926089127,
+          0.8003701170965077
+        ]
+      }
+    }
+  ]
+}

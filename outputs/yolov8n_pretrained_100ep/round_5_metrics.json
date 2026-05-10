@@ -1,0 +1,44 @@
+{
+  "round": 5,
+  "timestamp": "2026-05-10 06:35:26",
+  "checkpoint_path": "C:\\Users\\manig\\Downloads\\yolo-improvement-detection-moderation-paper\\runs\\yolov8n_pretrained_100ep\\incremental_round_5\\weights\\best.pt",
+  "training_set_size": 3301,
+  "verified_samples_added": 27,
+  "training_time_seconds": 5862.186008930206,
+  "validation_time_seconds": 7.904243469238281,
+  "metrics": {
+    "mAP50": 0.9187831818686938,
+    "mAP50-95": 0.6801244270802953,
+    "precision": 0.9336272670410213,
+    "recall": 0.8550100907006419,
+    "f1_score": 0.8925909221545295
+  },
+  "rejected_count": 108,
+  "undetected_count": 154,
+  "remaining_pool_size": 244,
+  "unlabeled_pool_size_at_round_start": 244,
+  "total_detections": 136,
+  "actual_stopped_epoch": 95,
+  "per_class_metrics": {
+    "mAP50_per_class": [
+      0.941086697172345,
+      0.8964796665650425
+    ],
+    "mAP50-95_per_class": [
+      0.6595473041588085,
+      0.7007015500017825
+    ],
+    "precision_per_class": [
+      0.9436788347264315,
+      0.923575699355611
+    ],
+    "recall_per_class": [
+      0.8808411214953271,
+      0.8291790599059568
+    ],
+    "f1_score_per_class": [
+      0.9111778912335478,
+      0.8738354594071178
+    ]
+  }
+}

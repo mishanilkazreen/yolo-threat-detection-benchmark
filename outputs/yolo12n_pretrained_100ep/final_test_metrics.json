@@ -1,0 +1,43 @@
+{
+  "timestamp": "2026-05-10 17:28:57",
+  "config_name": "yolo12n_pretrained_100ep",
+  "checkpoint_path": "C:\\Users\\manig\\Downloads\\yolo-improvement-detection-moderation-paper\\runs\\yolo12n_pretrained_100ep\\incremental_round_3\\weights\\best.pt",
+  "random_seed": 42,
+  "total_training_time_seconds": 17488.012578725815,
+  "total_training_time_minutes": 291.46687631209693,
+  "test_time_seconds": 5.4494946002960205,
+  "model_info": {
+    "parameters": 2557118,
+    "model_name": "best",
+    "inference_time_ms": null
+  },
+  "metrics": {
+    "mAP50": 0.9056876394536293,
+    "mAP50-95": 0.6513178687524648,
+    "precision": 0.9331390938242848,
+    "recall": 0.8135275214572355,
+    "f1_score": 0.8692378127939054
+  },
+  "per_class_metrics": {
+    "mAP50_per_class": [
+      0.9425423262679447,
+      0.8688329526393138
+    ],
+    "mAP50-95_per_class": [
+      0.6258197805623749,
+      0.6768159569425547
+    ],
+    "precision_per_class": [
+      0.9530883355536883,
+      0.9131898520948813
+    ],
+    "recall_per_class": [
+      0.854442077583,
+      0.7726129653314712
+    ],
+    "f1_score_per_class": [
+      0.9010733890086238,
+      0.837040147571656
+    ]
+  }
+}

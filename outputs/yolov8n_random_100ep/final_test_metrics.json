@@ -1,0 +1,43 @@
+{
+  "timestamp": "2026-05-10 01:43:47",
+  "config_name": "yolov8n_random_100ep",
+  "checkpoint_path": "C:\\Users\\manig\\Downloads\\yolo-improvement-detection-moderation-paper\\runs\\yolov8n_random_100ep\\incremental_round_4\\weights\\best.pt",
+  "random_seed": 42,
+  "total_training_time_seconds": 17127.260984659195,
+  "total_training_time_minutes": 285.4543497443199,
+  "test_time_seconds": 4.029330015182495,
+  "model_info": {
+    "parameters": 3006038,
+    "model_name": "best",
+    "inference_time_ms": null
+  },
+  "metrics": {
+    "mAP50": 0.8426535167815313,
+    "mAP50-95": 0.5817366300149553,
+    "precision": 0.9095801183892835,
+    "recall": 0.7338241076106875,
+    "f1_score": 0.8123038849693833
+  },
+  "per_class_metrics": {
+    "mAP50_per_class": [
+      0.8707163418443319,
+      0.8145906917187308
+    ],
+    "mAP50-95_per_class": [
+      0.5403209526267537,
+      0.623152307403157
+    ],
+    "precision_per_class": [
+      0.8981226983434394,
+      0.9210375384351277
+    ],
+    "recall_per_class": [
+      0.7757009345794392,
+      0.6919472806419359
+    ],
+    "f1_score_per_class": [
+      0.8324349146098033,
+      0.7902237052100618
+    ]
+  }
+}
