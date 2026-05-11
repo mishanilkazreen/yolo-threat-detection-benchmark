@@ -3,6 +3,15 @@
 # aggregate master log to logs/nano_master.log with timestamps.
 
 $ErrorActionPreference = "Continue"
+
+# Force UTF-8 everywhere so YOLO progress bars render correctly instead of as mojibake.
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+[Console]::InputEncoding = [System.Text.Encoding]::UTF8
+$OutputEncoding = [System.Text.Encoding]::UTF8
+$env:PYTHONIOENCODING = "utf-8"
+$env:PYTHONUTF8 = "1"
+chcp 65001 > $null
+
 $repoRoot = Split-Path -Parent $PSScriptRoot
 Set-Location $repoRoot
 

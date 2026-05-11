@@ -30,6 +30,9 @@ class TrainingConfig:
     optimizer: str | None = None
     lr0: float | None = None
     lrf: float | None = None
+    # Layer freezing (transfer learning): None = train all, int = freeze first N layers.
+    # For YOLOv8n/YOLOv12n: freeze=10 freezes backbone; freeze=22 freezes backbone+neck.
+    freeze: int | None = None
     # Baseline fields
     run_baseline: bool = False
     baseline_epochs: int = 50
@@ -261,6 +264,18 @@ class ConfigurationParser:
             if lrf <= 0:
                 raise ConfigurationParseError("lrf must be positive")
 
+        # Freeze (transfer learning): None = train all; int = freeze first N layers
+        freeze = data.get("freeze")
+        if freeze is not None:
+            try:
+                freeze = int(freeze)
+            except (ValueError, TypeError) as e:
+                raise ConfigurationParseError(
+                    f"freeze must be an integer or null, got: {data['freeze']}"
+                ) from e
+            if freeze < 0:
+                raise ConfigurationParseError("freeze must be non-negative")
+
         # Baseline fields
         run_baseline = data.get("run_baseline", False)
         if not isinstance(run_baseline, bool):
@@ -300,6 +315,7 @@ class ConfigurationParser:
             optimizer=optimizer,
             lr0=lr0,
             lrf=lrf,
+            freeze=freeze,
             run_baseline=run_baseline,
             baseline_epochs=baseline_epochs,
             mosaic=mosaic,
