@@ -10,7 +10,7 @@
   "python.analysis.typeCheckingMode": "basic",
   "pylint.args": ["--fail-under=9.0"],
   "mypy-type-checker.args": ["--ignore-missing-imports"],
-  "ruff.lint.args": ["--config=pyproject.toml"],
+  "ruff.configuration": "pyproject.toml",
   "editor.rulers": [100],
   "files.trimTrailingWhitespace": true,
   "files.insertFinalNewline": true
