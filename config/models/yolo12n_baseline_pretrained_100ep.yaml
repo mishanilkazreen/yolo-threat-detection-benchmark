@@ -1,0 +1,44 @@
+# YOLO12n — One-shot Baseline, Extended (COCO pretrained, early stopping)
+# Compute budget mirrors the extended incremental schedule (5 × 100 = 500 epochs).
+# patience=10 enables early stopping; report the actual epoch it stopped on.
+
+training:
+  epochs: 500
+  patience: 10
+  image_size: 640
+  batch_size: 16
+  optimizer: "AdamW"
+  lr0: 0.001
+  lrf: 0.1
+  runs: 1
+  seeds: [42]
+  device: "0"
+  baseline_epochs: 500
+
+model:
+  name: "yolov12n"
+  weights: "yolo12n.pt"
+
+data:
+  yaml_path: "config/data/weapon_detection_data.yaml"
+  train_init_percentage: 0.2
+  iou_threshold: 0.5
+
+augmentation:
+  mosaic: 1.0
+  scale: 0.5
+  fliplr: 0.5
+  hsv_h: 0.015
+  hsv_s: 0.7
+  hsv_v: 0.4
+
+xai:
+  enabled: false
+  methods:
+    gradcam: true
+    lrp: false
+    shap: false
+  sample_limit: 16
+  target_layer: "model.20"
+  background_set_size: 75
+  output_overlays: true
