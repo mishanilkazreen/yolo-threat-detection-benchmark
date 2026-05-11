@@ -1,6 +1,23 @@
 # XplainRescue
 
-> **Pretrained vs Random Weight Initialization in Incremental YOLO-Based Threat Detection**
+> **YOLO Architectures for Weapon Detection: One-Shot Baselines vs Incremental Protocols**
+>
+> This project evaluates YOLO architectures (v8, v11, v12, in nano and small sizes) on
+> weapon detection (knife / pistol) across several training protocols. The central
+> reference is a **per-architecture one-shot baseline** — a standard single-pass training
+> run over the full training set — against which every other experiment is measured.
+>
+> Every other experiment is a **dimension** varied against that baseline:
+>
+> | Dimension | Variants |
+> |---|---|
+> | **Training protocol** | One-shot baseline (single run, 50 / 100 epochs) vs MDPI-style incremental (5 rounds × 10 / 100 epochs) |
+> | **Weight init** | Random (`.yaml`) vs COCO-pretrained (`.pt`) |
+> | **Fine-tuning** | Full model, frozen backbone (`freeze=10`), head-only (`freeze=22`) |
+> | **Architecture** | YOLOv8, YOLOv11, YOLOv12 |
+> | **Size** | nano, small |
+>
+> ## Motivation — the MDPI reproduction
 >
 > The Kutlu & Emiroğlu (2025) MDPI paper
 > ([Computers 14(12):511](https://www.mdpi.com/2073-431X/14/12/511)) reports
@@ -9,25 +26,38 @@
 > random weights yields mAP@0.5 ≈ 0.54 — far below the claimed result
 > ([issue #9](https://github.com/mishanilkazreen/yolo-improvement-detection-moderation-paper/issues/9)).
 >
-> **Hypothesis:** The MDPI paper may have inadvertently used COCO-pretrained
-> weights rather than random initialization.
+> That reproduction is **one cell** in the matrix above (YOLOv8n, MDPI protocol, random init, no freeze).
+> Using the one-shot baselines as the reference lets us quantify what each design choice
+> actually contributes — training protocol, init, freeze strategy, or architecture.
 >
-> This project performs a systematic comparison to test that hypothesis:
+> ## Reported metrics
 >
-> | Experiment axis | Values |
-> |---|---|
-> | **Architecture** | YOLOv8, YOLOv12 |
-> | **Model size** | nano (n), small (s) |
-> | **Weight init** | Random (`.yaml`) vs Pretrained (`.pt`) |
-> | **Epoch budget** | 10 epochs/round (MDPI protocol) vs 100 epochs/round (early stopping, patience=10) |
->
-> For every combination we report the same metrics the MDPI paper reports:
-> F1-score, Precision, mAP@0.5, and per-class (knife / pistol) breakdowns.
-> For the 100-epoch early stopping runs we also report the actual stopping epoch.
+> For every experiment we report the same metrics the MDPI paper reports (F1-score,
+> Precision, mAP@0.5, and per-class knife / pistol breakdowns), **plus wall-clock time**
+> (training + validation) so comparisons are fair on compute budget too. For early-stopping
+> runs we also report the actual stopping epoch.
 
 ## Experiment matrix
 
-### Phase 1 — Nano models
+### Phase 0 — One-shot baselines (reference)
+
+Single-pass training, no incremental rounds. These are the reference points every other
+experiment is compared to (metrics + time). See
+[issue #13](https://github.com/mishanilkazreen/yolo-improvement-detection-moderation-paper/issues/13).
+
+| Config | Arch | Init | Epochs | Early stop |
+|---|---|---|---|---|
+| `yolov8n_baseline_pretrained.yaml` | v8n | COCO | 50 | no |
+| `yolov8n_baseline_random.yaml` | v8n | random | 50 | no |
+| `yolov8n_baseline_pretrained_100ep.yaml` | v8n | COCO | 100 | patience=10 |
+| `yolov8n_baseline_random_100ep.yaml` | v8n | random | 100 | patience=10 |
+| `yolov8s_baseline_*.yaml` | v8s | random / COCO | 50 / 100 | no / patience=10 |
+| `yolo12n_baseline_*.yaml` | v12n | random / COCO | 50 / 100 | no / patience=10 |
+| `yolo12s_baseline_*.yaml` | v12s | random / COCO | 50 / 100 | no / patience=10 |
+
+YOLOv11 baselines are planned — the architecture stub lives at `config/models/yolo11n.yaml`.
+
+### Phase 1 — Nano models (MDPI-style incremental)
 
 | Config | Arch | Init | Epochs/round | Early stop |
 |---|---|---|---|---|
@@ -40,7 +70,7 @@
 | `yolo12n_random_100ep.yaml` | v12n | random | 100 | patience=10 |
 | `yolo12n_pretrained_100ep.yaml` | v12n | COCO | 100 | patience=10 |
 
-### Phase 2 — Small models
+### Phase 2 — Small models (MDPI-style incremental)
 
 | Config | Arch | Init | Epochs/round | Early stop |
 |---|---|---|---|---|
@@ -57,8 +87,10 @@
 
 - **Overall:** F1-score (at optimal confidence), Precision (at conf=1.0), mAP@0.5
 - **Per-class:** F1-score, Precision, mAP@0.5 for knife and pistol
-- **Per-round:** All of the above for each of the 5 incremental rounds
-- **Early stopping runs:** Actual epoch the training stopped on
+- **Per-round** (incremental configs only): all of the above for each of the 5 rounds
+- **Early stopping runs:** actual epoch training stopped on
+- **Wall-clock time:** training and validation seconds per round / per baseline run, so
+  comparisons against the one-shot baseline are fair on compute as well as accuracy
 
 ## Prerequisites
 
@@ -157,7 +189,34 @@ uv run python scripts/validate_dataset.py
 
 ### Running experiments
 
-#### Phase 1 — Nano models (run first)
+#### Phase 0 — One-shot baselines (run first, anchors all other comparisons)
+
+```bash
+# 50-epoch baselines (same compute budget as MDPI protocol: 5 rounds x 10 epochs)
+uv run python scripts/train_baseline.py config/models/yolov8n_baseline_pretrained.yaml
+uv run python scripts/train_baseline.py config/models/yolov8n_baseline_random.yaml
+uv run python scripts/train_baseline.py config/models/yolo12n_baseline_pretrained.yaml
+uv run python scripts/train_baseline.py config/models/yolo12n_baseline_random.yaml
+
+# 100-epoch + early stopping baselines
+uv run python scripts/train_baseline.py config/models/yolov8n_baseline_pretrained_100ep.yaml
+uv run python scripts/train_baseline.py config/models/yolov8n_baseline_random_100ep.yaml
+uv run python scripts/train_baseline.py config/models/yolo12n_baseline_pretrained_100ep.yaml
+uv run python scripts/train_baseline.py config/models/yolo12n_baseline_random_100ep.yaml
+
+# Small variants follow the same pattern (yolov8s_baseline_*, yolo12s_baseline_*)
+```
+
+Then report:
+
+```bash
+uv run python scripts/report_results.py --phase baseline
+```
+
+Baseline rows are reserved in `outputs/full_evaluation_results.csv` with empty metric
+columns; the runners and `report_results.py` populate them on completion.
+
+#### Phase 1 — Nano models (MDPI-style incremental)
 
 ```bash
 # MDPI protocol — 10 epochs/round, no early stopping
@@ -179,7 +238,7 @@ After each run (or all of them), generate the results table:
 uv run python scripts/report_results.py --phase nano
 ```
 
-#### Phase 2 — Small models (heavier compute)
+#### Phase 2 — Small models (MDPI-style incremental, heavier compute)
 
 Run these on a machine with more GPU memory — same pattern, just swap `n` → `s`:
 

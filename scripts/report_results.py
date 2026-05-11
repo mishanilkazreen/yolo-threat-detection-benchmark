@@ -52,6 +52,28 @@ SMALL_CONFIGS = [
     "yolo12s_pretrained_100ep",
 ]
 
+# One-shot baselines (no incremental rounds). These anchor every other
+# experiment: each "round" config is compared to its matching baseline on
+# metrics (mAP, F1, precision, per-class) and wall-clock time. See issue #13.
+BASELINE_CONFIGS = [
+    "yolov8n_baseline_pretrained",
+    "yolov8n_baseline_random",
+    "yolov8n_baseline_pretrained_100ep",
+    "yolov8n_baseline_random_100ep",
+    "yolov8s_baseline_pretrained",
+    "yolov8s_baseline_random",
+    "yolov8s_baseline_pretrained_100ep",
+    "yolov8s_baseline_random_100ep",
+    "yolo12n_baseline_pretrained",
+    "yolo12n_baseline_random",
+    "yolo12n_baseline_pretrained_100ep",
+    "yolo12n_baseline_random_100ep",
+    "yolo12s_baseline_pretrained",
+    "yolo12s_baseline_random",
+    "yolo12s_baseline_pretrained_100ep",
+    "yolo12s_baseline_random_100ep",
+]
+
 OUTPUTS_DIR = project_root / "outputs"
 
 
@@ -216,7 +238,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Report experiment results")
     parser.add_argument(
         "--phase",
-        choices=["nano", "small", "all"],
+        choices=["nano", "small", "baseline", "all"],
         default="all",
         help="Which phase to report (default: all)",
     )
@@ -233,8 +255,10 @@ def main() -> None:
         configs = NANO_CONFIGS
     elif args.phase == "small":
         configs = SMALL_CONFIGS
+    elif args.phase == "baseline":
+        configs = BASELINE_CONFIGS
     else:
-        configs = NANO_CONFIGS + SMALL_CONFIGS
+        configs = NANO_CONFIGS + SMALL_CONFIGS + BASELINE_CONFIGS
 
     # -----------------------------------------------------------------------
     # Per-round tables
