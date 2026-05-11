@@ -69,7 +69,9 @@ uv run python scripts/train_model.py config/models/yolo12n_pretrained_headonly.y
 
 ## 4. Add YOLOv11 baseline configs and run them
 
-Related issue: [#13](https://github.com/mishanilkazreen/yolo-improvement-detection-moderation-paper/issues/13) (follow-up checklist)
+Related issue:
+[#13](https://github.com/mishanilkazreen/yolo-improvement-detection-moderation-paper/issues/13)
+(follow-up checklist)
 
 - [ ] Copy `config/models/yolov8n_baseline_*.yaml` to `yolo11n_baseline_*.yaml`,
   swap the `name` and `weights` fields to `yolov11n` / `yolo11n.pt` or `yolo11n.yaml`
@@ -111,7 +113,7 @@ Related issue: [#12](https://github.com/mishanilkazreen/yolo-improvement-detecti
 
 Draft the Results section around the baseline-centric framing:
 
-```
+```text
 4. Results
   4.1 One-shot baselines (per architecture)
   4.2 Effect of training protocol: incremental vs baseline
