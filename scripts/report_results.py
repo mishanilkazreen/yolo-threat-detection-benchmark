@@ -1,5 +1,5 @@
 """
-Report results from completed nano/small model experiments.
+Report results from completed nano model experiments.
 
 Reads all round_N_metrics.json and final_test_metrics.json files from
 outputs/ and prints a comparison table matching the MDPI paper metrics:
@@ -10,7 +10,7 @@ outputs/ and prints a comparison table matching the MDPI paper metrics:
 Usage:
     uv run python scripts/report_results.py
     uv run python scripts/report_results.py --phase nano
-    uv run python scripts/report_results.py --phase small
+    uv run python scripts/report_results.py --phase baseline
     uv run python scripts/report_results.py --configs yolov8n_random yolov8n_pretrained
 """
 
@@ -41,17 +41,6 @@ NANO_CONFIGS = [
     "yolo12n_pretrained_100ep",
 ]
 
-SMALL_CONFIGS = [
-    "yolov8s_random",
-    "yolov8s_pretrained",
-    "yolo12s_random",
-    "yolo12s_pretrained",
-    "yolov8s_random_100ep",
-    "yolov8s_pretrained_100ep",
-    "yolo12s_random_100ep",
-    "yolo12s_pretrained_100ep",
-]
-
 # One-shot baselines (no incremental rounds). These anchor every other
 # experiment: each "round" config is compared to its matching baseline on
 # metrics (mAP, F1, precision, per-class) and wall-clock time. See issue #13.
@@ -60,18 +49,10 @@ BASELINE_CONFIGS = [
     "yolov8n_baseline_random",
     "yolov8n_baseline_pretrained_100ep",
     "yolov8n_baseline_random_100ep",
-    "yolov8s_baseline_pretrained",
-    "yolov8s_baseline_random",
-    "yolov8s_baseline_pretrained_100ep",
-    "yolov8s_baseline_random_100ep",
     "yolo12n_baseline_pretrained",
     "yolo12n_baseline_random",
     "yolo12n_baseline_pretrained_100ep",
     "yolo12n_baseline_random_100ep",
-    "yolo12s_baseline_pretrained",
-    "yolo12s_baseline_random",
-    "yolo12s_baseline_pretrained_100ep",
-    "yolo12s_baseline_random_100ep",
 ]
 
 OUTPUTS_DIR = project_root / "outputs"
@@ -238,7 +219,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Report experiment results")
     parser.add_argument(
         "--phase",
-        choices=["nano", "small", "baseline", "all"],
+        choices=["nano", "baseline", "all"],
         default="all",
         help="Which phase to report (default: all)",
     )
@@ -253,12 +234,10 @@ def main() -> None:
         configs = args.configs
     elif args.phase == "nano":
         configs = NANO_CONFIGS
-    elif args.phase == "small":
-        configs = SMALL_CONFIGS
     elif args.phase == "baseline":
         configs = BASELINE_CONFIGS
     else:
-        configs = NANO_CONFIGS + SMALL_CONFIGS + BASELINE_CONFIGS
+        configs = NANO_CONFIGS + BASELINE_CONFIGS
 
     # -----------------------------------------------------------------------
     # Per-round tables

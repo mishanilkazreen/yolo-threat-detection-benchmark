@@ -98,6 +98,7 @@ class Baseline_Evaluator:
         val_metrics_path = output_dir / "val_metrics.json"
         with open(val_metrics_path, "w", encoding="utf-8") as f:
             json.dump(val_metrics, f, indent=2)
+            f.write("\n")
         self.logger.info("Val metrics saved to %s", val_metrics_path)
 
         # --- 2. Evaluate on test_fixed ---
@@ -135,6 +136,7 @@ class Baseline_Evaluator:
         final_test_metrics_path = output_dir / "final_test_metrics.json"
         with open(final_test_metrics_path, "w", encoding="utf-8") as f:
             json.dump(final_test_metrics, f, indent=2)
+            f.write("\n")
         self.logger.info("Final test metrics saved to %s", final_test_metrics_path)
 
         # --- 3. Compute HFS on the fixed image subset ---
@@ -149,6 +151,7 @@ class Baseline_Evaluator:
         hfs_metrics_path = output_dir / "hfs_metrics.json"
         with open(hfs_metrics_path, "w", encoding="utf-8") as f:
             json.dump(hfs_metrics, f, indent=2)
+            f.write("\n")
         self.logger.info("HFS metrics saved to %s", hfs_metrics_path)
 
         return {

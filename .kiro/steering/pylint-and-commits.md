@@ -80,7 +80,7 @@ See GitHub issue #9 for the original discussion.
 We run a 2×2×2×2 comparison matrix:
 
 - **Architecture:** YOLOv8 vs YOLOv12
-- **Size:** nano (n) vs small (s)
+- **Size:** nano (n) only (small was considered, cut due to compute cost)
 - **Init:** random (`.yaml`) vs pretrained (`.pt`)
 - **Epochs:** 10/round (MDPI protocol) vs 100/round (early stopping, patience=10)
 

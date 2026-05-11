@@ -59,6 +59,7 @@ class Round_Metrics_Tracker:
         round_file = output_path / f"round_{round_num}_metrics.json"
         with open(round_file, "w", encoding="utf-8") as f:
             json.dump(persisted, f, indent=2)
+            f.write("\n")
 
         logger.info(f"Saved round {round_num} metrics to {round_file}")
 
@@ -105,6 +106,7 @@ class Round_Metrics_Tracker:
         agg_file = output_path / "all_rounds_metrics.json"
         with open(agg_file, "w", encoding="utf-8") as f:
             json.dump(aggregated, f, indent=2)
+            f.write("\n")
 
         logger.info(f"Saved aggregated metrics to {agg_file}")
 

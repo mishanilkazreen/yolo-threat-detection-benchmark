@@ -2,7 +2,7 @@
 
 > **YOLO Architectures for Weapon Detection: One-Shot Baselines vs Incremental Protocols**
 >
-> This project evaluates YOLO architectures (v8, v11, v12, in nano and small sizes) on
+> This project evaluates YOLO architectures (v8, v11, v12 — all **nano**) on
 > weapon detection (knife / pistol) across several training protocols. The central
 > reference is a **per-architecture one-shot baseline** — a standard single-pass training
 > run over the full training set — against which every other experiment is measured.
@@ -15,7 +15,6 @@
 > | **Weight init** | Random (`.yaml`) vs COCO-pretrained (`.pt`) |
 > | **Fine-tuning** | Full model, frozen backbone (`freeze=10`), head-only (`freeze=22`) |
 > | **Architecture** | YOLOv8, YOLOv11, YOLOv12 |
-> | **Size** | nano, small |
 >
 > ## Motivation — the MDPI reproduction
 >
@@ -39,6 +38,10 @@
 
 ## Experiment matrix
 
+The project is **nano-only**. YOLOv8s / YOLOv12s (small) variants were considered but
+cut — the MDPI paper does not use them, and nano runs already take significant wall-clock
+time, so small models were out of scope.
+
 ### Phase 0 — One-shot baselines (reference)
 
 Single-pass training, no incremental rounds. These are the reference points every other
@@ -51,9 +54,7 @@ experiment is compared to (metrics + time). See
 | `yolov8n_baseline_random.yaml` | v8n | random | 50 | no |
 | `yolov8n_baseline_pretrained_100ep.yaml` | v8n | COCO | 100 | patience=10 |
 | `yolov8n_baseline_random_100ep.yaml` | v8n | random | 100 | patience=10 |
-| `yolov8s_baseline_*.yaml` | v8s | random / COCO | 50 / 100 | no / patience=10 |
 | `yolo12n_baseline_*.yaml` | v12n | random / COCO | 50 / 100 | no / patience=10 |
-| `yolo12s_baseline_*.yaml` | v12s | random / COCO | 50 / 100 | no / patience=10 |
 
 YOLOv11 baselines are planned — the architecture stub lives at `config/models/yolo11n.yaml`.
 
@@ -69,19 +70,6 @@ YOLOv11 baselines are planned — the architecture stub lives at `config/models/
 | `yolov8n_pretrained_100ep.yaml` | v8n | COCO | 100 | patience=10 |
 | `yolo12n_random_100ep.yaml` | v12n | random | 100 | patience=10 |
 | `yolo12n_pretrained_100ep.yaml` | v12n | COCO | 100 | patience=10 |
-
-### Phase 2 — Small models (MDPI-style incremental)
-
-| Config | Arch | Init | Epochs/round | Early stop |
-|---|---|---|---|---|
-| `yolov8s_random.yaml` | v8s | random | 10 | no |
-| `yolov8s_pretrained.yaml` | v8s | COCO | 10 | no |
-| `yolo12s_random.yaml` | v12s | random | 10 | no |
-| `yolo12s_pretrained.yaml` | v12s | COCO | 10 | no |
-| `yolov8s_random_100ep.yaml` | v8s | random | 100 | patience=10 |
-| `yolov8s_pretrained_100ep.yaml` | v8s | COCO | 100 | patience=10 |
-| `yolo12s_random_100ep.yaml` | v12s | random | 100 | patience=10 |
-| `yolo12s_pretrained_100ep.yaml` | v12s | COCO | 100 | patience=10 |
 
 ### Metrics reported (per experiment)
 
@@ -203,8 +191,6 @@ uv run python scripts/train_baseline.py config/models/yolov8n_baseline_pretraine
 uv run python scripts/train_baseline.py config/models/yolov8n_baseline_random_100ep.yaml
 uv run python scripts/train_baseline.py config/models/yolo12n_baseline_pretrained_100ep.yaml
 uv run python scripts/train_baseline.py config/models/yolo12n_baseline_random_100ep.yaml
-
-# Small variants follow the same pattern (yolov8s_baseline_*, yolo12s_baseline_*)
 ```
 
 Then report:
@@ -238,27 +224,9 @@ After each run (or all of them), generate the results table:
 uv run python scripts/report_results.py --phase nano
 ```
 
-#### Phase 2 — Small models (MDPI-style incremental, heavier compute)
-
-Run these on a machine with more GPU memory — same pattern, just swap `n` → `s`:
-
 ```bash
-# MDPI protocol
-uv run python scripts/train_model.py config/models/yolov8s_random.yaml
-uv run python scripts/train_model.py config/models/yolov8s_pretrained.yaml
-uv run python scripts/train_model.py config/models/yolo12s_random.yaml
-uv run python scripts/train_model.py config/models/yolo12s_pretrained.yaml
-
-# Extended with early stopping
-uv run python scripts/train_model.py config/models/yolov8s_random_100ep.yaml
-uv run python scripts/train_model.py config/models/yolov8s_pretrained_100ep.yaml
-uv run python scripts/train_model.py config/models/yolo12s_random_100ep.yaml
-uv run python scripts/train_model.py config/models/yolo12s_pretrained_100ep.yaml
-```
-
-```bash
-# Report
-uv run python scripts/report_results.py --phase small
+# Report all phases (baselines + nano incremental)
+uv run python scripts/report_results.py
 ```
 
 ## Development
@@ -375,7 +343,7 @@ Naming convention: `{arch}_{init}[_{epochs}].yaml`
 - `yolov8n_random.yaml` — YOLOv8 nano, random init, MDPI protocol
 - `yolov8n_pretrained.yaml` — YOLOv8 nano, COCO pretrained, MDPI protocol
 - `yolov8n_random_100ep.yaml` — YOLOv8 nano, random init, 100 epochs + early stopping
-- `yolo12s_pretrained_100ep.yaml` — YOLO12 small, COCO pretrained, 100 epochs + early stopping
+- `yolo12n_pretrained_100ep.yaml` — YOLO12 nano, COCO pretrained, 100 epochs + early stopping
 
 Dataset configs are in `config/data/`:
 

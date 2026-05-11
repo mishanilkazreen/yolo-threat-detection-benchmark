@@ -88,6 +88,7 @@ class Metrics_Collector:  # pylint: disable=invalid-name
 
         with open(metrics_file, "w", encoding="utf-8") as fh:
             json.dump(metrics, fh, indent=2)
+            fh.write("\n")
 
         self.logger.info("Metrics saved to %s", metrics_file)
 
@@ -266,6 +267,7 @@ class Metrics_Collector:  # pylint: disable=invalid-name
 
         with open(metrics_file, "w", encoding="utf-8") as fh:
             json.dump(metrics, fh, indent=2)
+            fh.write("\n")
 
         self.logger.info("Round %d metrics saved to %s", round_num, metrics_file)
 
@@ -339,6 +341,7 @@ class Metrics_Collector:  # pylint: disable=invalid-name
 
         with open(metrics_file, "w", encoding="utf-8") as fh:
             json.dump(metrics, fh, indent=2)
+            fh.write("\n")
 
         self.logger.info("Final test metrics saved to %s", metrics_file)
 

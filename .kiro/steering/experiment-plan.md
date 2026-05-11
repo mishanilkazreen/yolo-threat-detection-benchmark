@@ -12,7 +12,7 @@ using random initialization and 5 incremental rounds of 10 epochs each. Our
 reproduction yields mAP@0.5 = 0.561 with truly random weights. That
 discrepancy motivated this project, but the broader goal is now:
 
-> Evaluate YOLO architectures (v8, v11, v12, nano and small) on weapon
+> Evaluate YOLO architectures (v8, v11, v12; nano only) on weapon
 > detection along several dimensions, using a **per-architecture one-shot
 > baseline** as the reference every other experiment is measured against
 > (metrics + wall-clock time). See issue #13.
@@ -61,9 +61,13 @@ is one cell in that matrix, not the central study.
 - MDPI-style incremental (5 rounds x epochs_per_round)
 
 ### Axis 1: YOLO version
-- YOLOv8 (nano first, then small)
+- YOLOv8 (nano)
 - YOLOv11 (baselines planned; architecture stub at config/models/yolo11n.yaml)
-- YOLOv12 (nano first, then small)
+- YOLOv12 (nano)
+
+Note: only **nano** sizes are in scope. Small models (v8s, v12s) were cut — nano
+runs already take significant wall-clock time, and the MDPI paper does not use
+small models either.
 
 ### Axis 2: Weight initialisation
 - Random (`.yaml` architecture only)
@@ -102,7 +106,7 @@ search prompts documented in the issue.
 ### 4. Complete frozen experiments (GitHub issue #11)
 Wait for frozen_backbone and yolo12n headonly to finish. Compare all
 frozen configs against main branch results, the one-shot baselines, and the
-MDPI paper trajectory. Nano results must make sense before running small models.
+MDPI paper trajectory.
 
 ### 5. Structure paper Results section (GitHub issue #12)
 Report all experiments in a clear factorial design anchored on the one-shot
@@ -113,13 +117,9 @@ baselines. Tables needed:
 - Extended training with early stopping
 - Cross-condition factorial analysis
 
-### 6. Small models (after nano is validated)
-Run `scripts/run_small_experiments.ps1` on main branch.
-Run frozen variants for small models if nano results warrant it.
-
-### 7. YOLOv11 baselines
-`config/models/yolo11n.yaml` exists as a stub; add v11n / v11s baseline and
-incremental configs once the v8 / v12 comparisons are stable.
+### 6. YOLOv11 baselines
+`config/models/yolo11n.yaml` exists as a stub; add `yolo11n_baseline_*` configs
+once the v8 / v12 comparisons are stable. Small sizes are out of scope.
 
 ## Key findings so far
 
