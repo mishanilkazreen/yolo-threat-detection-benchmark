@@ -1,0 +1,41 @@
+{
+  "round": 1,
+  "timestamp": "2026-05-10 22:05:30",
+  "checkpoint_path": "C:\\Users\\manig\\Downloads\\yolo-improvement-detection-moderation-paper\\runs\\yolo12n_pretrained_frozen_backbone\\incremental_round_1\\weights\\best.pt",
+  "training_set_size": 709,
+  "verified_samples_added": 0,
+  "training_time_seconds": 304.14971351623535,
+  "validation_time_seconds": 12.607223510742188,
+  "metrics": {
+    "mAP50": 0.6270527129633988,
+    "mAP50-95": 0.3607058839121048,
+    "precision": 0.6744901208443737,
+    "recall": 0.5412374650385429,
+    "f1_score": 0.6005610589714908
+  },
+  "remaining_pool_size": 2836,
+  "unlabeled_pool_size_at_round_start": 2836,
+  "actual_stopped_epoch": 10,
+  "per_class_metrics": {
+    "mAP50_per_class": [
+      0.5434315849736199,
+      0.7106738409531778
+    ],
+    "mAP50-95_per_class": [
+      0.258993126403955,
+      0.4624186414202547
+    ],
+    "precision_per_class": [
+      0.6042285847049421,
+      0.7447516569838053
+    ],
+    "recall_per_class": [
+      0.4766355140186916,
+      0.6058394160583942
+    ],
+    "f1_score_per_class": [
+      0.5329010416678934,
+      0.6681517714451712
+    ]
+  }
+}
