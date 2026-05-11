@@ -1,0 +1,44 @@
+# YOLO12n — One-shot Baseline (random init)
+# Trains in a single pass on train_init + unlabeled_pool for baseline_epochs.
+# Compute budget matches MDPI protocol (5 rounds × 10 epochs = 50 epochs).
+
+training:
+  epochs: 50
+  patience: 0
+  image_size: 640
+  batch_size: 16
+  optimizer: "AdamW"
+  lr0: 0.001
+  lrf: 0.1
+  runs: 1
+  seeds: [42]
+  device: "0"
+  baseline_epochs: 50
+
+model:
+  name: "yolov12n"
+  weights: "yolo12n.yaml"
+
+data:
+  yaml_path: "config/data/weapon_detection_data.yaml"
+  train_init_percentage: 0.2
+  iou_threshold: 0.5
+
+augmentation:
+  mosaic: 1.0
+  scale: 0.5
+  fliplr: 0.5
+  hsv_h: 0.015
+  hsv_s: 0.7
+  hsv_v: 0.4
+
+xai:
+  enabled: false
+  methods:
+    gradcam: true
+    lrp: false
+    shap: false
+  sample_limit: 16
+  target_layer: "model.20"
+  background_set_size: 75
+  output_overlays: true

@@ -124,6 +124,8 @@ class Baseline_Trainer:  # pylint: disable=too-few-public-methods
             name=f"{config_name}/{baseline_name}",
             exist_ok=True,
             verbose=True,
+            patience=config.training.patience,
+            workers=0,
             mosaic=getattr(config.training, "mosaic", 1.0),
             scale=getattr(config.training, "scale", 0.5),
             fliplr=getattr(config.training, "fliplr", 0.5),
@@ -170,23 +172,22 @@ class Baseline_Trainer:  # pylint: disable=too-few-public-methods
         train_list = split_dir / "train.txt"
         val_list = split_dir / "val.txt"
 
+        # training_images / val_images already contain absolute paths from
+        # Dataset_Splitter (it re-partitions train/ + valid/ into 70/20/10 and
+        # writes absolute paths because images may physically live in either
+        # source dir). Write them straight through.
         train_image_dir = base_path / "train" / "images"
-        val_image_dir = base_path / "valid" / "images"
 
-        # Write train image list
+        def _resolve(name_or_path: str, fallback_dir: Path) -> str:
+            p = Path(name_or_path)
+            return str(p) if p.is_absolute() else str((fallback_dir / name_or_path).absolute())
+
         with open(train_list, "w", encoding="utf-8") as f:
-            full_paths = [str((train_image_dir / img).absolute()) for img in training_images]
-            f.write("\n".join(full_paths))
+            f.write("\n".join(_resolve(img, train_image_dir) for img in training_images))
 
-        # Write val image list
         with open(val_list, "w", encoding="utf-8") as f:
-            if val_images:
-                full_paths = [str((val_image_dir / img).absolute()) for img in val_images]
-                f.write("\n".join(full_paths))
-            else:
-                # Fallback: use training images for validation
-                full_paths = [str((train_image_dir / img).absolute()) for img in training_images]
-                f.write("\n".join(full_paths))
+            source = val_images if val_images else training_images
+            f.write("\n".join(_resolve(img, train_image_dir) for img in source))
 
         # Update data config with list paths
         data_config["train"] = str(train_list.absolute())
