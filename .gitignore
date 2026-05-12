@@ -248,6 +248,9 @@ outputs/**/split_metadata.json
 outputs/**/*_detections.json
 outputs/**/*_validations.json
 outputs/**/data_round_*.yaml
+outputs/**/data_baseline*.yaml
+outputs/**/baseline_splits/
+outputs/**/baseline_eval_splits/
 outputs/**/train_init.txt
 outputs/**/unlabeled_pool.txt
 outputs/**/val_fixed.txt
