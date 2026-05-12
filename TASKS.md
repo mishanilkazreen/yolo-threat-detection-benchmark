@@ -85,6 +85,7 @@ Related issue:
 (follow-up checklist)
 
 **✅ Configs created** — 4 yolo11n baseline configs are now in `config/models/`:
+
 - `yolo11n_baseline_random.yaml` (50 epochs, no early stopping)
 - `yolo11n_baseline_pretrained.yaml` (50 epochs, no early stopping)
 - `yolo11n_baseline_random_100ep.yaml` (500 epochs, patience=10)
