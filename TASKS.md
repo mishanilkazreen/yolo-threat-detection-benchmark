@@ -84,15 +84,31 @@ Related issue:
 [#13](https://github.com/mishanilkazreen/yolo-improvement-detection-moderation-paper/issues/13)
 (follow-up checklist)
 
-- [ ] Copy `config/models/yolov8n_baseline_*.yaml` to `yolo11n_baseline_*.yaml`,
-  swap the `name` and `weights` fields to `yolov11n` / `yolo11n.pt` or `yolo11n.yaml`
-- [ ] Mirror the same for the MDPI-style incremental configs if needed
-  (e.g. `yolo11n_random.yaml`, `yolo11n_pretrained.yaml`, `_100ep` variants)
-- [ ] Reserve rows in `outputs/full_evaluation_results.csv` (8 new baseline rows)
-- [ ] Run each via `scripts/train_baseline.py`
-- [ ] Update `NANO_CONFIGS` / `BASELINE_CONFIGS` in `scripts/report_results.py`
+**✅ Configs created** — 4 yolo11n baseline configs are now in `config/models/`:
+- `yolo11n_baseline_random.yaml` (50 epochs, no early stopping)
+- `yolo11n_baseline_pretrained.yaml` (50 epochs, no early stopping)
+- `yolo11n_baseline_random_100ep.yaml` (500 epochs, patience=10)
+- `yolo11n_baseline_pretrained_100ep.yaml` (500 epochs, patience=10)
+
+`BASELINE_CONFIGS` in `scripts/report_results.py` has been updated to include them.
+
+### Still to do
+
+- [ ] Run the 4 yolo11n baselines:
+
+  ```bash
+  uv run python scripts/train_baseline.py config/models/yolo11n_baseline_random.yaml
+  uv run python scripts/train_baseline.py config/models/yolo11n_baseline_pretrained.yaml
+  uv run python scripts/train_baseline.py config/models/yolo11n_baseline_random_100ep.yaml
+  uv run python scripts/train_baseline.py config/models/yolo11n_baseline_pretrained_100ep.yaml
+  ```
+
+- [ ] Optional (if needed for Related Work parity): create yolo11n MDPI-style
+  incremental configs (`yolo11n_random.yaml`, `yolo11n_pretrained.yaml`, etc.)
+  and run them
 
 Existing architecture stub: `config/models/yolo11n.yaml`.
+Pretrained weights: `yolo11n.pt` (already downloaded at project root).
 
 ## 5. Build the comparison tables (baseline-anchored)
 
