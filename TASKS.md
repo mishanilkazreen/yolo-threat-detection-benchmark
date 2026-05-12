@@ -9,12 +9,12 @@ the MDPI paper does not use them, and nano runs already take significant wall-cl
 
 Related issue: [#10](https://github.com/mishanilkazreen/yolo-improvement-detection-moderation-paper/issues/10)
 
-- [ ] Run the Google Scholar prompts listed in #10
+- [x] Run the Google Scholar prompts listed in #10
   (e.g. `"weapon_detection" "roboflow" "knife" "pistol" YOLO`)
-- [ ] Record each hit in a spreadsheet with: citation, dataset used, model, reported
+- [x] Record each hit in a spreadsheet with: citation, dataset used, model, reported
   mAP@0.5, weight init, fine-tune strategy
-- [ ] Park the most relevant PDFs under `Journal-of-Real-Time-Image-Processing/literature/`
-- [ ] Cross-check: do any independent papers reproduce the MDPI paper's claimed 0.886
+- [x] Park the most relevant PDFs under `Journal-of-Real-Time-Image-Processing/literature/`
+- [x] Cross-check: do any independent papers reproduce the MDPI paper's claimed 0.886
   with random init? That answer drives the Related Work narrative
 
 Baseline reference numbers to compare against (already on `main`):
