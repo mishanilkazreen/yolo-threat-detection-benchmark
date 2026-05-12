@@ -27,9 +27,19 @@ Baseline reference numbers to compare against (already on `main`):
 
 Related issue: [#13](https://github.com/mishanilkazreen/yolo-improvement-detection-moderation-paper/issues/13)
 
-These anchor every other comparison (metrics + wall-clock time). Placeholder rows with
-`phase=baseline` are already reserved in `outputs/full_evaluation_results.csv` with
-empty metric columns.
+**✅ DONE** — All 8 nano baselines completed. Results in `outputs/full_evaluation_results.csv` (phase=baseline).
+
+Summary:
+| Config | mAP@0.5 | F1 | Epochs | Time |
+|---|---|---|---|---|
+| yolov8n_baseline_pretrained | 0.9065 | 0.8712 | 50 | 68 min |
+| yolov8n_baseline_random | 0.8286 | 0.7925 | 50 | 64 min |
+| yolov8n_baseline_pretrained_100ep | 0.9143 | 0.8744 | 500 (stopped ~101) | 135 min |
+| yolov8n_baseline_random_100ep | 0.8663 | 0.8382 | 500 (stopped ~136) | 193 min |
+| yolo12n_baseline_pretrained | 0.9143 | 0.8735 | 50 | 89 min |
+| yolo12n_baseline_random | 0.7251 | 0.6874 | 50 | 85 min |
+| yolo12n_baseline_pretrained_100ep | 0.8853 | 0.8515 | 500 (stopped ~59) | 105 min |
+| yolo12n_baseline_random_100ep | 0.8630 | 0.8390 | 500 (stopped ~222) | 353 min |
 
 Run each via the baseline runner:
 
