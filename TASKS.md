@@ -30,6 +30,7 @@ Related issue: [#13](https://github.com/mishanilkazreen/yolo-improvement-detecti
 **✅ DONE** — All 8 nano baselines completed. Results in `outputs/full_evaluation_results.csv` (phase=baseline).
 
 Summary:
+
 | Config | mAP@0.5 | F1 | Epochs | Time |
 |---|---|---|---|---|
 | yolov8n_baseline_pretrained | 0.9065 | 0.8712 | 50 | 68 min |
