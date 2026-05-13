@@ -11,7 +11,7 @@ training:
   optimizer: "AdamW"
   lr0: 0.001
   lrf: 0.1
-  freeze: 22
+  freeze: 21  # YOLOv12n has 22 layers (0-21); Detect head is layer 21. Freeze 0-20.
   runs: 1
   seeds: [42]
   device: "0"

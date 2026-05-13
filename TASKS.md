@@ -71,8 +71,9 @@ Fill in the metrics columns in `outputs/full_evaluation_results.csv` for the 8
 
 Related issue: [#11](https://github.com/mishanilkazreen/yolo-improvement-detection-moderation-paper/issues/11)
 
-Config `yolo12n_pretrained_headonly` is committed but its run has not been executed.
-Every other nano frozen variant is already on `main`.
+**⚠️ BLOCKED** — Config `yolo12n_pretrained_headonly` had `freeze=22` but YOLOv12n only has
+22 layers (0-21), so freeze=22 froze everything including the head → gradient error.
+Fixed to `freeze=21`. Needs re-running:
 
 ```bash
 uv run python scripts/train_model.py config/models/yolo12n_pretrained_headonly.yaml
@@ -95,14 +96,11 @@ Related issue:
 
 ### Still to do
 
-- [ ] Run the 4 yolo11n baselines:
-
-  ```bash
-  uv run python scripts/train_baseline.py config/models/yolo11n_baseline_random.yaml
-  uv run python scripts/train_baseline.py config/models/yolo11n_baseline_pretrained.yaml
-  uv run python scripts/train_baseline.py config/models/yolo11n_baseline_random_100ep.yaml
-  uv run python scripts/train_baseline.py config/models/yolo11n_baseline_pretrained_100ep.yaml
-  ```
+- [x] Run the 4 yolo11n baselines ✅ Complete:
+  - yolo11n_baseline_random: mAP@0.5 = 0.7879, F1 = 0.752 (50 ep, 69 min)
+  - yolo11n_baseline_pretrained: mAP@0.5 = 0.924, F1 = 0.8818 (50 ep, 70 min)
+  - yolo11n_baseline_random_100ep: mAP@0.5 = 0.8827, F1 = 0.8417 (500 ep, 247 min)
+  - yolo11n_baseline_pretrained_100ep: mAP@0.5 = 0.9243, F1 = 0.8896 (500 ep, 195 min)
 
 - [ ] Optional (if needed for Related Work parity): create yolo11n MDPI-style
   incremental configs (`yolo11n_random.yaml`, `yolo11n_pretrained.yaml`, etc.)
