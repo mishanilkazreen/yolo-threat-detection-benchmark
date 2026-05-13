@@ -71,13 +71,12 @@ Fill in the metrics columns in `outputs/full_evaluation_results.csv` for the 8
 
 Related issue: [#11](https://github.com/mishanilkazreen/yolo-improvement-detection-moderation-paper/issues/11)
 
-**⚠️ BLOCKED** — Config `yolo12n_pretrained_headonly` had `freeze=22` but YOLOv12n only has
-22 layers (0-21), so freeze=22 froze everything including the head → gradient error.
-Fixed to `freeze=21`. Needs re-running:
+**✅ DONE** — `yolo12n_pretrained_headonly` (freeze=21) completed.
+Result: test mAP@0.5 = 0.574, F1 = 0.568. Trajectory: R1=0.387, R2=0.483, R3=0.551, R4=0.566, R5=0.594.
 
-```bash
-uv run python scripts/train_model.py config/models/yolo12n_pretrained_headonly.yaml
-```
+Note: YOLOv12n head-only performs worse than v8n head-only (0.776) because v12n's
+attention-enhanced backbone produces features that are less transferable when frozen.
+The detect head alone cannot compensate.
 
 ## 4. Add YOLOv11 baseline configs and run them
 
