@@ -187,14 +187,15 @@ Files to update:
 ## 8. Add missing citations to the paper
 
 Related GitHub issues:
+
 - [#1 YOLO models and COCO dataset citations](https://github.com/manighahrmani/Journal-of-Real-Time-Image-Processing/issues/1)
 - [#2 Partial model freezing citation](https://github.com/manighahrmani/Journal-of-Real-Time-Image-Processing/issues/2)
 - [#3 Data augmentation citations](https://github.com/manighahrmani/Journal-of-Real-Time-Image-Processing/issues/3)
 
-- [ ] YOLOv8 official Ultralytics citation (verify Ali2024 or find correct reference)
-- [ ] YOLOv11 official Ultralytics citation (currently missing independent citation)
-- [ ] YOLOv12 citation (verify Jegham2024 or find correct reference)
-- [ ] COCO dataset citation: Lin et al. (2014) "Microsoft COCO: Common Objects in Context"
+- [x] YOLOv8 official Ultralytics citation — added `Jocher2023` (@misc, closes #1)
+- [x] YOLOv11 official Ultralytics citation — added `Jocher2024` (@misc, closes #1)
+- [x] YOLOv12 citation — added `Tian2025yolov12` (arXiv:2502.12524, closes #1)
+- [x] COCO dataset citation — added `Lin2014` (ECCV 2014, closes #1)
 - [ ] Citation for partial layer freezing / frozen backbone fine-tuning technique (§3.3)
 - [ ] Citations for data augmentation: mosaic augmentation, HSV jitter (§3.2)
 - [ ] Expand Table 1 (literature review) with additional weapon detection papers
