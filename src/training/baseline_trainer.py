@@ -109,30 +109,36 @@ class Baseline_Trainer:  # pylint: disable=too-few-public-methods
         # Use Output_Manager to get YOLO project parameter
         yolo_project = self.output_manager.get_yolo_project_parameter(config_name)
 
-        model.train(
-            data=str(data_yaml_path),
-            epochs=baseline_epochs,
-            imgsz=image_size,
-            batch=batch_size,
-            optimizer=optimizer,
-            lr0=lr0,
-            lrf=lrf,
-            cos_lr=False,
-            seed=seed,
-            device=device,
-            project=yolo_project,
-            name=f"{config_name}/{baseline_name}",
-            exist_ok=True,
-            verbose=True,
-            patience=config.training.patience,
-            workers=0,
-            mosaic=getattr(config.training, "mosaic", 1.0),
-            scale=getattr(config.training, "scale", 0.5),
-            fliplr=getattr(config.training, "fliplr", 0.5),
-            hsv_h=getattr(config.training, "hsv_h", 0.015),
-            hsv_s=getattr(config.training, "hsv_s", 0.7),
-            hsv_v=getattr(config.training, "hsv_v", 0.4),
-        )
+        train_kwargs = {
+            "data": str(data_yaml_path),
+            "epochs": baseline_epochs,
+            "imgsz": image_size,
+            "batch": batch_size,
+            "optimizer": optimizer,
+            "lr0": lr0,
+            "lrf": lrf,
+            "cos_lr": False,
+            "seed": seed,
+            "device": device,
+            "project": yolo_project,
+            "name": f"{config_name}/{baseline_name}",
+            "exist_ok": True,
+            "verbose": True,
+            "patience": config.training.patience,
+            "workers": 0,
+            "mosaic": getattr(config.training, "mosaic", 1.0),
+            "scale": getattr(config.training, "scale", 0.5),
+            "fliplr": getattr(config.training, "fliplr", 0.5),
+            "hsv_h": getattr(config.training, "hsv_h", 0.015),
+            "hsv_s": getattr(config.training, "hsv_s", 0.7),
+            "hsv_v": getattr(config.training, "hsv_v", 0.4),
+        }
+
+        if getattr(config.training, "freeze", None) is not None:
+            train_kwargs["freeze"] = config.training.freeze
+            self.logger.info("  Applying freeze = %s layers", config.training.freeze)
+
+        model.train(**train_kwargs)
 
         training_time = time.time() - train_start
         self.logger.info("Baseline training completed in %.2f seconds", training_time)
