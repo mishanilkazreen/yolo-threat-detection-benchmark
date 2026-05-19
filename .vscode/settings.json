@@ -8,10 +8,18 @@
     }
   },
   "python.analysis.typeCheckingMode": "basic",
-  "pylint.args": ["--fail-under=9.0"],
-  "mypy-type-checker.args": ["--ignore-missing-imports"],
+  "pylint.args": [
+    "--fail-under=9.0"
+  ],
+  "mypy-type-checker.args": [
+    "--ignore-missing-imports"
+  ],
   "ruff.configuration": "pyproject.toml",
-  "editor.rulers": [100],
+  "editor.rulers": [
+    100
+  ],
   "files.trimTrailingWhitespace": true,
-  "files.insertFinalNewline": true
+  "files.insertFinalNewline": true,
+  "workbench.colorTheme": "Atom One Dark",
+  "workbench.preferredDarkColorTheme": "Atom One Dark"
 }
