@@ -1,0 +1,24 @@
+{
+  "config_name": "yolo12n_baseline_pretrained_frozen_backbone",
+  "model": "yolov12n",
+  "weights": "yolo12n.pt",
+  "random_seed": 42,
+  "epochs": 50,
+  "training_set_size": 3545,
+  "training_time_seconds": 4828.607324123383,
+  "training_time_minutes": 80.4767887353897,
+  "iou_threshold": 0.5,
+  "test_metrics": {
+    "mAP50": 0.9018958227372299,
+    "mAP50-95": 0.6274994749435738,
+    "precision": 0.9031162910606514,
+    "recall": 0.8178362109931887,
+    "f1_score": 0.8583632664885225
+  },
+  "per_class_test_metrics": {
+    "mAP50_per_class": [
+      0.9336654820179957,
+      0.8701261634564641
+    ]
+  }
+}
