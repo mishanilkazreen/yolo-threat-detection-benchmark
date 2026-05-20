@@ -460,7 +460,6 @@ def _generate_lrp_with_captum(
     start_time: float,
 ) -> tuple[np.ndarray, float | None, str]:
     """Generate LRP attribution using captum library (fallback)."""
-    from captum.attr import LRP as CaptumLRP
 
     # Load and preprocess image
     image = Image.open(image_path).convert("RGB")

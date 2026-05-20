@@ -110,7 +110,7 @@ def label(config: str) -> str:
 
 
 def fmt(v: float, decimals: int = 4) -> str:
-    if v != v:  # nan  # noqa: PLR0124
+    if v is not v:  # nan  # noqa: PLR0124
         return "--"
     return f"{v:.{decimals}f}"
 
@@ -121,7 +121,7 @@ def bold(s: str) -> str:
 
 def best_col(values: list[float]) -> int:
     """Return index of the max non-nan value."""
-    valid = [(v, i) for i, v in enumerate(values) if v == v]  # noqa: PLR0124
+    valid = [(v, i) for i, v in enumerate(values) if v is v]  # noqa: PLR0124
     if not valid:
         return -1
     return max(valid)[1]
