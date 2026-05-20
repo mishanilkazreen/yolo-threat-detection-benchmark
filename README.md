@@ -11,27 +11,31 @@
 >
 > | Dimension | Variants |
 > |---|---|
-> | **Training protocol** | One-shot baseline (single run, 50 / 100 epochs) vs MDPI-style incremental (5 rounds × 10 / 100 epochs) |
+> | **Training protocol** | One-shot baseline (single run, 50 / 100 epochs) vs Springer/JRTIP incremental (5 rounds × 10 / 100 epochs) |
 > | **Weight init** | Random (`.yaml`) vs COCO-pretrained (`.pt`) |
 > | **Fine-tuning** | Full model, frozen backbone (`freeze=10`), head-only (`freeze=22`) |
 > | **Architecture** | YOLOv8, YOLOv11, YOLOv12 |
 >
-> ## Motivation — the MDPI reproduction
+> ## Motivation — the JRTIP reproducibility study
 >
-> The Kutlu & Emiroğlu (2025) MDPI paper
+> The Kutlu & Emiroğlu (2025) paper
 > ([Computers 14(12):511](https://www.mdpi.com/2073-431X/14/12/511)) reports
 > mAP@0.5 = 0.886 using YOLOv8n with "random initialization" across five
 > incremental learning rounds (10 epochs each). Our reproduction with truly
 > random weights yields mAP@0.5 ≈ 0.54 — far below the claimed result
 > ([issue #9](https://github.com/mishanilkazreen/yolo-improvement-detection-moderation-paper/issues/9)).
 >
-> That reproduction is **one cell** in the matrix above (YOLOv8n, MDPI protocol, random init, no freeze).
+> That reproduction is **one cell** in the matrix above (YOLOv8n, incremental protocol, random init, no freeze).
 > Using the one-shot baselines as the reference lets us quantify what each design choice
 > actually contributes — training protocol, init, freeze strategy, or architecture.
 >
+> Results and analysis are published in the companion paper submitted to the
+> **Journal of Real-Time Image Processing** (Springer). See
+> [manighahrmani/Journal-of-Real-Time-Image-Processing](https://github.com/manighahrmani/Journal-of-Real-Time-Image-Processing).
+>
 > ## Reported metrics
 >
-> For every experiment we report the same metrics the MDPI paper reports (F1-score,
+> For every experiment we report the same metrics the reference paper reports (F1-score,
 > Precision, mAP@0.5, and per-class knife / pistol breakdowns), **plus wall-clock time**
 > (training + validation) so comparisons are fair on compute budget too. For early-stopping
 > runs we also report the actual stopping epoch.
@@ -54,20 +58,26 @@ experiment is compared to (metrics + time). See
 | `yolov8n_baseline_random.yaml` | v8n | random | 50 | no |
 | `yolov8n_baseline_pretrained_100ep.yaml` | v8n | COCO | 100 | patience=10 |
 | `yolov8n_baseline_random_100ep.yaml` | v8n | random | 100 | patience=10 |
+| `yolo11n_baseline_pretrained.yaml` | v11n | COCO | 50 | no |
+| `yolo11n_baseline_random.yaml` | v11n | random | 50 | no |
+| `yolo11n_baseline_pretrained_100ep.yaml` | v11n | COCO | 100 | patience=10 |
+| `yolo11n_baseline_random_100ep.yaml` | v11n | random | 100 | patience=10 |
 | `yolo12n_baseline_*.yaml` | v12n | random / COCO | 50 / 100 | no / patience=10 |
 
-YOLOv11 baselines are planned — the architecture stub lives at `config/models/yolo11n.yaml`.
-
-### Phase 1 — Nano models (MDPI-style incremental)
+### Phase 1 — Nano models (incremental protocol)
 
 | Config | Arch | Init | Epochs/round | Early stop |
 |---|---|---|---|---|
 | `yolov8n_random.yaml` | v8n | random | 10 | no |
 | `yolov8n_pretrained.yaml` | v8n | COCO | 10 | no |
+| `yolo11n_random.yaml` | v11n | random | 10 | no |
+| `yolo11n_pretrained.yaml` | v11n | COCO | 10 | no |
 | `yolo12n_random.yaml` | v12n | random | 10 | no |
 | `yolo12n_pretrained.yaml` | v12n | COCO | 10 | no |
 | `yolov8n_random_100ep.yaml` | v8n | random | 100 | patience=10 |
 | `yolov8n_pretrained_100ep.yaml` | v8n | COCO | 100 | patience=10 |
+| `yolo11n_random_100ep.yaml` | v11n | random | 100 | patience=10 |
+| `yolo11n_pretrained_100ep.yaml` | v11n | COCO | 100 | patience=10 |
 | `yolo12n_random_100ep.yaml` | v12n | random | 100 | patience=10 |
 | `yolo12n_pretrained_100ep.yaml` | v12n | COCO | 100 | patience=10 |
 
@@ -180,15 +190,19 @@ uv run python scripts/validate_dataset.py
 #### Phase 0 — One-shot baselines (run first, anchors all other comparisons)
 
 ```bash
-# 50-epoch baselines (same compute budget as MDPI protocol: 5 rounds x 10 epochs)
+# 50-epoch baselines
 uv run python scripts/train_baseline.py config/models/yolov8n_baseline_pretrained.yaml
 uv run python scripts/train_baseline.py config/models/yolov8n_baseline_random.yaml
+uv run python scripts/train_baseline.py config/models/yolo11n_baseline_pretrained.yaml
+uv run python scripts/train_baseline.py config/models/yolo11n_baseline_random.yaml
 uv run python scripts/train_baseline.py config/models/yolo12n_baseline_pretrained.yaml
 uv run python scripts/train_baseline.py config/models/yolo12n_baseline_random.yaml
 
 # 100-epoch + early stopping baselines
 uv run python scripts/train_baseline.py config/models/yolov8n_baseline_pretrained_100ep.yaml
 uv run python scripts/train_baseline.py config/models/yolov8n_baseline_random_100ep.yaml
+uv run python scripts/train_baseline.py config/models/yolo11n_baseline_pretrained_100ep.yaml
+uv run python scripts/train_baseline.py config/models/yolo11n_baseline_random_100ep.yaml
 uv run python scripts/train_baseline.py config/models/yolo12n_baseline_pretrained_100ep.yaml
 uv run python scripts/train_baseline.py config/models/yolo12n_baseline_random_100ep.yaml
 ```
@@ -202,18 +216,22 @@ uv run python scripts/report_results.py --phase baseline
 Baseline rows are reserved in `outputs/full_evaluation_results.csv` with empty metric
 columns; the runners and `report_results.py` populate them on completion.
 
-#### Phase 1 — Nano models (MDPI-style incremental)
+#### Phase 1 — Nano models (incremental)
 
 ```bash
-# MDPI protocol — 10 epochs/round, no early stopping
+# Standard protocol — 10 epochs/round, no early stopping
 uv run python scripts/train_model.py config/models/yolov8n_random.yaml
 uv run python scripts/train_model.py config/models/yolov8n_pretrained.yaml
+uv run python scripts/train_model.py config/models/yolo11n_random.yaml
+uv run python scripts/train_model.py config/models/yolo11n_pretrained.yaml
 uv run python scripts/train_model.py config/models/yolo12n_random.yaml
 uv run python scripts/train_model.py config/models/yolo12n_pretrained.yaml
 
 # Extended — 100 epochs/round, early stopping patience=10
 uv run python scripts/train_model.py config/models/yolov8n_random_100ep.yaml
 uv run python scripts/train_model.py config/models/yolov8n_pretrained_100ep.yaml
+uv run python scripts/train_model.py config/models/yolo11n_random_100ep.yaml
+uv run python scripts/train_model.py config/models/yolo11n_pretrained_100ep.yaml
 uv run python scripts/train_model.py config/models/yolo12n_random_100ep.yaml
 uv run python scripts/train_model.py config/models/yolo12n_pretrained_100ep.yaml
 ```
@@ -340,9 +358,13 @@ Model configs are in `config/models/`. Each config specifies:
 
 Naming convention: `{arch}_{init}[_{epochs}].yaml`
 
-- `yolov8n_random.yaml` — YOLOv8 nano, random init, MDPI protocol
-- `yolov8n_pretrained.yaml` — YOLOv8 nano, COCO pretrained, MDPI protocol
+- `yolov8n_random.yaml` — YOLOv8 nano, random init, JRTIP incremental protocol
+- `yolov8n_pretrained.yaml` — YOLOv8 nano, COCO pretrained, JRTIP incremental protocol
 - `yolov8n_random_100ep.yaml` — YOLOv8 nano, random init, 100 epochs + early stopping
+- `yolo11n_random.yaml` — YOLOv11 nano, random init, standard incremental protocol
+- `yolo11n_pretrained.yaml` — YOLOv11 nano, COCO pretrained, standard incremental protocol
+- `yolo11n_random_100ep.yaml` — YOLOv11 nano, random init, 100 epochs + early stopping
+- `yolo11n_pretrained_100ep.yaml` — YOLOv11 nano, COCO pretrained, 100 epochs + early stopping
 - `yolo12n_pretrained_100ep.yaml` — YOLO12 nano, COCO pretrained, 100 epochs + early stopping
 
 Dataset configs are in `config/data/`:
@@ -363,3 +385,9 @@ Training results are saved to:
 - Kutlu, Z.; Emiroğlu, B.G. Image-Based Threat Detection and Explainability Investigation Using
   Incremental Learning and Grad-CAM with YOLOv8. *Computers* **2025**, *14*, 511.
   [doi:10.3390/computers14120511](https://doi.org/10.3390/computers14120511)
+
+## Related
+
+- **Paper repository**:
+  [manighahrmani/Journal-of-Real-Time-Image-Processing](https://github.com/manighahrmani/Journal-of-Real-Time-Image-Processing)
+  — LaTeX source and CI for the JRTIP Springer submission

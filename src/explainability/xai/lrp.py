@@ -72,10 +72,6 @@ def generate_lrp_attribution(
         except ImportError:
             logger.warning("zennit not available, falling back to captum")
             try:
-                from captum.attr import (
-                    LRP as CaptumLRP,  # noqa: F401  # pylint: disable=unused-import
-                )
-
                 return _generate_lrp_with_captum(
                     model,
                     image_path,
@@ -460,6 +456,7 @@ def _generate_lrp_with_captum(
     start_time: float,
 ) -> tuple[np.ndarray, float | None, str]:
     """Generate LRP attribution using captum library (fallback)."""
+    from captum.attr import LRP as CaptumLRP
 
     # Load and preprocess image
     image = Image.open(image_path).convert("RGB")
