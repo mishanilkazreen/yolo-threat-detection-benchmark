@@ -229,9 +229,18 @@ data/downloaded/
 # YOLO pretrained weights
 *.pt
 
-# Training outputs (YOLO checkpoints, plots — large, regenerable)
+# Training outputs (YOLO checkpoints and batch visualizations — large, regenerable)
 runs/
 !runs/.gitkeep
+!runs/**/results.csv
+!runs/**/args.yaml
+!runs/**/BoxF1_curve.png
+!runs/**/BoxPR_curve.png
+!runs/**/BoxP_curve.png
+!runs/**/BoxR_curve.png
+!runs/**/confusion_matrix.png
+!runs/**/confusion_matrix_normalized.png
+!runs/**/results.png
 
 # Experiment logs (console output from training runs)
 logs/
