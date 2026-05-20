@@ -196,9 +196,9 @@ Related GitHub issues:
 - [x] YOLOv11 official Ultralytics citation — added `Jocher2024` (@misc, closes #1)
 - [x] YOLOv12 citation — added `Tian2025yolov12` (arXiv:2502.12524, closes #1)
 - [x] COCO dataset citation — added `Lin2014` (ECCV 2014, closes #1)
-- [ ] Citation for partial layer freezing / frozen backbone fine-tuning technique (§3.3)
-- [ ] Citations for data augmentation: mosaic augmentation, HSV jitter (§3.2)
-- [ ] Expand Table 1 (literature review) with additional weapon detection papers
+- [x] Citation for partial layer freezing / frozen backbone fine-tuning technique (§3.3)
+- [x] Citations for data augmentation: mosaic augmentation, HSV jitter (§3.2)
+- [x] Expand Table 1 (literature review) with additional weapon detection papers
 
 ## Reference commands
 
