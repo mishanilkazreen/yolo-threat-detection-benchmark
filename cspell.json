@@ -153,7 +153,9 @@
         "twocolumn",
         "underfitting",
         "visualisation",
-        "visualisations"
+        "visualisations",
+        "Mela",
+        "nchez"
     ],
     "ignorePaths": [
         "node_modules",
