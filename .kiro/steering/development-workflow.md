@@ -122,3 +122,16 @@ uv run mypy src/ --ignore-missing-imports
 uv run pytest tests/ -v
 uv run pre-commit run --all-files
 ```
+
+## VS Code Extensions Recommendation
+
+This workspace consists of three repositories, each with their own IDE recommendations in `.vscode/extensions.json`:
+- **Outer Repo (Benchmarks):** Python (`ms-python.python`), pylint (`ms-python.pylint`), mypy (`ms-python.mypy-type-checker`), ruff (`charliermarsh.ruff`), markdownlint (`DavidAnson.vscode-markdownlint`), cspell (`streetsidesoftware.code-spell-checker`), gitlens (`eamodio.gitlens`).
+- **Journal Paper Repo (`Journal-of-Real-Time-Image-Processing`):** LaTeX Workshop (`James-Yu.latex-workshop`), cspell (`streetsidesoftware.code-spell-checker`), cspell scientific terms (`streetsidesoftware.code-spell-checker-scientific-terms`), markdownlint (`DavidAnson.vscode-markdownlint`), gitlens (`eamodio.gitlens`).
+- **YOLO Cam Repo (`yolo_cam`):** Jupyter (`ms-toolsai.jupyter`), Jupyter Renderers (`ms-toolsai.jupyter-renderers`), Python (`ms-python.python`), debugpy (`ms-python.debugpy`), ruff (`charliermarsh.ruff`), cspell (`streetsidesoftware.code-spell-checker`), gitlens (`eamodio.gitlens`).
+
+## Overleaf Sync (Journal Paper)
+
+In the `Journal-of-Real-Time-Image-Processing/` repo:
+- Pull changes from Overleaf: `git pull overleaf master --no-rebase`
+- Push changes to Overleaf: `./push_to_overleaf.sh`
