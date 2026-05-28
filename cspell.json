@@ -168,7 +168,11 @@
         "*.cls",
         "*.sty",
         "*.eps",
-        "*.pdf"
+        "*.pdf",
+        "*.bib",
+        "**/*.bib",
+        "submission/*.bib",
+        "**/submission/*.bib"
     ],
     "ignoreRegExpList": [
         "\\\\[a-zA-Z]+\\{[^}]*\\}",
