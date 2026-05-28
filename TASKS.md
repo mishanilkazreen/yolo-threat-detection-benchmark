@@ -6,7 +6,7 @@ Tracked as GitHub issues.
 ## Paper (`Journal-of-Real-Time-Image-Processing`)
 
 - [x] Expand YOLO abbreviation — [#6][i6] (closed)
-- [ ] Better edge-device citation — [#7][i7] (open, for other agent)
+- [x] Better edge-device citation — [#7][i7] (closed)
 - [x] Epoch label fix — [#8][i8] (closed, relabelled to 500)
 - [x] 30 fps human-eye reference — [#9][i9] (closed)
 - [x] Model size discussion — [#10][i10] (closed)
