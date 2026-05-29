@@ -16,7 +16,8 @@ Patterns for self-improvement through iterative evaluation and refinement.
 
 ## Overview
 
-Evaluation patterns enable agents to assess and improve their own outputs, moving beyond single-shot generation to iterative refinement loops.
+Evaluation patterns enable agents to assess and improve their own outputs,
+moving beyond single-shot generation to iterative refinement loops.
 
 ```text
 Generate → Evaluate → Critique → Refine → Output
@@ -122,6 +123,7 @@ class CodeReflector:
 ## Evaluation Strategies
 
 ### Outcome-Based
+
 Evaluate whether output achieves the expected result.
 
 ```python
@@ -130,6 +132,7 @@ def evaluate_outcome(task: str, output: str, expected: str) -> str:
 ```
 
 ### LLM-as-Judge
+
 Use LLM to compare and rank outputs.
 
 ```python
@@ -138,6 +141,7 @@ def llm_judge(output_a: str, output_b: str, criteria: str) -> str:
 ```
 
 ### Rubric-Based
+
 Score outputs against weighted dimensions.
 
 ```python
