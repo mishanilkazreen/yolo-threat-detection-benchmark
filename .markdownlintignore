@@ -1,3 +1,4 @@
 .kiro/
 .venv/
 node_modules/
+.github/agents/
