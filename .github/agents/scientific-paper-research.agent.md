@@ -60,3 +60,9 @@ To push changes to Overleaf:
    - Stages the changes from your local `main` branch.
    - Commits and pushes them to `overleaf/master` via the `overleaf-deploy` branch.
    - Safely switches back to your local `main` branch.
+
+## CI/CD and Quality Verification
+
+Before committing or pushing any changes to the remote repository, ensure that all local CI/CD checks pass:
+- Run `uv run pre-commit run --all-files` (or execute ruff, mypy, and pytest individually).
+- Fix any code quality or linting issues before pushing to GitHub. Do not bypass git hooks unless handling third-party assets that are exempt.
