@@ -1,6 +1,11 @@
 ---
 name: git-commit
-description: 'Execute git commit with conventional commit message analysis, intelligent staging, and message generation. Use when user asks to commit changes, create a git commit, or mentions "/commit". Supports: (1) Auto-detecting type and scope from changes, (2) Generating conventional commit messages from diff, (3) Interactive commit with optional type/scope/description overrides, (4) Intelligent file staging for logical grouping'
+description: |-
+  Execute git commit with conventional commit message analysis, intelligent staging, and message
+  generation. Use when user asks to commit changes, create a git commit, or mentions "/commit".
+  Supports: (1) Auto-detecting type and scope from changes, (2) Generating conventional commit
+  messages from diff, (3) Interactive commit with optional type/scope/description overrides,
+  (4) Intelligent file staging for logical grouping
 license: MIT
 allowed-tools: Bash
 ---
@@ -13,7 +18,7 @@ Create standardized, semantic git commits using the Conventional Commits specifi
 
 ## Conventional Commit Format
 
-```
+```text
 <type>[optional scope]: <description>
 
 [optional body]
@@ -39,7 +44,7 @@ Create standardized, semantic git commits using the Conventional Commits specifi
 
 ## Breaking Changes
 
-```
+```text
 # Exclamation mark after type/scope
 feat!: remove deprecated endpoint
 

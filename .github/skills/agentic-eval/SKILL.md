@@ -18,7 +18,7 @@ Patterns for self-improvement through iterative evaluation and refinement.
 
 Evaluation patterns enable agents to assess and improve their own outputs, moving beyond single-shot generation to iterative refinement loops.
 
-```
+```text
 Generate → Evaluate → Critique → Refine → Output
     ↑                              │
     └──────────────────────────────┘
