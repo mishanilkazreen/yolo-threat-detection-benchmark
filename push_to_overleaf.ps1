@@ -47,6 +47,18 @@ if ($remotes -notcontains "overleaf") {
     }
 }
 
+# Check for local unstaged or staged modifications in the working tree
+$hasChanges = [bool](git status --porcelain)
+if ($hasChanges) {
+    Write-Host "Local changes detected. Stashing changes temporarily to ensure clean branch switching..." -ForegroundColor Cyan
+    git stash
+    if ($LASTEXITCODE -ne 0) {
+        Write-Error "Failed to stash local changes. Please commit or stash them manually."
+        Set-Location $rootDir
+        exit 1
+    }
+}
+
 try {
     # 1. Fetch latest changes from Overleaf to ensure local tracking is fresh
     Write-Host "Fetching latest state from Overleaf..." -ForegroundColor Cyan
@@ -116,9 +128,17 @@ catch {
         Write-Host "Aborting deploy and returning to main branch..." -ForegroundColor Yellow
         git checkout -f main
     }
-    Write-Host "Sync aborted. Local files remain intact on main." -ForegroundColor Yellow
+    Write-Host "Sync aborted." -ForegroundColor Yellow
 }
 finally {
+    # If we stashed changes, pop them to restore user's working state
+    if ($hasChanges) {
+        Write-Host "Restoring stashed local changes..." -ForegroundColor Cyan
+        git stash pop
+        if ($LASTEXITCODE -ne 0) {
+            Write-Host "Warning: Could not automatically restore stashed changes. Run 'git stash pop' manually." -ForegroundColor Yellow
+        }
+    }
     # Return to the root directory
     Set-Location $rootDir
 }
