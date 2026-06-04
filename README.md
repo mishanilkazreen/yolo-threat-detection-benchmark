@@ -1,56 +1,33 @@
-# XplainRescue
+# Benchmarking YOLO Generations for Explainable Incremental Threat Detection: Weight Initialisation, Architecture, and Training Budget
 
-> **YOLO Architectures for Weapon Detection: One-Shot Baselines vs Incremental Protocols**
->
-> This project evaluates YOLO architectures (v8, v11, v12 — all **nano**) on
-> weapon detection (knife / pistol) across several training protocols. The central
-> reference is a **per-architecture one-shot baseline** — a standard single-pass training
-> run over the full training set — against which every other experiment is measured.
->
-> Every other experiment is a **dimension** varied against that baseline:
->
-> | Dimension | Variants |
-> |---|---|
-> | **Training protocol** | One-shot baseline (single run, 50 / 100 epochs) vs Springer/JRTIP incremental (5 rounds × 10 / 100 epochs) |
-> | **Weight init** | Random (`.yaml`) vs COCO-pretrained (`.pt`) |
-> | **Fine-tuning** | Full model, frozen backbone (`freeze=10`), head-only (`freeze=22`) |
-> | **Architecture** | YOLOv8, YOLOv11, YOLOv12 |
->
-> ## Motivation — the JRTIP reproducibility study
->
-> The Kutlu & Emiroğlu (2025) paper
-> ([Computers 14(12):511](https://www.mdpi.com/2073-431X/14/12/511)) reports
-> mAP@0.5 = 0.886 using YOLOv8n with "random initialization" across five
-> incremental learning rounds (10 epochs each). Our reproduction with truly
-> random weights yields mAP@0.5 ≈ 0.54 — far below the claimed result
-> ([issue #9](https://github.com/mishanilkazreen/yolo-improvement-detection-moderation-paper/issues/9)).
->
-> That reproduction is **one cell** in the matrix above (YOLOv8n, incremental protocol, random init, no freeze).
-> Using the one-shot baselines as the reference lets us quantify what each design choice
-> actually contributes — training protocol, init, freeze strategy, or architecture.
->
-> Results and analysis are published in the companion paper submitted to the
-> **Journal of Real-Time Image Processing** (Springer). See
-> [manighahrmani/Journal-of-Real-Time-Image-Processing](https://github.com/manighahrmani/Journal-of-Real-Time-Image-Processing).
->
-> ## Reported metrics
->
-> For every experiment we report the same metrics the reference paper reports (F1-score,
-> Precision, mAP@0.5, and per-class knife / pistol breakdowns), **plus wall-clock time**
-> (training + validation) so comparisons are fair on compute budget too. For early-stopping
-> runs we also report the actual stopping epoch.
+## Abstract
+
+Incremental learning frameworks for real-time object detection have attracted growing interest in security-critical
+applications, yet benchmarks comparing You Only Look Once (YOLO) generations under controlled initialisation conditions
+remain scarce.
+Kutlu and Emiroğlu (2025) report mAP@0.5 of 0.886 for YOLOv8-nano under reported random initialisation on a
+two-class (pistol and knife) weapon dataset; a direct replication yields only 0.54, a result more consistent with
+COCO-pretrained initialisation than with the random protocol reported by the authors.
+We evaluate YOLOv8, YOLOv11, and YOLOv12 nano variants under both random and COCO-pretrained initialisation with
+two epoch budgets (10 and 100 per round) across five data-incremental rounds, yielding twelve core conditions.
+For each condition we report mAP@0.5, mAP@0.5:0.95, F1-score, precision, recall, and per-class mAP@0.5.
+Weight initialisation emerges as the dominant factor: pretrained architectures reach Round-5 mAP@0.5 above 0.89 at
+10 epochs per round; random initialisation peaks at 0.534 under the same protocol.
+Extended training reduces but does not eliminate this gap, and freeze-strategy ablations confirm that backbone-only
+feature transfer reproduces the reference trajectory to within 0.002 mAP@0.5.
+Grad-CAM, LRP, and SHAP analyses assess how initialisation influences interpretability across architectures and rounds.
+All configurations, scripts, and metrics are made publicly available.
+
+---
 
 ## Experiment matrix
 
-The project is **nano-only**. YOLOv8s / YOLOv12s (small) variants were considered but
-cut — the MDPI paper does not use them, and nano runs already take significant wall-clock
-time, so small models were out of scope.
+All experiments use **nano-only** variants (YOLOv8n, YOLOv11n, YOLOv12n).
 
 ### Phase 0 — One-shot baselines (reference)
 
-Single-pass training, no incremental rounds. These are the reference points every other
-experiment is compared to (metrics + time). See
-[issue #13](https://github.com/mishanilkazreen/yolo-improvement-detection-moderation-paper/issues/13).
+Single-pass training, no incremental rounds. These serve as reference points for all incremental experiments
+(metrics and wall-clock time).
 
 | Config | Arch | Init | Epochs | Early stop |
 |---|---|---|---|---|
@@ -380,14 +357,9 @@ Training results are saved to:
 - `outputs/{model_name}/` — Evaluation metrics (JSON)
 - `explanations/{model_name}/` — Explainability visualizations
 
-## References
+## Citation
 
-- Kutlu, Z.; Emiroğlu, B.G. Image-Based Threat Detection and Explainability Investigation Using
-  Incremental Learning and Grad-CAM with YOLOv8. *Computers* **2025**, *14*, 511.
-  [doi:10.3390/computers14120511](https://doi.org/10.3390/computers14120511)
+*This paper is currently under review. Citation details will be updated upon publication.*
 
-## Related
-
-- **Paper repository**:
-  [manighahrmani/Journal-of-Real-Time-Image-Processing](https://github.com/manighahrmani/Journal-of-Real-Time-Image-Processing)
-  — LaTeX source and CI for the JRTIP Springer submission
+If you use this work, please contact the corresponding author at `mani.ghahremani@port.ac.uk` for citation details
+until the paper is published.
