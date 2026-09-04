@@ -7,6 +7,7 @@ comparable at the same seed.
 
 from __future__ import annotations
 
+import json
 import logging
 from pathlib import Path
 from typing import Any
@@ -43,9 +44,31 @@ class Baseline_Runner:
         self.seed_manager = Seed_Manager()
         self.dataset_validator = Dataset_Validator()
 
-    def run(self, config_path: str, validate_dataset: bool = True) -> dict[str, Any]:
+    def run(
+        self,
+        config_path: str,
+        validate_dataset: bool = True,
+        seed: int | None = None,
+        device: str | None = None,
+        epochs: int | None = None,
+        patience: int | None = None,
+    ) -> dict[str, Any]:
         config = ConfigurationParser.parse(config_path)
         config_name = Path(config_path).stem
+
+        # Apply overrides if provided (TASK-R2-03, TASK-MAJ-12)
+        if seed is not None:
+            config.training.seeds = [seed]
+            self.logger.info("CLI override: seed=%d", seed)
+        if device is not None:
+            config.training.device = str(device)
+            self.logger.info("CLI override: device=%s", device)
+        if epochs is not None:
+            config.training.baseline_epochs = epochs
+            self.logger.info("CLI override: baseline_epochs=%d", epochs)
+        if patience is not None:
+            config.training.patience = patience
+            self.logger.info("CLI override: patience=%d", patience)
 
         if validate_dataset:
             self._validate_dataset(config.data.yaml_path)
@@ -135,17 +158,33 @@ class Baseline_Runner:
             config=config,
         )
 
-        return {
+        summary = {
             "config_name": config_name,
             "checkpoint_path": str(train_result["checkpoint_path"]),
             "training_time_seconds": train_result["training_time_seconds"],
             "training_set_size": train_result["training_set_size"],
             "epochs": train_result["epochs"],
+            "actual_stopped_epoch": train_result.get("actual_stopped_epoch"),
+            "best_epoch": train_result.get("best_epoch"),
+            "patience": train_result.get("patience"),
+            "total_optimizer_steps": train_result.get("total_optimizer_steps"),
+            "total_images_processed": train_result.get("total_images_processed"),
+            "gflops": train_result.get("gflops"),
+            "total_training_tflops": train_result.get("total_training_tflops"),
             "val_metrics": eval_result["val_metrics"],
             "test_metrics": eval_result["test_metrics"],
             "hfs_metrics": eval_result["hfs_metrics"],
             "output_dir": eval_result["output_dir"],
         }
+
+        # Save baseline summary to output directory (TASK-MAJ-12)
+        summary_path = Path(eval_result["output_dir"]) / "baseline_summary.json"
+        with open(summary_path, "w", encoding="utf-8") as fh:
+            json.dump(summary, fh, indent=2)
+            fh.write("\n")
+        self.logger.info("Saved baseline summary to %s", summary_path)
+
+        return summary
 
     @staticmethod
     def _load_lines(path: str) -> list[str]:

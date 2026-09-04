@@ -32,6 +32,18 @@ def create_step_decay_callback(lr0: float, lrf: float, step_interval: int = 5) -
     return on_train_epoch_start
 
 
+def get_model_gflops(model_name: str) -> float:
+    """Return theoretical forward GFLOPs at 640x640 for the architecture."""
+    name = model_name.lower()
+    if "yolov8n" in name:
+        return 8.7
+    if "yolo11n" in name:
+        return 6.5
+    if "yolo12n" in name:
+        return 6.5
+    return 8.7
+
+
 def select_device(device_config: str = "auto") -> str:
     """
     Select the appropriate device for training.

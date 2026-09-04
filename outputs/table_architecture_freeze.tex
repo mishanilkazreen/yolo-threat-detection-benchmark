@@ -1,0 +1,31 @@
+\begin{table*}[t]
+\caption{Layer indexing, parameter breakdown, and freeze strategy accounting across YOLO generations.}
+\label{tab:architecture_layer_freeze}
+\centering
+\begin{tabular*}{\textwidth}{@{\extracolsep{\fill}}llrrrrr@{}}
+\hline
+Architecture & Component / Strategy & Layers & Total Params & Trainable Params & Frozen Params & \% Trainable \\
+\hline
+YOLOV8N & Total Architecture & 0--22 & 3,157,200 & 3,157,200 & 0 & 100.0\% \\
+ & Backbone & 0–9 & 1,272,656 & -- & -- & 40.31\% \\
+ & Neck & 10–21 & 986,880 & -- & -- & 31.26\% \\
+ & Head & 22 & 897,664 & -- & -- & 28.43\% \\
+ & Strategy: Frozen Backbone & Freeze=10 & 3,157,200 & 1,884,544 & 1,272,656 & 59.69\% \\
+ & Strategy: Head-Only & Freeze=22 & 3,157,200 & 897,664 & 2,259,536 & 28.43\% \\
+\hline
+YOLO11N & Total Architecture & 0--23 & 2,624,080 & 2,624,080 & 0 & 100.0\% \\
+ & Backbone & 0–10 & 1,365,472 & -- & -- & 52.04\% \\
+ & Neck & 11–22 & 793,696 & -- & -- & 30.25\% \\
+ & Head & 23 & 464,912 & -- & -- & 17.72\% \\
+ & Strategy: Frozen Backbone & Freeze=11 & 2,624,080 & 1,258,608 & 1,365,472 & 47.96\% \\
+ & Strategy: Head-Only & Freeze=23 & 2,624,080 & 464,912 & 2,159,168 & 17.72\% \\
+\hline
+YOLO12N & Total Architecture & 0--21 & 2,603,056 & 2,603,056 & 0 & 100.0\% \\
+ & Backbone & 0–8 & 1,389,024 & -- & -- & 53.36\% \\
+ & Neck & 9–20 & 749,120 & -- & -- & 28.78\% \\
+ & Head & 21 & 464,912 & -- & -- & 17.86\% \\
+ & Strategy: Frozen Backbone & Freeze=9 & 2,603,056 & 1,214,032 & 1,389,024 & 46.64\% \\
+ & Strategy: Head-Only & Freeze=21 & 2,603,056 & 464,912 & 2,138,144 & 17.86\% \\
+\hline
+\end{tabular*}
+\end{table*}

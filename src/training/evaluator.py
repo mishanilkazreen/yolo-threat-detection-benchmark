@@ -185,6 +185,14 @@ class Metrics_Collector:  # pylint: disable=invalid-name
         total_detections: int | None = None,
         actual_stopped_epoch: int | None = None,
         best_epoch: int | None = None,
+        class_distribution: dict[str, Any] | None = None,
+        optimizer_steps: int | None = None,
+        cumulative_optimizer_steps: int | None = None,
+        images_processed: int | None = None,
+        cumulative_images_processed: int | None = None,
+        gflops: float | None = None,
+        training_tflops: float | None = None,
+        cumulative_training_tflops: float | None = None,
     ) -> dict[str, Any]:
         """
         Collect metrics for a specific training round.
@@ -204,6 +212,14 @@ class Metrics_Collector:  # pylint: disable=invalid-name
             total_detections: Total detections from edge simulation (optional)
             actual_stopped_epoch: Epoch training stopped on (early stopping runs)
             best_epoch: Epoch with best validation fitness
+            class_distribution: Dictionary of class label counts in training set
+            optimizer_steps: Optimizer update steps taken in this round
+            cumulative_optimizer_steps: Cumulative optimizer steps across all rounds
+            images_processed: Number of images processed in this round
+            cumulative_images_processed: Cumulative images processed across all rounds
+            gflops: Theoretical forward GFLOPs per 640x640 image
+            training_tflops: Estimated training compute (forward+backward) in TFLOPs
+            cumulative_training_tflops: Cumulative training compute across all rounds
 
         Returns:
             Dictionary of round metrics
@@ -258,6 +274,24 @@ class Metrics_Collector:  # pylint: disable=invalid-name
         if best_epoch is not None:
             metrics["best_epoch"] = best_epoch
 
+        # Add compute and sample accounting (Reviewer 1 Major 3, Major 11)
+        if class_distribution is not None:
+            metrics["class_distribution"] = class_distribution
+        if optimizer_steps is not None:
+            metrics["optimizer_steps"] = optimizer_steps
+        if cumulative_optimizer_steps is not None:
+            metrics["cumulative_optimizer_steps"] = cumulative_optimizer_steps
+        if images_processed is not None:
+            metrics["images_processed"] = images_processed
+        if cumulative_images_processed is not None:
+            metrics["cumulative_images_processed"] = cumulative_images_processed
+        if gflops is not None:
+            metrics["gflops"] = gflops
+        if training_tflops is not None:
+            metrics["training_tflops"] = training_tflops
+        if cumulative_training_tflops is not None:
+            metrics["cumulative_training_tflops"] = cumulative_training_tflops
+
         self._attach_per_class_metrics(metrics, results)
 
         # Save round metrics
@@ -281,6 +315,9 @@ class Metrics_Collector:  # pylint: disable=invalid-name
         config_name: str,
         random_seed: int,
         total_training_time: float,
+        cumulative_optimizer_steps: int | None = None,
+        cumulative_images_processed: int | None = None,
+        cumulative_training_tflops: float | None = None,
     ) -> dict[str, Any]:
         """
         Evaluate final model (Round 5 best checkpoint) on test_fixed.
@@ -292,6 +329,9 @@ class Metrics_Collector:  # pylint: disable=invalid-name
             config_name: Configuration name
             random_seed: Random seed used
             total_training_time: Total training time across all rounds
+            cumulative_optimizer_steps: Total optimizer steps across all rounds
+            cumulative_images_processed: Total images processed across all rounds
+            cumulative_training_tflops: Total training TFLOPs across all rounds
 
         Returns:
             Dictionary of final test metrics
@@ -319,6 +359,9 @@ class Metrics_Collector:  # pylint: disable=invalid-name
             "total_training_time_seconds": total_training_time,
             "total_training_time_minutes": total_training_time / 60.0,
             "test_time_seconds": test_time,
+            "cumulative_optimizer_steps": cumulative_optimizer_steps,
+            "cumulative_images_processed": cumulative_images_processed,
+            "cumulative_training_tflops": cumulative_training_tflops,
             "model_info": model_info,
             "metrics": {
                 "mAP50": float(results.box.map50) if hasattr(results.box, "map50") else 0.0,

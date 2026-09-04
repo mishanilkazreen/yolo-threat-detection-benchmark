@@ -1,7 +1,9 @@
 """Baseline trainer for one-shot full-partition training."""
 
 import logging
+import math
 from pathlib import Path
+import sys
 import time
 from typing import Any
 
@@ -10,7 +12,7 @@ import yaml
 
 from ..config.parser import Configuration
 from ..utils.output_manager import Output_Manager
-from .device_utils import create_step_decay_callback, select_device
+from .device_utils import create_step_decay_callback, get_model_gflops, select_device
 
 logger = logging.getLogger(__name__)
 
@@ -87,21 +89,26 @@ class Baseline_Trainer:  # pylint: disable=too-few-public-methods
         self.logger.info("Initializing model from weights: %s", config.model.weights)
         model = YOLO(config.model.weights)
 
-        # Add step decay LR callback (same as incremental runner)
-        step_decay_callback = create_step_decay_callback(lr0, lrf, step_interval=5)
-        model.add_callback("on_train_epoch_start", step_decay_callback)
-        self.logger.info("Added step decay LR scheduler: lr0=%s, lrf=%s, step_interval=5", lr0, lrf)
+        # Reviewer 2 comment TASK-R2-02: Use verified AdamW linear LR schedule by default
+        use_step_decay = getattr(config.training, "use_step_decay", False)
+        if use_step_decay:
+            step_decay_callback = create_step_decay_callback(lr0, lrf, step_interval=5)
+            model.add_callback("on_train_epoch_start", step_decay_callback)
+            self.logger.info("Added step decay LR scheduler: lr0=%s, lrf=%s, step_interval=5", lr0, lrf)
+        else:
+            self.logger.info("Using standard AdamW linear LR schedule: lr0=%s, lrf=%s (cos_lr=False)", lr0, lrf)
 
         device = select_device(config.training.device)
 
         self.logger.info(
-            "Training baseline (epochs=%s, device=%s, optimizer=%s, lr0=%s, lrf=%s, batch=%s)",
+            "Training baseline (epochs=%s, device=%s, optimizer=%s, lr0=%s, lrf=%s, batch=%s, seed=%s)",
             baseline_epochs,
             device,
             optimizer,
             lr0,
             lrf,
             batch_size,
+            seed,
         )
 
         train_start = time.time()
@@ -118,14 +125,15 @@ class Baseline_Trainer:  # pylint: disable=too-few-public-methods
             "lr0": lr0,
             "lrf": lrf,
             "cos_lr": False,
-            "seed": seed,
+            "seed": seed,  # Explicitly enforce configured seed for Ultralytics (TASK-R2-03)
+            "deterministic": True,  # Ensure deterministic cuDNN algorithms (TASK-MIN-03)
             "device": device,
             "project": yolo_project,
             "name": f"{config_name}/{baseline_name}",
             "exist_ok": True,
             "verbose": True,
             "patience": config.training.patience,
-            "workers": 0,
+            "workers": 0 if sys.platform == "win32" else 4,
             "mosaic": getattr(config.training, "mosaic", 1.0),
             "scale": getattr(config.training, "scale", 0.5),
             "fliplr": getattr(config.training, "fliplr", 0.5),
@@ -143,6 +151,35 @@ class Baseline_Trainer:  # pylint: disable=too-few-public-methods
         training_time = time.time() - train_start
         self.logger.info("Baseline training completed in %.2f seconds", training_time)
 
+        # Extract trainer actual stopping epoch and best epoch (TASK-MAJ-12)
+        actual_stopped_epoch = None
+        best_epoch = None
+        try:
+            trainer = getattr(model, "trainer", None)
+            if trainer is not None:
+                raw_epoch = getattr(trainer, "epoch", None)
+                raw_best = getattr(trainer, "best_epoch", None)
+                if raw_epoch is not None:
+                    actual_stopped_epoch = int(raw_epoch) + 1
+                if raw_best is not None:
+                    best_epoch = int(raw_best) + 1
+                self.logger.info(
+                    "Baseline epoch accounting: stopped at epoch %s/%s (best epoch: %s)",
+                    actual_stopped_epoch,
+                    baseline_epochs,
+                    best_epoch,
+                )
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            self.logger.warning("Could not read stopping epoch from baseline trainer: %s", exc)
+
+        effective_epochs = actual_stopped_epoch if actual_stopped_epoch is not None else baseline_epochs
+        steps_per_epoch = math.ceil(len(full_training_images) / batch_size)
+        total_optimizer_steps = steps_per_epoch * effective_epochs
+        total_images_processed = len(full_training_images) * effective_epochs
+
+        gflops = get_model_gflops(config.model.name)
+        total_training_tflops = (3.0 * gflops * total_images_processed) / 1000.0
+
         # Use Output_Manager to resolve checkpoint path
         checkpoint_path = self.output_manager.resolve_checkpoint_path(
             model_name=config_name, round_name=f"{config_name}_baseline", checkpoint_type="best"
@@ -155,6 +192,13 @@ class Baseline_Trainer:  # pylint: disable=too-few-public-methods
             "training_time_seconds": training_time,
             "training_set_size": len(full_training_images),
             "epochs": baseline_epochs,
+            "actual_stopped_epoch": actual_stopped_epoch,
+            "best_epoch": best_epoch,
+            "patience": config.training.patience,
+            "total_optimizer_steps": total_optimizer_steps,
+            "total_images_processed": total_images_processed,
+            "gflops": gflops,
+            "total_training_tflops": total_training_tflops,
         }
 
     def _write_data_yaml(

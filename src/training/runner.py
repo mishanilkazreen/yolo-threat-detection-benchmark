@@ -3,6 +3,7 @@
 import gc
 import json
 import logging
+import math
 from pathlib import Path
 import time
 from typing import Any
@@ -19,11 +20,60 @@ from ..explainability.xai.manager import XAIManager
 from ..utils.output_manager import Output_Manager
 from .baseline_evaluator import Baseline_Evaluator
 from .baseline_trainer import Baseline_Trainer
-from .device_utils import create_step_decay_callback, select_device
+from .device_utils import create_step_decay_callback, get_model_gflops, select_device
 from .evaluator import Metrics_Collector
 from .seed_manager import Seed_Manager
 
 logger = logging.getLogger(__name__)
+
+
+def count_dataset_class_distribution(image_paths: list[str]) -> dict[str, Any]:
+    """Count knife vs pistol annotations and image frequencies across image paths."""
+    knife_boxes = 0
+    pistol_boxes = 0
+    images_with_knife = 0
+    images_with_pistol = 0
+
+    for img_path in image_paths:
+        p = Path(img_path)
+        parts = list(p.parts)
+        if "images" in parts:
+            idx = parts.index("images")
+            parts[idx] = "labels"
+            lbl_p = Path(*parts).with_suffix(".txt")
+        else:
+            lbl_p = p.parent.parent / "labels" / f"{p.stem}.txt"
+
+        has_knife = False
+        has_pistol = False
+        if lbl_p.exists():
+            for line in lbl_p.read_text(encoding="utf-8").splitlines():
+                parts_line = line.strip().split()
+                if not parts_line:
+                    continue
+                try:
+                    cls_id = int(parts_line[0])
+                    if cls_id == 0:
+                        knife_boxes += 1
+                        has_knife = True
+                    elif cls_id == 1:
+                        pistol_boxes += 1
+                        has_pistol = True
+                except (ValueError, IndexError):
+                    continue
+        if has_knife:
+            images_with_knife += 1
+        if has_pistol:
+            images_with_pistol += 1
+
+    return {
+        "knife_boxes": knife_boxes,
+        "pistol_boxes": pistol_boxes,
+        "total_boxes": knife_boxes + pistol_boxes,
+        "images_with_knife": images_with_knife,
+        "images_with_pistol": images_with_pistol,
+        "total_images": len(image_paths),
+    }
 
 
 class Experiment_Runner:
@@ -118,13 +168,25 @@ class Experiment_Runner:
 
         self.logger.debug("Memory cleanup completed")
 
-    def run_experiment(self, config_path: str, validate_dataset: bool = True) -> dict[str, Any]:
+    def run_experiment(
+        self,
+        config_path: str,
+        validate_dataset: bool = True,
+        seed: int | None = None,
+        device: str | None = None,
+        epochs: int | None = None,
+        runs: int | None = None,
+    ) -> dict[str, Any]:
         """
         Run complete experiment: training and evaluation.
 
         Args:
             config_path: Path to training configuration YAML
             validate_dataset: Whether to validate dataset before training
+            seed: Optional seed override (e.g. 42, 123, 456)
+            device: Optional device override (e.g. '0', 'cpu')
+            epochs: Optional epoch count override
+            runs: Optional number of multi-run seeds
 
         Returns:
             Dictionary of experiment results
@@ -134,6 +196,20 @@ class Experiment_Runner:
         # Load configuration
         config = ConfigurationParser.parse(config_path)
         config_name = Path(config_path).stem
+
+        # Apply CLI overrides if provided
+        if seed is not None:
+            config.training.seeds = [seed]
+            self.logger.info("CLI override: seed=%d", seed)
+        if device is not None:
+            config.training.device = str(device)
+            self.logger.info("CLI override: device=%s", device)
+        if epochs is not None:
+            config.training.epochs = epochs
+            self.logger.info("CLI override: epochs=%d", epochs)
+        if runs is not None:
+            config.training.runs = runs
+            self.logger.info("CLI override: runs=%d", runs)
 
         # Validate dataset if requested
         if validate_dataset:
@@ -189,12 +265,14 @@ class Experiment_Runner:
 
         # Get hyperparameters
         lr0 = getattr(config.training, "lr0", 0.001)
-        lrf = getattr(config.training, "lrf", 0.1)
-
-        # Create and add step decay LR scheduler callback
-        step_decay_callback = create_step_decay_callback(lr0, lrf, step_interval=5)
-        model.add_callback("on_train_epoch_start", step_decay_callback)
-        self.logger.info("Added step decay LR scheduler: lr0=%s, lrf=%s, step_interval=5", lr0, lrf)
+        # Reviewer 2 comment TASK-R2-02: Use verified AdamW linear LR schedule by default
+        use_step_decay = getattr(config.training, "use_step_decay", False)
+        if use_step_decay:
+            step_decay_callback = create_step_decay_callback(lr0, lrf, step_interval=5)
+            model.add_callback("on_train_epoch_start", step_decay_callback)
+            self.logger.info("Added step decay LR scheduler: lr0=%s, lrf=%s, step_interval=5", lr0, lrf)
+        else:
+            self.logger.info("Using standard AdamW linear LR schedule: lr0=%s, lrf=%s (cos_lr=False)", lr0, lrf)
 
         # Select device
         device = select_device(config.training.device)
@@ -215,8 +293,10 @@ class Experiment_Runner:
             verbose=True,
             lr0=lr0,
             lrf=lrf,
-            cos_lr=False,  # Disable cosine LR scheduler to use our custom step decay
-            workers=0,  # Run dataloader in main process (Windows pagefile safety)
+            cos_lr=False,
+            workers=0 if sys.platform == "win32" else 4,
+            seed=seed,  # Explicitly enforce configured seed for Ultralytics (TASK-R2-03)
+            deterministic=True,  # Ensure deterministic cuDNN algorithms (TASK-MIN-03)
         )
 
         training_time = time.time() - train_start
@@ -388,13 +468,17 @@ class Experiment_Runner:
         current_training_images = splits["train_init"].copy()
         unlabeled_pool = splits["unlabeled_pool"].copy()
 
-        # Track metrics across rounds
+        # Track metrics and cumulative compute across rounds (Reviewer 1 Major 3, Major 11)
         all_round_metrics = []
         best_checkpoint_path = None
         best_overall_checkpoint_path = None
         best_overall_map50 = -1.0
         best_overall_round = -1
         total_training_time = 0.0
+        cumulative_optimizer_steps = 0
+        cumulative_images_processed = 0
+        cumulative_training_tflops = 0.0
+        gflops = get_model_gflops(config.model.name)
 
         # Select device
         device = select_device(config.training.device)
@@ -405,6 +489,16 @@ class Experiment_Runner:
             self.logger.info("Round %d/%d", round_num, rounds)
             self.logger.info("Training set size: %d images", len(current_training_images))
             self.logger.info("Unlabeled pool size: %d images", len(unlabeled_pool))
+
+            # Audit and report class distribution for training set (TASK-MAJ-03)
+            class_dist = count_dataset_class_distribution(current_training_images)
+            self.logger.info(
+                "Training set class distribution: %d knife boxes (%d images), %d pistol boxes (%d images)",
+                class_dist["knife_boxes"],
+                class_dist["images_with_knife"],
+                class_dist["pistol_boxes"],
+                class_dist["images_with_pistol"],
+            )
             self.logger.info("%s\n", "=" * 60)
 
             # Skip rounds where the previous simulation produced no verified samples.
@@ -458,13 +552,20 @@ class Experiment_Runner:
                     raise ValueError(f"No checkpoint found from Round {round_num - 1}")
                 model = YOLO(best_checkpoint_path)
 
-            # Create and add step decay LR scheduler callback
-            step_decay_callback = create_step_decay_callback(lr0, lrf, step_interval=5)
-            model.add_callback("on_train_epoch_start", step_decay_callback)
-            if round_num == 1:
-                self.logger.info(
-                    "Added step decay LR scheduler: lr0=%s, lrf=%s, step_interval=5", lr0, lrf
-                )
+            # Reviewer 2 comment TASK-R2-02: Use verified AdamW linear LR schedule by default
+            use_step_decay = getattr(config.training, "use_step_decay", False)
+            if use_step_decay:
+                step_decay_callback = create_step_decay_callback(lr0, lrf, step_interval=5)
+                model.add_callback("on_train_epoch_start", step_decay_callback)
+                if round_num == 1:
+                    self.logger.info(
+                        "Added step decay LR scheduler: lr0=%s, lrf=%s, step_interval=5", lr0, lrf
+                    )
+            else:
+                if round_num == 1:
+                    self.logger.info(
+                        "Using standard AdamW linear LR schedule: lr0=%s, lrf=%s (cos_lr=False)", lr0, lrf
+                    )
 
             # Train model for this round
             self.logger.info(
@@ -487,19 +588,21 @@ class Experiment_Runner:
                 "optimizer": optimizer,
                 "lr0": lr0,
                 "lrf": lrf,
-                "cos_lr": False,  # Disable cosine LR scheduler; use our custom step decay
+                "cos_lr": False,
                 "device": device,
                 "project": self.output_manager.get_yolo_project_parameter(config_name),
                 "name": f"{config_name}/incremental_round_{round_num}",
                 "exist_ok": True,
                 "verbose": True,
-                "workers": 0,  # Run dataloader in main process (Windows pagefile safety)
+                "workers": 0 if sys.platform == "win32" else 4,
                 "mosaic": config.training.mosaic,
                 "scale": config.training.scale,
                 "fliplr": config.training.fliplr,
                 "hsv_h": config.training.hsv_h,
                 "hsv_s": config.training.hsv_s,
                 "hsv_v": config.training.hsv_v,
+                "seed": seed,  # Explicitly enforce configured seed for Ultralytics (TASK-R2-03)
+                "deterministic": True,  # Ensure deterministic cuDNN algorithms (TASK-MIN-03)
             }
             if config.training.freeze is not None:
                 train_kwargs["freeze"] = config.training.freeze
@@ -603,6 +706,16 @@ class Experiment_Runner:
                     except OSError as exc:
                         self.logger.warning("Could not load previous validation results: %s", exc)
 
+            effective_epochs = actual_stopped_epoch if actual_stopped_epoch is not None else epochs_per_round
+            steps_per_epoch = math.ceil(len(current_training_images) / batch_size)
+            round_optimizer_steps = steps_per_epoch * effective_epochs
+            round_images_processed = len(current_training_images) * effective_epochs
+            round_tflops = (3.0 * gflops * round_images_processed) / 1000.0
+
+            cumulative_optimizer_steps += round_optimizer_steps
+            cumulative_images_processed += round_images_processed
+            cumulative_training_tflops += round_tflops
+
             round_metrics = self.metrics_collector.collect_round_metrics(
                 checkpoint_path=best_checkpoint_path,
                 data_yaml=round_data_yamls[round_num],
@@ -618,6 +731,14 @@ class Experiment_Runner:
                 total_detections=total_detections,
                 actual_stopped_epoch=actual_stopped_epoch,
                 best_epoch=best_epoch,
+                class_distribution=class_dist,
+                optimizer_steps=round_optimizer_steps,
+                cumulative_optimizer_steps=cumulative_optimizer_steps,
+                images_processed=round_images_processed,
+                cumulative_images_processed=cumulative_images_processed,
+                gflops=gflops,
+                training_tflops=round_tflops,
+                cumulative_training_tflops=cumulative_training_tflops,
             )
 
             all_round_metrics.append(round_metrics)
@@ -761,6 +882,9 @@ class Experiment_Runner:
             config_name=config_name,
             random_seed=seed,
             total_training_time=total_training_time,
+            cumulative_optimizer_steps=cumulative_optimizer_steps,
+            cumulative_images_processed=cumulative_images_processed,
+            cumulative_training_tflops=cumulative_training_tflops,
         )
 
         # Aggregate round-level metrics

@@ -1,0 +1,584 @@
+[
+  {
+    "architecture": "yolov8n",
+    "total_layers": 23,
+    "total_parameters": 3157200,
+    "components": {
+      "backbone": {
+        "layer_indices": "0\u20139",
+        "parameters": 1272656,
+        "percentage": 40.31
+      },
+      "neck": {
+        "layer_indices": "10\u201321",
+        "parameters": 986880,
+        "percentage": 31.26
+      },
+      "head": {
+        "layer_indices": "22",
+        "parameters": 897664,
+        "percentage": 28.43
+      }
+    },
+    "freeze_strategies": {
+      "full_finetuning": {
+        "freeze_arg": 0,
+        "trainable_parameters": 3157200,
+        "trainable_percentage": 100.0,
+        "frozen_parameters": 0,
+        "frozen_percentage": 0.0
+      },
+      "frozen_backbone": {
+        "freeze_arg": 10,
+        "frozen_layers": "0\u20139",
+        "trainable_parameters": 1884544,
+        "trainable_percentage": 59.69,
+        "frozen_parameters": 1272656,
+        "frozen_percentage": 40.31
+      },
+      "head_only": {
+        "freeze_arg": 22,
+        "frozen_layers": "0\u201321",
+        "trainable_parameters": 897664,
+        "trainable_percentage": 28.43,
+        "frozen_parameters": 2259536,
+        "frozen_percentage": 71.57
+      }
+    },
+    "detection_head_weight_handling": {
+      "source_classes": 80,
+      "target_classes": 2,
+      "box_regression_cv2": "Transferred verbatim (class-agnostic coordinates and DFL representation)",
+      "classification_cv3": "Final projection layers (cv3.2) resized from 80 to 2 outputs; weights re-initialized randomly via Ultralytics intersect_dicts",
+      "backbone_and_neck": "100% pretrained weights preserved and loaded directly"
+    },
+    "layer_breakdown": [
+      {
+        "index": 0,
+        "type": "Conv",
+        "component": "Backbone",
+        "parameters": 464
+      },
+      {
+        "index": 1,
+        "type": "Conv",
+        "component": "Backbone",
+        "parameters": 4672
+      },
+      {
+        "index": 2,
+        "type": "C2f",
+        "component": "Backbone",
+        "parameters": 7360
+      },
+      {
+        "index": 3,
+        "type": "Conv",
+        "component": "Backbone",
+        "parameters": 18560
+      },
+      {
+        "index": 4,
+        "type": "C2f",
+        "component": "Backbone",
+        "parameters": 49664
+      },
+      {
+        "index": 5,
+        "type": "Conv",
+        "component": "Backbone",
+        "parameters": 73984
+      },
+      {
+        "index": 6,
+        "type": "C2f",
+        "component": "Backbone",
+        "parameters": 197632
+      },
+      {
+        "index": 7,
+        "type": "Conv",
+        "component": "Backbone",
+        "parameters": 295424
+      },
+      {
+        "index": 8,
+        "type": "C2f",
+        "component": "Backbone",
+        "parameters": 460288
+      },
+      {
+        "index": 9,
+        "type": "SPPF",
+        "component": "Backbone",
+        "parameters": 164608
+      },
+      {
+        "index": 10,
+        "type": "Upsample",
+        "component": "Neck",
+        "parameters": 0
+      },
+      {
+        "index": 11,
+        "type": "Concat",
+        "component": "Neck",
+        "parameters": 0
+      },
+      {
+        "index": 12,
+        "type": "C2f",
+        "component": "Neck",
+        "parameters": 148224
+      },
+      {
+        "index": 13,
+        "type": "Upsample",
+        "component": "Neck",
+        "parameters": 0
+      },
+      {
+        "index": 14,
+        "type": "Concat",
+        "component": "Neck",
+        "parameters": 0
+      },
+      {
+        "index": 15,
+        "type": "C2f",
+        "component": "Neck",
+        "parameters": 37248
+      },
+      {
+        "index": 16,
+        "type": "Conv",
+        "component": "Neck",
+        "parameters": 36992
+      },
+      {
+        "index": 17,
+        "type": "Concat",
+        "component": "Neck",
+        "parameters": 0
+      },
+      {
+        "index": 18,
+        "type": "C2f",
+        "component": "Neck",
+        "parameters": 123648
+      },
+      {
+        "index": 19,
+        "type": "Conv",
+        "component": "Neck",
+        "parameters": 147712
+      },
+      {
+        "index": 20,
+        "type": "Concat",
+        "component": "Neck",
+        "parameters": 0
+      },
+      {
+        "index": 21,
+        "type": "C2f",
+        "component": "Neck",
+        "parameters": 493056
+      },
+      {
+        "index": 22,
+        "type": "Detect",
+        "component": "Head",
+        "parameters": 897664
+      }
+    ]
+  },
+  {
+    "architecture": "yolo11n",
+    "total_layers": 24,
+    "total_parameters": 2624080,
+    "components": {
+      "backbone": {
+        "layer_indices": "0\u201310",
+        "parameters": 1365472,
+        "percentage": 52.04
+      },
+      "neck": {
+        "layer_indices": "11\u201322",
+        "parameters": 793696,
+        "percentage": 30.25
+      },
+      "head": {
+        "layer_indices": "23",
+        "parameters": 464912,
+        "percentage": 17.72
+      }
+    },
+    "freeze_strategies": {
+      "full_finetuning": {
+        "freeze_arg": 0,
+        "trainable_parameters": 2624080,
+        "trainable_percentage": 100.0,
+        "frozen_parameters": 0,
+        "frozen_percentage": 0.0
+      },
+      "frozen_backbone": {
+        "freeze_arg": 11,
+        "frozen_layers": "0\u201310",
+        "trainable_parameters": 1258608,
+        "trainable_percentage": 47.96,
+        "frozen_parameters": 1365472,
+        "frozen_percentage": 52.04
+      },
+      "head_only": {
+        "freeze_arg": 23,
+        "frozen_layers": "0\u201322",
+        "trainable_parameters": 464912,
+        "trainable_percentage": 17.72,
+        "frozen_parameters": 2159168,
+        "frozen_percentage": 82.28
+      }
+    },
+    "detection_head_weight_handling": {
+      "source_classes": 80,
+      "target_classes": 2,
+      "box_regression_cv2": "Transferred verbatim (class-agnostic coordinates and DFL representation)",
+      "classification_cv3": "Final projection layers (cv3.2) resized from 80 to 2 outputs; weights re-initialized randomly via Ultralytics intersect_dicts",
+      "backbone_and_neck": "100% pretrained weights preserved and loaded directly"
+    },
+    "layer_breakdown": [
+      {
+        "index": 0,
+        "type": "Conv",
+        "component": "Backbone",
+        "parameters": 464
+      },
+      {
+        "index": 1,
+        "type": "Conv",
+        "component": "Backbone",
+        "parameters": 4672
+      },
+      {
+        "index": 2,
+        "type": "C3k2",
+        "component": "Backbone",
+        "parameters": 6640
+      },
+      {
+        "index": 3,
+        "type": "Conv",
+        "component": "Backbone",
+        "parameters": 36992
+      },
+      {
+        "index": 4,
+        "type": "C3k2",
+        "component": "Backbone",
+        "parameters": 26080
+      },
+      {
+        "index": 5,
+        "type": "Conv",
+        "component": "Backbone",
+        "parameters": 147712
+      },
+      {
+        "index": 6,
+        "type": "C3k2",
+        "component": "Backbone",
+        "parameters": 87040
+      },
+      {
+        "index": 7,
+        "type": "Conv",
+        "component": "Backbone",
+        "parameters": 295424
+      },
+      {
+        "index": 8,
+        "type": "C3k2",
+        "component": "Backbone",
+        "parameters": 346112
+      },
+      {
+        "index": 9,
+        "type": "SPPF",
+        "component": "Backbone",
+        "parameters": 164608
+      },
+      {
+        "index": 10,
+        "type": "C2PSA",
+        "component": "Backbone",
+        "parameters": 249728
+      },
+      {
+        "index": 11,
+        "type": "Upsample",
+        "component": "Neck",
+        "parameters": 0
+      },
+      {
+        "index": 12,
+        "type": "Concat",
+        "component": "Neck",
+        "parameters": 0
+      },
+      {
+        "index": 13,
+        "type": "C3k2",
+        "component": "Neck",
+        "parameters": 111296
+      },
+      {
+        "index": 14,
+        "type": "Upsample",
+        "component": "Neck",
+        "parameters": 0
+      },
+      {
+        "index": 15,
+        "type": "Concat",
+        "component": "Neck",
+        "parameters": 0
+      },
+      {
+        "index": 16,
+        "type": "C3k2",
+        "component": "Neck",
+        "parameters": 32096
+      },
+      {
+        "index": 17,
+        "type": "Conv",
+        "component": "Neck",
+        "parameters": 36992
+      },
+      {
+        "index": 18,
+        "type": "Concat",
+        "component": "Neck",
+        "parameters": 0
+      },
+      {
+        "index": 19,
+        "type": "C3k2",
+        "component": "Neck",
+        "parameters": 86720
+      },
+      {
+        "index": 20,
+        "type": "Conv",
+        "component": "Neck",
+        "parameters": 147712
+      },
+      {
+        "index": 21,
+        "type": "Concat",
+        "component": "Neck",
+        "parameters": 0
+      },
+      {
+        "index": 22,
+        "type": "C3k2",
+        "component": "Neck",
+        "parameters": 378880
+      },
+      {
+        "index": 23,
+        "type": "Detect",
+        "component": "Head",
+        "parameters": 464912
+      }
+    ]
+  },
+  {
+    "architecture": "yolo12n",
+    "total_layers": 22,
+    "total_parameters": 2603056,
+    "components": {
+      "backbone": {
+        "layer_indices": "0\u20138",
+        "parameters": 1389024,
+        "percentage": 53.36
+      },
+      "neck": {
+        "layer_indices": "9\u201320",
+        "parameters": 749120,
+        "percentage": 28.78
+      },
+      "head": {
+        "layer_indices": "21",
+        "parameters": 464912,
+        "percentage": 17.86
+      }
+    },
+    "freeze_strategies": {
+      "full_finetuning": {
+        "freeze_arg": 0,
+        "trainable_parameters": 2603056,
+        "trainable_percentage": 100.0,
+        "frozen_parameters": 0,
+        "frozen_percentage": 0.0
+      },
+      "frozen_backbone": {
+        "freeze_arg": 9,
+        "frozen_layers": "0\u20138",
+        "trainable_parameters": 1214032,
+        "trainable_percentage": 46.64,
+        "frozen_parameters": 1389024,
+        "frozen_percentage": 53.36
+      },
+      "head_only": {
+        "freeze_arg": 21,
+        "frozen_layers": "0\u201320",
+        "trainable_parameters": 464912,
+        "trainable_percentage": 17.86,
+        "frozen_parameters": 2138144,
+        "frozen_percentage": 82.14
+      }
+    },
+    "detection_head_weight_handling": {
+      "source_classes": 80,
+      "target_classes": 2,
+      "box_regression_cv2": "Transferred verbatim (class-agnostic coordinates and DFL representation)",
+      "classification_cv3": "Final projection layers (cv3.2) resized from 80 to 2 outputs; weights re-initialized randomly via Ultralytics intersect_dicts",
+      "backbone_and_neck": "100% pretrained weights preserved and loaded directly"
+    },
+    "layer_breakdown": [
+      {
+        "index": 0,
+        "type": "Conv",
+        "component": "Backbone",
+        "parameters": 464
+      },
+      {
+        "index": 1,
+        "type": "Conv",
+        "component": "Backbone",
+        "parameters": 4672
+      },
+      {
+        "index": 2,
+        "type": "C3k2",
+        "component": "Backbone",
+        "parameters": 6640
+      },
+      {
+        "index": 3,
+        "type": "Conv",
+        "component": "Backbone",
+        "parameters": 36992
+      },
+      {
+        "index": 4,
+        "type": "C3k2",
+        "component": "Backbone",
+        "parameters": 26080
+      },
+      {
+        "index": 5,
+        "type": "Conv",
+        "component": "Backbone",
+        "parameters": 147712
+      },
+      {
+        "index": 6,
+        "type": "A2C2f",
+        "component": "Backbone",
+        "parameters": 181120
+      },
+      {
+        "index": 7,
+        "type": "Conv",
+        "component": "Backbone",
+        "parameters": 295424
+      },
+      {
+        "index": 8,
+        "type": "A2C2f",
+        "component": "Backbone",
+        "parameters": 689920
+      },
+      {
+        "index": 9,
+        "type": "Upsample",
+        "component": "Neck",
+        "parameters": 0
+      },
+      {
+        "index": 10,
+        "type": "Concat",
+        "component": "Neck",
+        "parameters": 0
+      },
+      {
+        "index": 11,
+        "type": "A2C2f",
+        "component": "Neck",
+        "parameters": 86912
+      },
+      {
+        "index": 12,
+        "type": "Upsample",
+        "component": "Neck",
+        "parameters": 0
+      },
+      {
+        "index": 13,
+        "type": "Concat",
+        "component": "Neck",
+        "parameters": 0
+      },
+      {
+        "index": 14,
+        "type": "A2C2f",
+        "component": "Neck",
+        "parameters": 24000
+      },
+      {
+        "index": 15,
+        "type": "Conv",
+        "component": "Neck",
+        "parameters": 36992
+      },
+      {
+        "index": 16,
+        "type": "Concat",
+        "component": "Neck",
+        "parameters": 0
+      },
+      {
+        "index": 17,
+        "type": "A2C2f",
+        "component": "Neck",
+        "parameters": 74624
+      },
+      {
+        "index": 18,
+        "type": "Conv",
+        "component": "Neck",
+        "parameters": 147712
+      },
+      {
+        "index": 19,
+        "type": "Concat",
+        "component": "Neck",
+        "parameters": 0
+      },
+      {
+        "index": 20,
+        "type": "C3k2",
+        "component": "Neck",
+        "parameters": 378880
+      },
+      {
+        "index": 21,
+        "type": "Detect",
+        "component": "Head",
+        "parameters": 464912
+      }
+    ]
+  }
+]
