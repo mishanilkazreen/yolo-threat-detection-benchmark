@@ -27,6 +27,19 @@ from .seed_manager import Seed_Manager
 
 logger = logging.getLogger(__name__)
 
+# Prevent race condition when concurrent cluster jobs unlink labels.cache simultaneously (TASK-R2-03)
+_original_path_unlink = Path.unlink
+
+
+def _safe_path_unlink(self, missing_ok: bool = True) -> None:
+    try:
+        _original_path_unlink(self, missing_ok=missing_ok)
+    except FileNotFoundError:
+        pass
+
+
+Path.unlink = _safe_path_unlink  # type: ignore[assignment]
+
 
 def count_dataset_class_distribution(image_paths: list[str]) -> dict[str, Any]:
     """Count knife vs pistol annotations and image frequencies across image paths."""
@@ -650,16 +663,16 @@ class Experiment_Runner:
                         best_epoch = int(raw_best) + 1
                     if config.training.patience > 0:
                         self.logger.info(
-                            "Early stopping: stopped at epoch %d/%d (best epoch: %d)",
-                            actual_stopped_epoch,
+                            "Early stopping: stopped at epoch %s/%d (best epoch: %s)",
+                            str(actual_stopped_epoch),
                             epochs_per_round,
-                            best_epoch,
+                            str(best_epoch),
                         )
                     else:
                         self.logger.info(
-                            "Training completed all %d epochs (best epoch: %d)",
-                            actual_stopped_epoch,
-                            best_epoch,
+                            "Training completed all %s epochs (best epoch: %s)",
+                            str(actual_stopped_epoch),
+                            str(best_epoch),
                         )
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 self.logger.warning("Could not read stopping epoch from trainer: %s", exc)

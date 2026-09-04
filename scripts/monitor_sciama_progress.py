@@ -57,10 +57,11 @@ def get_queue_info() -> tuple[list[dict], list[dict]]:
 
 def get_completed_counts() -> tuple[int, int, int]:
     cmd = (
-        "cd /mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark && "
-        "echo $(find outputs -name 'final_test_metrics.json' | wc -l) "
-        "$(find outputs -name 'baseline_summary.json' | wc -l) "
-        "$(ls outputs/coco_knife_overlap_evaluation.json outputs/decomposed_latency_benchmark.json 2>/dev/null | wc -l)"
+        "python3 -c 'import glob, json, os; "
+        "new_m = sum(1 for p in glob.glob(\"/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/outputs/**/final_test_metrics.json\", recursive=True) if json.load(open(p)).get(\"cumulative_optimizer_steps\", 0) > 0); "
+        "base_m = sum(1 for p in glob.glob(\"/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/outputs/**/baseline_summary.json\", recursive=True) if \"100ep\" not in p and json.load(open(p)).get(\"total_optimizer_steps\", 0) > 0); "
+        "fast_m = sum(1 for p in [\"/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/outputs/coco_knife_overlap_evaluation.json\", \"/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/outputs/decomposed_latency_benchmark.json\"] if os.path.exists(p)); "
+        "print(new_m, base_m, fast_m)'"
     )
     raw = run_ssh(cmd)
     try:
@@ -88,12 +89,15 @@ def display_dashboard():
     running, pending = get_queue_info()
     multiseed_done, baselines_done, fast_done = get_completed_counts()
     total_done = multiseed_done + baselines_done + fast_done
-    remaining_jobs = max(0, TOTAL_EXPECTED_JOBS - total_done)
+    remaining_multiseed = max(0, 60 - multiseed_done)
 
-    # ETA Calculation:
-    # Baselines ~40m, 50-epoch ~10m, 500-epoch ~100m.
-    # Weighted average remaining job duration ~50 minutes across 2 GPUs
-    est_remaining_minutes = (remaining_jobs * 50) / MAX_CONCURRENT_GPUS
+    # Realistic ETA Calculation based on actual benchmarks on NVIDIA A100/L40:
+    # 50-epoch runs: ~10 minutes/run
+    # 100-epoch runs: ~75 minutes/run (with patience=10 early stopping)
+    # Remaining 49 runs are a mix of ~20 50-epoch and ~29 100-epoch runs
+    # Total remaining GPU time ≈ (20 * 10 + 29 * 75) = 2,375 GPU-minutes
+    # SCIAMA concurrency: 2 GPU workers (QOSMaxJobsPerUserLimit)
+    est_remaining_minutes = (remaining_multiseed * 48) / MAX_CONCURRENT_GPUS
     eta_time = now + timedelta(minutes=est_remaining_minutes)
 
     print("\033[2J\033[H", end="")  # Clear screen

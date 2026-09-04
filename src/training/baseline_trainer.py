@@ -16,6 +16,19 @@ from .device_utils import create_step_decay_callback, get_model_gflops, select_d
 
 logger = logging.getLogger(__name__)
 
+# Prevent race condition when concurrent cluster jobs unlink labels.cache simultaneously
+_original_path_unlink = Path.unlink
+
+
+def _safe_path_unlink(self, missing_ok: bool = True) -> None:
+    try:
+        _original_path_unlink(self, missing_ok=missing_ok)
+    except FileNotFoundError:
+        pass
+
+
+Path.unlink = _safe_path_unlink  # type: ignore[assignment]
+
 
 class Baseline_Trainer:  # pylint: disable=too-few-public-methods
     """
