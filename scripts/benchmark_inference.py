@@ -312,7 +312,7 @@ def main() -> None:
     )
 
     device_str = select_device(args.device)
-    device = torch.device(device_str if "cuda" in device_str else "cpu")
+    device = torch.device(device_str)
     print("\n" + "=" * 80)
     print("DECOMPOSED REAL-TIME INFERENCE BENCHMARK")
     print("=" * 80)

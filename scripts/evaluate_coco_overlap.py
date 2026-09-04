@@ -280,7 +280,7 @@ def main() -> None:
     )
 
     device_str = select_device(args.device)
-    device = torch.device(device_str if "cuda" in device_str else "cpu")
+    device = torch.device(device_str)
 
     test_list_path = PROJECT_ROOT / args.test_list
     if not test_list_path.exists():
