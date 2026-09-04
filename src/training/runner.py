@@ -247,8 +247,8 @@ class Experiment_Runner:
         # Check if incremental training is enabled
         if (
             hasattr(config.training, "rounds")
-            and config.training.rounds
-            and config.training.rounds > 1
+            and config.training.rounds is not None
+            and config.training.rounds >= 1
         ):
             return self._run_incremental_training(config, config_name, seed, run_id)
         return self._run_standard_training(config, config_name, seed, run_id)
@@ -275,6 +275,7 @@ class Experiment_Runner:
 
         # Get hyperparameters
         lr0 = getattr(config.training, "lr0", 0.001)
+        lrf = getattr(config.training, "lrf", 0.1)
         # Reviewer 2 comment TASK-R2-02: Use verified AdamW linear LR schedule by default
         use_step_decay = getattr(config.training, "use_step_decay", False)
         if use_step_decay:
