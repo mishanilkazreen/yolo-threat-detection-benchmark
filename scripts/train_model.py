@@ -30,6 +30,8 @@ def parse_args():
     parser.add_argument("--seed", type=int, default=None, help="Random seed override (e.g. 42, 123, 456)")
     parser.add_argument("--device", type=str, default=None, help="Device override (e.g. '0', 'cpu')")
     parser.add_argument("--epochs", type=int, default=None, help="Epoch count override")
+    parser.add_argument("--epochs-per-round", type=int, default=None, help="Epochs per round override")
+    parser.add_argument("--rounds", type=int, default=None, help="Incremental rounds override (e.g. 5)")
     parser.add_argument("--runs", type=int, default=None, help="Number of multi-seed runs")
     parser.add_argument(
         "--no-validate-dataset", action="store_true", help="Skip dataset validation check"
@@ -65,6 +67,8 @@ def main():
         seed=args.seed,
         device=args.device,
         epochs=args.epochs,
+        epochs_per_round=args.epochs_per_round,
+        rounds=args.rounds,
         runs=args.runs,
     )
 

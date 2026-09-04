@@ -175,6 +175,8 @@ class Experiment_Runner:
         seed: int | None = None,
         device: str | None = None,
         epochs: int | None = None,
+        epochs_per_round: int | None = None,
+        rounds: int | None = None,
         runs: int | None = None,
     ) -> dict[str, Any]:
         """
@@ -186,6 +188,8 @@ class Experiment_Runner:
             seed: Optional seed override (e.g. 42, 123, 456)
             device: Optional device override (e.g. '0', 'cpu')
             epochs: Optional epoch count override
+            epochs_per_round: Optional epochs per round override
+            rounds: Optional incremental rounds override
             runs: Optional number of multi-run seeds
 
         Returns:
@@ -207,6 +211,12 @@ class Experiment_Runner:
         if epochs is not None:
             config.training.epochs = epochs
             self.logger.info("CLI override: epochs=%d", epochs)
+        if epochs_per_round is not None:
+            config.training.epochs_per_round = epochs_per_round
+            self.logger.info("CLI override: epochs_per_round=%d", epochs_per_round)
+        if rounds is not None:
+            config.training.rounds = rounds
+            self.logger.info("CLI override: rounds=%d", rounds)
         if runs is not None:
             config.training.runs = runs
             self.logger.info("CLI override: runs=%d", runs)
