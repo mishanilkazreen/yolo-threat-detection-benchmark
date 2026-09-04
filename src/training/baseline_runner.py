@@ -76,10 +76,14 @@ class Baseline_Runner:
         seed = config.training.seeds[0] if config.training.seeds else 42
         self.seed_manager.set_seed(seed)
 
-        # Use a shared outputs/{config_name}/ directory (mirrors incremental runner).
+        effective_config_name = (
+            f"{config_name}_seed_{seed}" if (seed is not None and seed != 42) else config_name
+        )
+
+        # Use a shared outputs/{effective_config_name}/ directory (mirrors incremental runner).
         output_dir = str(
             self.output_manager.get_evaluation_output_path(
-                model_name=config_name, round_name=None, create=True
+                model_name=effective_config_name, round_name=None, create=True
             ).parent
         )
 
@@ -127,7 +131,7 @@ class Baseline_Runner:
         trainer = Baseline_Trainer()
         train_result = trainer.train(
             config=config,
-            config_name=config_name,
+            config_name=effective_config_name,
             full_training_images=full_training_images,
             val_images=splits["val_fixed"],
             base_path=base_path,
@@ -146,7 +150,7 @@ class Baseline_Runner:
         evaluator = Baseline_Evaluator(output_manager=self.output_manager)
         eval_result = evaluator.evaluate(
             checkpoint_path=str(train_result["checkpoint_path"]),
-            config_name=config_name,
+            config_name=effective_config_name,
             val_data_yaml=str(eval_yaml_path),
             test_data_yaml=str(eval_yaml_path),
             hfs_image_subset=splits["val_fixed"],

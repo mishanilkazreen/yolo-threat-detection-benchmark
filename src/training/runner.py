@@ -245,14 +245,18 @@ class Experiment_Runner:
         # Set seed for reproducibility
         self.seed_manager.set_seed(seed)
 
+        effective_config_name = (
+            f"{config_name}_seed_{seed}" if (seed is not None and seed != 42) else config_name
+        )
+
         # Check if incremental training is enabled
         if (
             hasattr(config.training, "rounds")
             and config.training.rounds is not None
             and config.training.rounds >= 1
         ):
-            return self._run_incremental_training(config, config_name, seed, run_id)
-        return self._run_standard_training(config, config_name, seed, run_id)
+            return self._run_incremental_training(config, effective_config_name, seed, run_id)
+        return self._run_standard_training(config, effective_config_name, seed, run_id)
 
     def _run_standard_training(
         self, config: Configuration, config_name: str, seed: int, run_id: int | None = None
