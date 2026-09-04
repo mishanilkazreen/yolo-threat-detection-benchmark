@@ -1,0 +1,10 @@
+{
+  "rounds": [
+    {
+      "round": 2,
+      "training_set_size": 2448,
+      "samples_added": 1739,
+      "unlabeled_remaining": 1097
+    }
+  ]
+}

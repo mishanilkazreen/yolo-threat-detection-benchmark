@@ -1,0 +1,59 @@
+{
+  "round": 5,
+  "timestamp": "2026-09-04 10:23:14",
+  "checkpoint_path": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/runs/yolov8n_pretrained_seed_123/incremental_round_5/weights/best.pt",
+  "training_set_size": 3305,
+  "verified_samples_added": 58,
+  "training_time_seconds": 175.72771549224854,
+  "validation_time_seconds": 4.436373710632324,
+  "metrics": {
+    "mAP50": 0.910679157122773,
+    "mAP50-95": 0.6670806747775314,
+    "precision": 0.9068417831475979,
+    "recall": 0.8295456184922607,
+    "f1_score": 0.8664732618600571
+  },
+  "rejected_count": 102,
+  "undetected_count": 164,
+  "remaining_pool_size": 240,
+  "unlabeled_pool_size_at_round_start": 240,
+  "total_detections": 162,
+  "actual_stopped_epoch": 10,
+  "class_distribution": {
+    "knife_boxes": 1449,
+    "pistol_boxes": 2198,
+    "total_boxes": 3647,
+    "images_with_knife": 1392,
+    "images_with_pistol": 1913,
+    "total_images": 3305
+  },
+  "optimizer_steps": 2070,
+  "cumulative_optimizer_steps": 8200,
+  "images_processed": 33050,
+  "cumulative_images_processed": 130870,
+  "gflops": 8.7,
+  "training_tflops": 862.6049999999999,
+  "cumulative_training_tflops": 3415.707,
+  "per_class_metrics": {
+    "mAP50_per_class": [
+      0.9495105359969994,
+      0.8718477782485466
+    ],
+    "mAP50-95_per_class": [
+      0.6576674872337667,
+      0.6764938623212962
+    ],
+    "precision_per_class": [
+      0.9252190900533518,
+      0.8884644762418441
+    ],
+    "recall_per_class": [
+      0.8896713615023474,
+      0.7694198754821739
+    ],
+    "f1_score_per_class": [
+      0.9070970942958495,
+      0.8246681693683436
+    ]
+  }
+}

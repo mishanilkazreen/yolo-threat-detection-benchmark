@@ -1,41 +1,56 @@
 {
   "round": 1,
-  "timestamp": "2026-05-09 17:21:40",
-  "checkpoint_path": "C:\\Users\\manig\\Downloads\\yolo-improvement-detection-moderation-paper\\runs\\yolov8n_random\\incremental_round_1\\weights\\best.pt",
+  "timestamp": "2026-09-04 09:07:43",
+  "checkpoint_path": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/runs/yolov8n_random/incremental_round_1/weights/best.pt",
   "training_set_size": 709,
   "verified_samples_added": 0,
-  "training_time_seconds": 162.81079530715942,
-  "validation_time_seconds": 24.3357093334198,
+  "training_time_seconds": 69.6443076133728,
+  "validation_time_seconds": 4.990623712539673,
   "metrics": {
-    "mAP50": 0.19666446213348146,
-    "mAP50-95": 0.11455739716540045,
-    "precision": 0.758106872109874,
-    "recall": 0.1591240875912409,
-    "f1_score": 0.2630374891847136
+    "mAP50": 0.16505117660923213,
+    "mAP50-95": 0.08888782866900123,
+    "precision": 0.42583159421428285,
+    "recall": 0.18126467136150234,
+    "f1_score": 0.2542866044724863
   },
   "remaining_pool_size": 2836,
   "unlabeled_pool_size_at_round_start": 2836,
   "actual_stopped_epoch": 10,
+  "class_distribution": {
+    "knife_boxes": 306,
+    "pistol_boxes": 478,
+    "total_boxes": 784,
+    "images_with_knife": 291,
+    "images_with_pistol": 418,
+    "total_images": 709
+  },
+  "optimizer_steps": 450,
+  "cumulative_optimizer_steps": 450,
+  "images_processed": 7090,
+  "cumulative_images_processed": 7090,
+  "gflops": 8.7,
+  "training_tflops": 185.04899999999998,
+  "cumulative_training_tflops": 185.04899999999998,
   "per_class_metrics": {
     "mAP50_per_class": [
-      0.03100844314644713,
-      0.3623204811205158
+      0.04722715642213153,
+      0.2828751967963327
     ],
     "mAP50-95_per_class": [
-      0.008246520638852981,
-      0.22086827369194792
+      0.01728014785662319,
+      0.1604955094813793
     ],
     "precision_per_class": [
-      1.0,
-      0.5162137442197482
+      0.5206380138012279,
+      0.33102517462733777
     ],
     "recall_per_class": [
-      0.0,
-      0.3182481751824818
+      0.018779342723004695,
+      0.34375
     ],
     "f1_score_per_class": [
-      0.0,
-      0.39374854210180565
+      0.036251112714644276,
+      0.33726760573546827
     ]
   }
 }

@@ -1,0 +1,806 @@
+[
+  {
+    "model_name": "best",
+    "model_path": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/runs/yolov8n_baseline_pretrained_100ep/yolov8n_baseline_pretrained_100ep_baseline/weights/best.pt",
+    "precision": "FP32",
+    "parameters": 3011238,
+    "gflops": 8.7,
+    "batch_size": 1,
+    "imgsz": 640,
+    "iterations": 500,
+    "warmup": 100,
+    "device_name": "NVIDIA A100-PCIE-40GB MIG 1g.5gb",
+    "preprocess_ms": {
+      "mean": 1.1946378238499165,
+      "std": 0.14534559699635338,
+      "p50": 1.1295489966869354,
+      "p95": 1.5259692445397377,
+      "p99": 1.5416976250708103,
+      "min": 1.0015256702899933,
+      "max": 1.5637017786502838
+    },
+    "forward_ms": {
+      "mean": 7.182152912020683,
+      "std": 0.04969429541467576,
+      "p50": 7.172467187047005,
+      "p95": 7.331795338541269,
+      "p99": 7.363559324294329,
+      "min": 7.109310477972031,
+      "max": 7.438221946358681
+    },
+    "postprocess_ms": {
+      "mean": 0.6162347123026848,
+      "std": 0.18053116078112572,
+      "p50": 0.7167132571339607,
+      "p95": 0.7311169989407063,
+      "p99": 0.7358809188008308,
+      "min": 0.30909106135368347,
+      "max": 1.4509372413158417
+    },
+    "end_to_end_ms": {
+      "mean": 8.993025448173285,
+      "std": 0.25629792883501534,
+      "p50": 9.012839756906033,
+      "p95": 9.428149089217186,
+      "p99": 9.566128086298704,
+      "min": 8.503438904881477,
+      "max": 9.800225496292114
+    },
+    "fps_mean": 111.2,
+    "fps_median": 110.95,
+    "deadline_compliance": {
+      "Surveillance_30FPS": {
+        "deadline_ms": 33.333,
+        "slack_margin_p99_ms": 23.767,
+        "meets_deadline_p99": true
+      },
+      "HighSpeed_60FPS": {
+        "deadline_ms": 16.667,
+        "slack_margin_p99_ms": 7.101,
+        "meets_deadline_p99": true
+      },
+      "EdgeUltraFast_120FPS": {
+        "deadline_ms": 8.333,
+        "slack_margin_p99_ms": -1.233,
+        "meets_deadline_p99": false
+      }
+    }
+  },
+  {
+    "model_name": "best",
+    "model_path": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/runs/yolov8n_baseline_pretrained_100ep/yolov8n_baseline_pretrained_100ep_baseline/weights/best.pt",
+    "precision": "FP16",
+    "parameters": 3011238,
+    "gflops": 8.7,
+    "batch_size": 1,
+    "imgsz": 640,
+    "iterations": 500,
+    "warmup": 100,
+    "device_name": "NVIDIA A100-PCIE-40GB MIG 1g.5gb",
+    "preprocess_ms": {
+      "mean": 1.1547735892236233,
+      "std": 0.15540654618153527,
+      "p50": 1.0812720283865929,
+      "p95": 1.4727900736033916,
+      "p99": 1.5066692419350147,
+      "min": 0.9642075747251511,
+      "max": 1.9930358976125717
+    },
+    "forward_ms": {
+      "mean": 7.998634170740843,
+      "std": 0.2329468062754835,
+      "p50": 7.971285842359066,
+      "p95": 8.148242346942425,
+      "p99": 8.189202081412077,
+      "min": 7.890559732913971,
+      "max": 11.654743924736977
+    },
+    "postprocess_ms": {
+      "mean": 0.6307816505432129,
+      "std": 0.18558827804125072,
+      "p50": 0.7376717403531075,
+      "p95": 0.7513073273003101,
+      "p99": 0.7579696737229824,
+      "min": 0.310482457280159,
+      "max": 0.8326694369316101
+    },
+    "end_to_end_ms": {
+      "mean": 9.784189410507679,
+      "std": 0.3657541764723757,
+      "p50": 9.792489930987358,
+      "p95": 10.193377640098333,
+      "p99": 10.385304465889929,
+      "min": 9.243670850992203,
+      "max": 13.907449319958687
+    },
+    "fps_mean": 102.21,
+    "fps_median": 102.12,
+    "deadline_compliance": {
+      "Surveillance_30FPS": {
+        "deadline_ms": 33.333,
+        "slack_margin_p99_ms": 22.948,
+        "meets_deadline_p99": true
+      },
+      "HighSpeed_60FPS": {
+        "deadline_ms": 16.667,
+        "slack_margin_p99_ms": 6.282,
+        "meets_deadline_p99": true
+      },
+      "EdgeUltraFast_120FPS": {
+        "deadline_ms": 8.333,
+        "slack_margin_p99_ms": -2.052,
+        "meets_deadline_p99": false
+      }
+    }
+  },
+  {
+    "model_name": "best",
+    "model_path": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/runs/yolov8n_pretrained/incremental_round_1/weights/best.pt",
+    "precision": "FP32",
+    "parameters": 3011238,
+    "gflops": 8.7,
+    "batch_size": 1,
+    "imgsz": 640,
+    "iterations": 500,
+    "warmup": 100,
+    "device_name": "NVIDIA A100-PCIE-40GB MIG 1g.5gb",
+    "preprocess_ms": {
+      "mean": 1.194841742515564,
+      "std": 0.1703385105791262,
+      "p50": 1.1260826140642166,
+      "p95": 1.5080809593200684,
+      "p99": 1.5367958694696426,
+      "min": 0.9959768503904343,
+      "max": 3.1093601137399673
+    },
+    "forward_ms": {
+      "mean": 7.205257162451744,
+      "std": 0.13009515972830757,
+      "p50": 7.185110822319984,
+      "p95": 7.353213522583246,
+      "p99": 7.39798242226243,
+      "min": 7.1334559470415115,
+      "max": 9.75755974650383
+    },
+    "postprocess_ms": {
+      "mean": 0.3164769969880581,
+      "std": 0.005818046943085098,
+      "p50": 0.31365174800157547,
+      "p95": 0.32628634944558144,
+      "p99": 0.32845916226506233,
+      "min": 0.3084242343902588,
+      "max": 0.34835562109947205
+    },
+    "end_to_end_ms": {
+      "mean": 8.716575901955366,
+      "std": 0.22270081102306266,
+      "p50": 8.649670518934727,
+      "p95": 9.032961633056402,
+      "p99": 9.21188561245799,
+      "min": 8.460184559226036,
+      "max": 11.184245347976685
+    },
+    "fps_mean": 114.72,
+    "fps_median": 115.61,
+    "deadline_compliance": {
+      "Surveillance_30FPS": {
+        "deadline_ms": 33.333,
+        "slack_margin_p99_ms": 24.121,
+        "meets_deadline_p99": true
+      },
+      "HighSpeed_60FPS": {
+        "deadline_ms": 16.667,
+        "slack_margin_p99_ms": 7.455,
+        "meets_deadline_p99": true
+      },
+      "EdgeUltraFast_120FPS": {
+        "deadline_ms": 8.333,
+        "slack_margin_p99_ms": -0.879,
+        "meets_deadline_p99": false
+      }
+    }
+  },
+  {
+    "model_name": "best",
+    "model_path": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/runs/yolov8n_pretrained/incremental_round_1/weights/best.pt",
+    "precision": "FP16",
+    "parameters": 3011238,
+    "gflops": 8.7,
+    "batch_size": 1,
+    "imgsz": 640,
+    "iterations": 500,
+    "warmup": 100,
+    "device_name": "NVIDIA A100-PCIE-40GB MIG 1g.5gb",
+    "preprocess_ms": {
+      "mean": 1.1623878628015518,
+      "std": 0.1593047685504793,
+      "p50": 1.091056503355503,
+      "p95": 1.527280081063509,
+      "p99": 1.5582605265080929,
+      "min": 0.9648986160755157,
+      "max": 1.5681535005569458
+    },
+    "forward_ms": {
+      "mean": 7.9832715056836605,
+      "std": 0.09766654096766433,
+      "p50": 7.973590865731239,
+      "p95": 8.124776650220156,
+      "p99": 8.168592769652605,
+      "min": 7.896119728684425,
+      "max": 9.801462292671204
+    },
+    "postprocess_ms": {
+      "mean": 0.31940875202417374,
+      "std": 0.031425785601871925,
+      "p50": 0.3151930868625641,
+      "p95": 0.3273981623351574,
+      "p99": 0.3323401138186455,
+      "min": 0.3099720925092697,
+      "max": 1.0062754154205322
+    },
+    "end_to_end_ms": {
+      "mean": 9.465068120509386,
+      "std": 0.19270899638137112,
+      "p50": 9.395327419042587,
+      "p95": 9.839298203587532,
+      "p99": 9.892979599535465,
+      "min": 9.1813113540411,
+      "max": 11.211730539798737
+    },
+    "fps_mean": 105.65,
+    "fps_median": 106.44,
+    "deadline_compliance": {
+      "Surveillance_30FPS": {
+        "deadline_ms": 33.333,
+        "slack_margin_p99_ms": 23.44,
+        "meets_deadline_p99": true
+      },
+      "HighSpeed_60FPS": {
+        "deadline_ms": 16.667,
+        "slack_margin_p99_ms": 6.774,
+        "meets_deadline_p99": true
+      },
+      "EdgeUltraFast_120FPS": {
+        "deadline_ms": 8.333,
+        "slack_margin_p99_ms": -1.56,
+        "meets_deadline_p99": false
+      }
+    }
+  },
+  {
+    "model_name": "best",
+    "model_path": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/runs/yolov8n_pretrained_seed_123/incremental_round_1/weights/best.pt",
+    "precision": "FP32",
+    "parameters": 3011238,
+    "gflops": 8.7,
+    "batch_size": 1,
+    "imgsz": 640,
+    "iterations": 500,
+    "warmup": 100,
+    "device_name": "NVIDIA A100-PCIE-40GB MIG 1g.5gb",
+    "preprocess_ms": {
+      "mean": 1.239198174327612,
+      "std": 0.23239574568042293,
+      "p50": 1.1387206614017487,
+      "p95": 1.5520748682320118,
+      "p99": 2.0201626606285563,
+      "min": 0.9943041950464249,
+      "max": 3.1741391867399216
+    },
+    "forward_ms": {
+      "mean": 7.197643976658583,
+      "std": 0.05067735456308599,
+      "p50": 7.188593037426472,
+      "p95": 7.334676664322615,
+      "p99": 7.378534357994795,
+      "min": 7.1344636380672455,
+      "max": 7.771385833621025
+    },
+    "postprocess_ms": {
+      "mean": 0.3168390579521656,
+      "std": 0.006556133134974825,
+      "p50": 0.3139367327094078,
+      "p95": 0.32644737511873245,
+      "p99": 0.32853540033102036,
+      "min": 0.3085508942604065,
+      "max": 0.39422325789928436
+    },
+    "end_to_end_ms": {
+      "mean": 8.75368120893836,
+      "std": 0.25240804656563837,
+      "p50": 8.6557911708951,
+      "p95": 9.180801175534725,
+      "p99": 9.597334153950214,
+      "min": 8.481636643409729,
+      "max": 11.339748278260231
+    },
+    "fps_mean": 114.24,
+    "fps_median": 115.53,
+    "deadline_compliance": {
+      "Surveillance_30FPS": {
+        "deadline_ms": 33.333,
+        "slack_margin_p99_ms": 23.736,
+        "meets_deadline_p99": true
+      },
+      "HighSpeed_60FPS": {
+        "deadline_ms": 16.667,
+        "slack_margin_p99_ms": 7.07,
+        "meets_deadline_p99": true
+      },
+      "EdgeUltraFast_120FPS": {
+        "deadline_ms": 8.333,
+        "slack_margin_p99_ms": -1.264,
+        "meets_deadline_p99": false
+      }
+    }
+  },
+  {
+    "model_name": "best",
+    "model_path": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/runs/yolov8n_pretrained_seed_123/incremental_round_1/weights/best.pt",
+    "precision": "FP16",
+    "parameters": 3011238,
+    "gflops": 8.7,
+    "batch_size": 1,
+    "imgsz": 640,
+    "iterations": 500,
+    "warmup": 100,
+    "device_name": "NVIDIA A100-PCIE-40GB MIG 1g.5gb",
+    "preprocess_ms": {
+      "mean": 1.158356573432684,
+      "std": 0.1520629008769528,
+      "p50": 1.0918667539954185,
+      "p95": 1.4788264408707619,
+      "p99": 1.5045546740293503,
+      "min": 0.9561032056808472,
+      "max": 1.8934160470962524
+    },
+    "forward_ms": {
+      "mean": 7.957986757159233,
+      "std": 0.07390633805480756,
+      "p50": 7.94569868594408,
+      "p95": 8.096303138881922,
+      "p99": 8.14299263060093,
+      "min": 7.878277450799942,
+      "max": 8.927583694458008
+    },
+    "postprocess_ms": {
+      "mean": 0.3184662014245987,
+      "std": 0.022418281332848677,
+      "p50": 0.3140624612569809,
+      "p95": 0.32715676352381706,
+      "p99": 0.33275594934821123,
+      "min": 0.3085322678089142,
+      "max": 0.7082559168338776
+    },
+    "end_to_end_ms": {
+      "mean": 9.434809532016516,
+      "std": 0.17621528756547572,
+      "p50": 9.369833394885063,
+      "p95": 9.777181968092918,
+      "p99": 10.062490608543158,
+      "min": 9.194768965244293,
+      "max": 10.351557284593582
+    },
+    "fps_mean": 105.99,
+    "fps_median": 106.73,
+    "deadline_compliance": {
+      "Surveillance_30FPS": {
+        "deadline_ms": 33.333,
+        "slack_margin_p99_ms": 23.271,
+        "meets_deadline_p99": true
+      },
+      "HighSpeed_60FPS": {
+        "deadline_ms": 16.667,
+        "slack_margin_p99_ms": 6.605,
+        "meets_deadline_p99": true
+      },
+      "EdgeUltraFast_120FPS": {
+        "deadline_ms": 8.333,
+        "slack_margin_p99_ms": -1.729,
+        "meets_deadline_p99": false
+      }
+    }
+  },
+  {
+    "model_name": "yolov8n",
+    "model_path": "yolov8n.pt",
+    "precision": "FP32",
+    "parameters": 3157200,
+    "gflops": 8.7,
+    "batch_size": 1,
+    "imgsz": 640,
+    "iterations": 500,
+    "warmup": 100,
+    "device_name": "NVIDIA A100-PCIE-40GB MIG 1g.5gb",
+    "preprocess_ms": {
+      "mean": 1.1923602558672428,
+      "std": 0.15653355173066613,
+      "p50": 1.1121612042188644,
+      "p95": 1.5059665776789186,
+      "p99": 1.5613055229186998,
+      "min": 0.9967070072889328,
+      "max": 1.9434522837400436
+    },
+    "forward_ms": {
+      "mean": 7.270972207188606,
+      "std": 0.11569915526026753,
+      "p50": 7.24412128329277,
+      "p95": 7.438773475587368,
+      "p99": 7.572667710483074,
+      "min": 7.191674783825874,
+      "max": 9.036270901560783
+    },
+    "postprocess_ms": {
+      "mean": 0.7277286536991596,
+      "std": 0.015008476277964007,
+      "p50": 0.7276507094502449,
+      "p95": 0.7384493947029114,
+      "p99": 0.7436801493167877,
+      "min": 0.7055997848510742,
+      "max": 0.9277351200580597
+    },
+    "end_to_end_ms": {
+      "mean": 9.191061116755009,
+      "std": 0.19381986182753366,
+      "p50": 9.118784219026566,
+      "p95": 9.49817355722189,
+      "p99": 9.745536725968122,
+      "min": 8.945297449827194,
+      "max": 10.962126776576042
+    },
+    "fps_mean": 108.8,
+    "fps_median": 109.66,
+    "deadline_compliance": {
+      "Surveillance_30FPS": {
+        "deadline_ms": 33.333,
+        "slack_margin_p99_ms": 23.587,
+        "meets_deadline_p99": true
+      },
+      "HighSpeed_60FPS": {
+        "deadline_ms": 16.667,
+        "slack_margin_p99_ms": 6.921,
+        "meets_deadline_p99": true
+      },
+      "EdgeUltraFast_120FPS": {
+        "deadline_ms": 8.333,
+        "slack_margin_p99_ms": -1.413,
+        "meets_deadline_p99": false
+      }
+    }
+  },
+  {
+    "model_name": "yolov8n",
+    "model_path": "yolov8n.pt",
+    "precision": "FP16",
+    "parameters": 3157200,
+    "gflops": 8.7,
+    "batch_size": 1,
+    "imgsz": 640,
+    "iterations": 500,
+    "warmup": 100,
+    "device_name": "NVIDIA A100-PCIE-40GB MIG 1g.5gb",
+    "preprocess_ms": {
+      "mean": 1.1519720181822777,
+      "std": 0.14289311881171593,
+      "p50": 1.0845484212040901,
+      "p95": 1.472097262740135,
+      "p99": 1.509519573301077,
+      "min": 0.966360792517662,
+      "max": 1.520765945315361
+    },
+    "forward_ms": {
+      "mean": 8.046159736812115,
+      "std": 0.08399863818089194,
+      "p50": 8.029540069401264,
+      "p95": 8.204657584428787,
+      "p99": 8.238945975899696,
+      "min": 7.958319038152695,
+      "max": 9.324099868535995
+    },
+    "postprocess_ms": {
+      "mean": 0.7464844211935997,
+      "std": 0.009678838701731855,
+      "p50": 0.7465016096830368,
+      "p95": 0.7570705376565456,
+      "p99": 0.7672449760138988,
+      "min": 0.7262881845235825,
+      "max": 0.8821245282888412
+    },
+    "end_to_end_ms": {
+      "mean": 9.944616176187992,
+      "std": 0.16640697348355477,
+      "p50": 9.891943074762821,
+      "p95": 10.244520101696253,
+      "p99": 10.413453355431557,
+      "min": 9.690910577774048,
+      "max": 11.271193623542786
+    },
+    "fps_mean": 100.56,
+    "fps_median": 101.09,
+    "deadline_compliance": {
+      "Surveillance_30FPS": {
+        "deadline_ms": 33.333,
+        "slack_margin_p99_ms": 22.92,
+        "meets_deadline_p99": true
+      },
+      "HighSpeed_60FPS": {
+        "deadline_ms": 16.667,
+        "slack_margin_p99_ms": 6.254,
+        "meets_deadline_p99": true
+      },
+      "EdgeUltraFast_120FPS": {
+        "deadline_ms": 8.333,
+        "slack_margin_p99_ms": -2.08,
+        "meets_deadline_p99": false
+      }
+    }
+  },
+  {
+    "model_name": "yolo11n",
+    "model_path": "yolo11n.pt",
+    "precision": "FP32",
+    "parameters": 2624080,
+    "gflops": 6.5,
+    "batch_size": 1,
+    "imgsz": 640,
+    "iterations": 500,
+    "warmup": 100,
+    "device_name": "NVIDIA A100-PCIE-40GB MIG 1g.5gb",
+    "preprocess_ms": {
+      "mean": 1.232757106423378,
+      "std": 0.21865515428035837,
+      "p50": 1.1358745396137238,
+      "p95": 1.543584931641817,
+      "p99": 2.000390738248825,
+      "min": 0.9944643825292587,
+      "max": 2.5268997997045517
+    },
+    "forward_ms": {
+      "mean": 9.7675128467381,
+      "std": 0.0677370326462728,
+      "p50": 9.752821177244186,
+      "p95": 9.916599560528994,
+      "p99": 9.948787987232208,
+      "min": 9.675798937678337,
+      "max": 10.484371334314346
+    },
+    "postprocess_ms": {
+      "mean": 0.7170766666531563,
+      "std": 0.06310058464170862,
+      "p50": 0.7247701287269592,
+      "p95": 0.7347354665398598,
+      "p99": 0.738140195608139,
+      "min": 0.3123972564935684,
+      "max": 1.2972671538591385
+    },
+    "end_to_end_ms": {
+      "mean": 11.717346619814634,
+      "std": 0.24806428634872352,
+      "p50": 11.65764033794403,
+      "p95": 12.159187067300081,
+      "p99": 12.592827714979649,
+      "min": 11.052703484892845,
+      "max": 13.02824541926384
+    },
+    "fps_mean": 85.34,
+    "fps_median": 85.78,
+    "deadline_compliance": {
+      "Surveillance_30FPS": {
+        "deadline_ms": 33.333,
+        "slack_margin_p99_ms": 20.74,
+        "meets_deadline_p99": true
+      },
+      "HighSpeed_60FPS": {
+        "deadline_ms": 16.667,
+        "slack_margin_p99_ms": 4.074,
+        "meets_deadline_p99": true
+      },
+      "EdgeUltraFast_120FPS": {
+        "deadline_ms": 8.333,
+        "slack_margin_p99_ms": -4.26,
+        "meets_deadline_p99": false
+      }
+    }
+  },
+  {
+    "model_name": "yolo11n",
+    "model_path": "yolo11n.pt",
+    "precision": "FP16",
+    "parameters": 2624080,
+    "gflops": 6.5,
+    "batch_size": 1,
+    "imgsz": 640,
+    "iterations": 500,
+    "warmup": 100,
+    "device_name": "NVIDIA A100-PCIE-40GB MIG 1g.5gb",
+    "preprocess_ms": {
+      "mean": 1.1535733677446842,
+      "std": 0.1449314433441132,
+      "p50": 1.0850923135876656,
+      "p95": 1.4752809889614582,
+      "p99": 1.505651455372572,
+      "min": 0.9573120623826981,
+      "max": 1.516668125987053
+    },
+    "forward_ms": {
+      "mean": 10.95338473469019,
+      "std": 0.08592834979585239,
+      "p50": 10.940488427877426,
+      "p95": 11.083059012889862,
+      "p99": 11.121369488537312,
+      "min": 10.836668312549591,
+      "max": 11.941296979784966
+    },
+    "postprocess_ms": {
+      "mean": 0.7454845644533634,
+      "std": 0.07091727099263295,
+      "p50": 0.74787437915802,
+      "p95": 0.7601981051266192,
+      "p99": 0.9360018000006676,
+      "min": 0.3126189112663269,
+      "max": 0.9463243186473846
+    },
+    "end_to_end_ms": {
+      "mean": 12.852442666888237,
+      "std": 0.19706144101992018,
+      "p50": 12.811395339667797,
+      "p95": 13.211110141128302,
+      "p99": 13.320961259305477,
+      "min": 12.122640386223793,
+      "max": 13.870134949684143
+    },
+    "fps_mean": 77.81,
+    "fps_median": 78.06,
+    "deadline_compliance": {
+      "Surveillance_30FPS": {
+        "deadline_ms": 33.333,
+        "slack_margin_p99_ms": 20.012,
+        "meets_deadline_p99": true
+      },
+      "HighSpeed_60FPS": {
+        "deadline_ms": 16.667,
+        "slack_margin_p99_ms": 3.346,
+        "meets_deadline_p99": true
+      },
+      "EdgeUltraFast_120FPS": {
+        "deadline_ms": 8.333,
+        "slack_margin_p99_ms": -4.988,
+        "meets_deadline_p99": false
+      }
+    }
+  },
+  {
+    "model_name": "yolo12n",
+    "model_path": "yolo12n.pt",
+    "precision": "FP32",
+    "parameters": 2603056,
+    "gflops": 6.5,
+    "batch_size": 1,
+    "imgsz": 640,
+    "iterations": 500,
+    "warmup": 100,
+    "device_name": "NVIDIA A100-PCIE-40GB MIG 1g.5gb",
+    "preprocess_ms": {
+      "mean": 1.238638948649168,
+      "std": 0.22346738862706167,
+      "p50": 1.1363299563527107,
+      "p95": 1.5610219910740852,
+      "p99": 1.9843673519790166,
+      "min": 1.0107941925525665,
+      "max": 2.51152366399765
+    },
+    "forward_ms": {
+      "mean": 14.863236278295517,
+      "std": 0.15496635655840482,
+      "p50": 14.833410270512104,
+      "p95": 15.033444948494434,
+      "p99": 15.120418630540371,
+      "min": 14.70300368964672,
+      "max": 17.506185919046402
+    },
+    "postprocess_ms": {
+      "mean": 0.7267582565546036,
+      "std": 0.0129491551500516,
+      "p50": 0.7267128676176071,
+      "p95": 0.7384463213384151,
+      "p99": 0.7563436962664127,
+      "min": 0.7007196545600891,
+      "max": 0.9143147617578506
+    },
+    "end_to_end_ms": {
+      "mean": 16.82863348349929,
+      "std": 0.27735218146822405,
+      "p50": 16.746331937611103,
+      "p95": 17.314944602549073,
+      "p99": 17.71240064874291,
+      "min": 16.49048924446106,
+      "max": 19.446229562163353
+    },
+    "fps_mean": 59.42,
+    "fps_median": 59.71,
+    "deadline_compliance": {
+      "Surveillance_30FPS": {
+        "deadline_ms": 33.333,
+        "slack_margin_p99_ms": 15.621,
+        "meets_deadline_p99": true
+      },
+      "HighSpeed_60FPS": {
+        "deadline_ms": 16.667,
+        "slack_margin_p99_ms": -1.045,
+        "meets_deadline_p99": false
+      },
+      "EdgeUltraFast_120FPS": {
+        "deadline_ms": 8.333,
+        "slack_margin_p99_ms": -9.379,
+        "meets_deadline_p99": false
+      }
+    }
+  },
+  {
+    "model_name": "yolo12n",
+    "model_path": "yolo12n.pt",
+    "precision": "FP16",
+    "parameters": 2603056,
+    "gflops": 6.5,
+    "batch_size": 1,
+    "imgsz": 640,
+    "iterations": 500,
+    "warmup": 100,
+    "device_name": "NVIDIA A100-PCIE-40GB MIG 1g.5gb",
+    "preprocess_ms": {
+      "mean": 1.1549504399299622,
+      "std": 0.14830309883910023,
+      "p50": 1.0879505425691605,
+      "p95": 1.4818121679127216,
+      "p99": 1.5043056011199951,
+      "min": 0.9652674198150635,
+      "max": 1.7482470721006393
+    },
+    "forward_ms": {
+      "mean": 16.574854116886854,
+      "std": 0.1919539354402321,
+      "p50": 16.560512594878674,
+      "p95": 16.724595241248608,
+      "p99": 16.936253793537617,
+      "min": 16.237135976552963,
+      "max": 19.290316849946976
+    },
+    "postprocess_ms": {
+      "mean": 0.7568511143326759,
+      "std": 0.008287240414082095,
+      "p50": 0.7573273032903671,
+      "p95": 0.7676099427044392,
+      "p99": 0.7714356109499931,
+      "min": 0.7344037294387817,
+      "max": 0.8171703666448593
+    },
+    "end_to_end_ms": {
+      "mean": 18.486655671149492,
+      "std": 0.2572607300134292,
+      "p50": 18.434999510645866,
+      "p95": 18.855042289942503,
+      "p99": 19.00149403139949,
+      "min": 18.048126250505447,
+      "max": 21.29581570625305
+    },
+    "fps_mean": 54.09,
+    "fps_median": 54.24,
+    "deadline_compliance": {
+      "Surveillance_30FPS": {
+        "deadline_ms": 33.333,
+        "slack_margin_p99_ms": 14.332,
+        "meets_deadline_p99": true
+      },
+      "HighSpeed_60FPS": {
+        "deadline_ms": 16.667,
+        "slack_margin_p99_ms": -2.334,
+        "meets_deadline_p99": false
+      },
+      "EdgeUltraFast_120FPS": {
+        "deadline_ms": 8.333,
+        "slack_margin_p99_ms": -10.668,
+        "meets_deadline_p99": false
+      }
+    }
+  }
+]

@@ -1,0 +1,1784 @@
+[
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/knife_96_jpg.rf.cd1354cd4cb273325a8f7100b7291135.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.32822659611701965,
+      0.5193039178848267,
+      0.6502423286437988,
+      0.5913447737693787
+    ],
+    "confidence": 0.3884647488594055
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/knife_521_jpg.rf.2683bddba9394de41a13465ee4f37cb0.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.761612057685852,
+      0.5411050915718079,
+      0.32659363746643066,
+      0.5914113521575928
+    ],
+    "confidence": 0.5911599397659302
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/knife_269_jpg.rf.ea001981075c2a088ea2a8c83a059a66.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.29804909229278564,
+      0.6629711985588074,
+      0.4385809600353241,
+      0.20013925433158875
+    ],
+    "confidence": 0.4811667799949646
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/knife_82_jpg.rf.c48d44b30886d5179c5888b69c5189aa.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.3152242600917816,
+      0.5020062923431396,
+      0.3953911364078522,
+      0.4188206195831299
+    ],
+    "confidence": 0.6085000038146973
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/knife_431_jpg.rf.3cfe33c4d65bc7a68cd8bdc62554bfd5.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.3969409465789795,
+      0.2653251886367798,
+      0.6606374382972717,
+      0.22193773090839386
+    ],
+    "confidence": 0.36445343494415283
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/knife_588_jpg.rf.646f113eafbff378b6327fe2b3e88896.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.31576019525527954,
+      0.42869123816490173,
+      0.14544983208179474,
+      0.7094129323959351
+    ],
+    "confidence": 0.6963697671890259
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/knife_588_jpg.rf.646f113eafbff378b6327fe2b3e88896.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.7432824969291687,
+      0.4952099025249481,
+      0.30266904830932617,
+      0.1722235232591629
+    ],
+    "confidence": 0.26384633779525757
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/valid/images/knife_6_jpg.rf.a2517e46782e3593fbfb201626f159df.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.5227530002593994,
+      0.4041439890861511,
+      0.9503329992294312,
+      0.8082879781723022
+    ],
+    "confidence": 0.7465128302574158
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/knife_1110_jpg.rf.ab3b7834d98dcaff323f2ae59ac4bf1e.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.3802771270275116,
+      0.6308342218399048,
+      0.1608051359653473,
+      0.1363564431667328
+    ],
+    "confidence": 0.25085383653640747
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/knife_33_jpg.rf.7ff08af4eec1d7971f2138e9a9cb8780.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.675220787525177,
+      0.5338271260261536,
+      0.5234787464141846,
+      0.3731308579444885
+    ],
+    "confidence": 0.523422360420227
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/valid/images/knife_315_jpg.rf.8b6897d67d6a53707008c95db2db5bb9.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.3577253520488739,
+      0.53743577003479,
+      0.3968728184700012,
+      0.8011742830276489
+    ],
+    "confidence": 0.49270325899124146
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/valid/images/knife_638_jpg.rf.12d7369ca9c4066dad03a255d41bf621.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.5656881332397461,
+      0.24792498350143433,
+      0.14804211258888245,
+      0.2348381131887436
+    ],
+    "confidence": 0.41096389293670654
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/knife_564_jpg.rf.5c5ba742b85eb67e6442e80614a677bd.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.5950139760971069,
+      0.675218403339386,
+      0.8099720478057861,
+      0.3780120313167572
+    ],
+    "confidence": 0.5312721133232117
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/valid/images/knife_449_jpg.rf.2672e5e69bfc3efdcf7d7e25f6bb475a.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.5595566034317017,
+      0.5281219482421875,
+      0.8792656660079956,
+      0.8923141360282898
+    ],
+    "confidence": 0.6093543767929077
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/valid/images/knife_281_jpg.rf.376c2c217f4d1d0b6c721ab806135c46.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.20536695420742035,
+      0.3216298818588257,
+      0.400709867477417,
+      0.38836291432380676
+    ],
+    "confidence": 0.8064604997634888
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/knife_307_jpg.rf.4d291c73e9d0027b7ac47d6532b86a88.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.6949350833892822,
+      0.2956850826740265,
+      0.6027156114578247,
+      0.45920711755752563
+    ],
+    "confidence": 0.8514527678489685
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/knife_403_jpg.rf.ef6f7cccf10418414c180f4c3b8f8ed3.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.35097000002861023,
+      0.44444167613983154,
+      0.6461536884307861,
+      0.31589582562446594
+    ],
+    "confidence": 0.36675122380256653
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/valid/images/knife_430_jpg.rf.ae5241db23b7ffd35a388670fc92123c.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.484571248292923,
+      0.1951412707567215,
+      0.878481388092041,
+      0.36614084243774414
+    ],
+    "confidence": 0.335065633058548
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/valid/images/knife_430_jpg.rf.ae5241db23b7ffd35a388670fc92123c.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.4875788688659668,
+      0.5043310523033142,
+      0.890518844127655,
+      0.9237868785858154
+    ],
+    "confidence": 0.2661959230899811
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/KravMagaTraining626_jpg.rf.8e398ee4cfd2bd3ea6a443bccde2ff05.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.919559895992279,
+      0.5511783957481384,
+      0.03742866590619087,
+      0.22039617598056793
+    ],
+    "confidence": 0.4898422956466675
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/knife_118_jpg.rf.f8b8a27ffd151e06a34966652bf75bdb.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.4517051577568054,
+      0.4714852571487427,
+      0.6630363464355469,
+      0.21012581884860992
+    ],
+    "confidence": 0.5422906279563904
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/knife_118_jpg.rf.f8b8a27ffd151e06a34966652bf75bdb.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.4503924250602722,
+      0.4892071783542633,
+      0.688400149345398,
+      0.22208403050899506
+    ],
+    "confidence": 0.408582866191864
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/KravMagaTraining4408_jpg.rf.bd832da380c2b4d62a1b0d588a671c9b.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.4341690242290497,
+      0.365092009305954,
+      0.12175066769123077,
+      0.09417224675416946
+    ],
+    "confidence": 0.5950726866722107
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/knife_208_jpg.rf.97017e836823654e2a5ce0c823383539.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.49996182322502136,
+      0.4962029755115509,
+      0.9937501549720764,
+      0.7246045470237732
+    ],
+    "confidence": 0.2524145543575287
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/valid/images/KravMagaTraining467_jpg.rf.78e26493764e903f3e7847232c4ce1a2.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.9712173342704773,
+      0.8698062896728516,
+      0.05648651346564293,
+      0.20651093125343323
+    ],
+    "confidence": 0.43270352482795715
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/knife_1321_jpg.rf.36bbf3e4f4c01fc66d27c3a7d1eb87ab.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.5453660488128662,
+      0.264029324054718,
+      0.07038869708776474,
+      0.25593483448028564
+    ],
+    "confidence": 0.7416197657585144
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/knife_373_jpg.rf.6f9039900c2a183f602acb1d6ffbdb92.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.22680142521858215,
+      0.5031509399414062,
+      0.4454280138015747,
+      0.2482592761516571
+    ],
+    "confidence": 0.26411834359169006
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/valid/images/knife_491_jpg.rf.0431a99844a88d8ea55edda4dd109b98.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.6833747029304504,
+      0.5627410411834717,
+      0.27307912707328796,
+      0.4594217836856842
+    ],
+    "confidence": 0.7964414358139038
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/valid/images/knife_491_jpg.rf.0431a99844a88d8ea55edda4dd109b98.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.32752251625061035,
+      0.5870757699012756,
+      0.24362486600875854,
+      0.41142523288726807
+    ],
+    "confidence": 0.7597355842590332
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/valid/images/KravMagaTraining464_jpg.rf.4b96dc74eb4a38dccd3730cd9bdd4b8e.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.23099176585674286,
+      0.6766635775566101,
+      0.12239336967468262,
+      0.1080695316195488
+    ],
+    "confidence": 0.3044753968715668
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/knife_35_jpg.rf.2b84e04c7dc18c11be43408408af1b24.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.6031391024589539,
+      0.5184184908866882,
+      0.7937217950820923,
+      0.9631630182266235
+    ],
+    "confidence": 0.36904212832450867
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/DSC_0037_JPG_jpg.rf.57e0317b508ae869eb05a68851f75c81.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.5072003602981567,
+      0.6059885621070862,
+      0.03711586073040962,
+      0.2242480367422104
+    ],
+    "confidence": 0.443217009305954
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/valid/images/knife_1099_jpg.rf.9ef59924847ca7d6d5c4bddb0e5bc9b7.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.48292312026023865,
+      0.672112226486206,
+      0.11118125915527344,
+      0.1570654958486557
+    ],
+    "confidence": 0.6236518025398254
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/knife_1262_jpg.rf.49ebbc891c6af76316be2daac5b41d70.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.40654951333999634,
+      0.694375216960907,
+      0.09384327381849289,
+      0.15974952280521393
+    ],
+    "confidence": 0.2969626784324646
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/knife_189_jpg.rf.e4d09db9e49cd396dc558b053713f303.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.49788251519203186,
+      0.48048481345176697,
+      0.9957650303840637,
+      0.9609696269035339
+    ],
+    "confidence": 0.4252853989601135
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/knife_237_jpg.rf.a4396e8ac59ab98ede2a27a52e7da7f2.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.36884865164756775,
+      0.4437723755836487,
+      0.16736164689064026,
+      0.6527299284934998
+    ],
+    "confidence": 0.41335585713386536
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/knife_237_jpg.rf.a4396e8ac59ab98ede2a27a52e7da7f2.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.36633214354515076,
+      0.44322651624679565,
+      0.16539889574050903,
+      0.6336631774902344
+    ],
+    "confidence": 0.3484698235988617
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/knife_193_jpg.rf.8797046dc7c91a1c837a31f8c8281d8c.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.6762953996658325,
+      0.39655497670173645,
+      0.3593498170375824,
+      0.6403538584709167
+    ],
+    "confidence": 0.39644917845726013
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/knife_193_jpg.rf.8797046dc7c91a1c837a31f8c8281d8c.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.8424387574195862,
+      0.728897750377655,
+      0.10787282884120941,
+      0.3380196690559387
+    ],
+    "confidence": 0.3795032501220703
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/knife_193_jpg.rf.8797046dc7c91a1c837a31f8c8281d8c.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.6806691884994507,
+      0.41275110840797424,
+      0.3508118987083435,
+      0.6112505197525024
+    ],
+    "confidence": 0.33272814750671387
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/KravMagaTraining20997_jpg.rf.48af3c5a9a5b1f86099dbfe1f19aeaec.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.44115516543388367,
+      0.815949022769928,
+      0.084786057472229,
+      0.08003099262714386
+    ],
+    "confidence": 0.49240928888320923
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/DSC_00561_JPG_jpg.rf.cbadb9373830e0300eaa2cc231ed1185.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.37251269817352295,
+      0.5235776901245117,
+      0.08027181774377823,
+      0.10914400964975357
+    ],
+    "confidence": 0.3170519769191742
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/DSC_00561_JPG_jpg.rf.cbadb9373830e0300eaa2cc231ed1185.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.4362064599990845,
+      0.5672606229782104,
+      0.11312472820281982,
+      0.0648692175745964
+    ],
+    "confidence": 0.30244961380958557
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/valid/images/knife_1300_jpg.rf.fae11f341070517f4f52b5776dd2c636.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.3653124272823334,
+      0.708378255367279,
+      0.06362181156873703,
+      0.216450035572052
+    ],
+    "confidence": 0.4131143093109131
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/knife_36_jpg.rf.bb8fd72faf8e9ea6f144452bdbfea01c.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.6210411190986633,
+      0.5115536451339722,
+      0.7159487009048462,
+      0.5454819798469543
+    ],
+    "confidence": 0.26502639055252075
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/knife_1056_jpg.rf.44e6741e78a638fd9a4f94fe875a1018.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.5134829878807068,
+      0.7267847657203674,
+      0.09577512741088867,
+      0.31112200021743774
+    ],
+    "confidence": 0.44679099321365356
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/sharpenKnife200_jpg.rf.999c072a99234d2959141211ecfb5447.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.5244957208633423,
+      0.6171427369117737,
+      0.07916736602783203,
+      0.06808336079120636
+    ],
+    "confidence": 0.3675038814544678
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/DSC_00461_JPG_jpg.rf.dcaafdd5ced8894b87aa73f57ad75d2a.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.5071900486946106,
+      0.28729480504989624,
+      0.03322954475879669,
+      0.14766035974025726
+    ],
+    "confidence": 0.3763423562049866
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/KravMagaTraining4081_jpg.rf.7726741b84236f33ec0307e75cef8e9c.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.4473814070224762,
+      0.7837207317352295,
+      0.22253485023975372,
+      0.19113753736019135
+    ],
+    "confidence": 0.6442194581031799
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/knife_288_jpg.rf.91f36b583992c1f12b5c27f258f68584.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.24709627032279968,
+      0.3783275783061981,
+      0.48646023869514465,
+      0.31123441457748413
+    ],
+    "confidence": 0.3538949191570282
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/knife_157_jpg.rf.a4f069b4b744a908c185cfb97a709b89.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.5665020942687988,
+      0.6942694187164307,
+      0.2555275857448578,
+      0.6016607284545898
+    ],
+    "confidence": 0.6140092611312866
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/knife_1069_jpg.rf.c8ba69ab65758d5b36e6e3c93d55d900.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.5610766410827637,
+      0.5829953551292419,
+      0.2366853803396225,
+      0.23725315928459167
+    ],
+    "confidence": 0.42123129963874817
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/knife_382_jpg.rf.057ba47a518efd28d2766b95048571f0.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.25555846095085144,
+      0.5759090781211853,
+      0.4698168635368347,
+      0.2633042633533478
+    ],
+    "confidence": 0.5550572276115417
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-2982-_jpg.rf.6fef98715046695d4c35d84bd11f6958.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.47744885087013245,
+      0.6447911858558655,
+      0.34691449999809265,
+      0.640985369682312
+    ],
+    "confidence": 0.5885400176048279
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-74-_jpg.rf.e05cdd33c5a60d08716fdd5156d0120c.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.6455156803131104,
+      0.6142642498016357,
+      0.10405578464269638,
+      0.3347330689430237
+    ],
+    "confidence": 0.42336592078208923
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-135-_jpg.rf.332de3ef750492ea52b89f832cc6a7f6.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.5349295139312744,
+      0.5622788071632385,
+      0.09081658720970154,
+      0.28299155831336975
+    ],
+    "confidence": 0.4241255521774292
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-135-_jpg.rf.332de3ef750492ea52b89f832cc6a7f6.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.5641434192657471,
+      0.5096331238746643,
+      0.1479906290769577,
+      0.18255312740802765
+    ],
+    "confidence": 0.2714212238788605
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-1905-_jpg.rf.735c22dff345cf631d66ddb8e2fc7f44.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.5225249528884888,
+      0.4751301109790802,
+      0.8758879899978638,
+      0.8476521372795105
+    ],
+    "confidence": 0.4605346918106079
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-893-_jpg.rf.7cc3bf581effd362165ef28f59f02720.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.18574115633964539,
+      0.8857146501541138,
+      0.14859338104724884,
+      0.2283686101436615
+    ],
+    "confidence": 0.3919672966003418
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-2947-_jpg.rf.00a5efbf5430c35f367aa58b8b7d25d2.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.3897453248500824,
+      0.2204403281211853,
+      0.04494209215044975,
+      0.06415433436632156
+    ],
+    "confidence": 0.2910046875476837
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-616-_jpg.rf.fe4b6ba0b186f0f298f01954437f0c49.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.3285059630870819,
+      0.6225746870040894,
+      0.15652915835380554,
+      0.17753316462039948
+    ],
+    "confidence": 0.5797078609466553
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-269-_jpg.rf.43160976cf17227a7428470bc8b48230.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.654944896697998,
+      0.48928195238113403,
+      0.6794523596763611,
+      0.5906113982200623
+    ],
+    "confidence": 0.6680135726928711
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-2129-_jpg.rf.fa2f9004a855671817ced6c4fbf35e13.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.575782060623169,
+      0.2709074318408966,
+      0.21756011247634888,
+      0.10963151603937149
+    ],
+    "confidence": 0.3587195575237274
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-1033-_jpg.rf.53219450688f3ed7245140675eb177a1.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.3161900043487549,
+      0.4896339774131775,
+      0.15878473222255707,
+      0.2168131023645401
+    ],
+    "confidence": 0.5470109581947327
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-1033-_jpg.rf.53219450688f3ed7245140675eb177a1.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.2873770594596863,
+      0.4440993368625641,
+      0.09476923197507858,
+      0.12222994863986969
+    ],
+    "confidence": 0.48218539357185364
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/valid/images/armas-978-_jpg.rf.598e90f195a3bfa8aff438ab34a28d23.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.8074325919151306,
+      0.42351460456848145,
+      0.385134756565094,
+      0.4828488826751709
+    ],
+    "confidence": 0.5002365112304688
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/valid/images/armas-978-_jpg.rf.598e90f195a3bfa8aff438ab34a28d23.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.2461799830198288,
+      0.699549674987793,
+      0.14480771124362946,
+      0.18874385952949524
+    ],
+    "confidence": 0.2757878005504608
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/valid/images/armas-978-_jpg.rf.598e90f195a3bfa8aff438ab34a28d23.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.5860307812690735,
+      0.39428621530532837,
+      0.09744244813919067,
+      0.09448348730802536
+    ],
+    "confidence": 0.2642895579338074
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-2063-_jpg.rf.2ee1a605d4397aab7aae45a443c9b68c.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.2711850702762604,
+      0.4720578193664551,
+      0.08932790905237198,
+      0.15051795542240143
+    ],
+    "confidence": 0.4787365794181824
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/valid/images/armas-231-_jpg.rf.b779a3894cf771f221db57c13c5ff5fd.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.8226622939109802,
+      0.6896063089370728,
+      0.1253644824028015,
+      0.15472359955310822
+    ],
+    "confidence": 0.2629067003726959
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/valid/images/armas-231-_jpg.rf.b779a3894cf771f221db57c13c5ff5fd.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.4920056462287903,
+      0.4259072542190552,
+      0.9645451903343201,
+      0.8518145084381104
+    ],
+    "confidence": 0.26226314902305603
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-114-_jpg.rf.23156b851adfb60e9e48a48eced6bdb1.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.3897651433944702,
+      0.31499502062797546,
+      0.1544937789440155,
+      0.21974945068359375
+    ],
+    "confidence": 0.4712373912334442
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-114-_jpg.rf.23156b851adfb60e9e48a48eced6bdb1.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.4227381944656372,
+      0.26718825101852417,
+      0.08821164816617966,
+      0.10681629180908203
+    ],
+    "confidence": 0.45704182982444763
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/valid/images/armas-1617-_jpg.rf.6ba9b9e80b7c075fdf53b658f4eb510f.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.3819258511066437,
+      0.6710882782936096,
+      0.17208246886730194,
+      0.3028890788555145
+    ],
+    "confidence": 0.4677368700504303
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-1708-_jpg.rf.d55fc455064acc537a32f1f77c37afdd.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.4369962513446808,
+      0.5708218216896057,
+      0.06389492750167847,
+      0.22125983238220215
+    ],
+    "confidence": 0.47051316499710083
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-266-_jpg.rf.1cf062a867556b9a2647496fbbf22dca.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.60468590259552,
+      0.5164740085601807,
+      0.14684095978736877,
+      0.18640252947807312
+    ],
+    "confidence": 0.5242875218391418
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-1215-_jpg.rf.123baf34aff940d2fcbcb690acc33406.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.7840466499328613,
+      0.49617335200309753,
+      0.1333431750535965,
+      0.1959511786699295
+    ],
+    "confidence": 0.553534984588623
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-368-_jpg.rf.84b707a36c24c076ebbc9fe4e732fdda.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.3623943328857422,
+      0.37798231840133667,
+      0.11563912034034729,
+      0.4323958158493042
+    ],
+    "confidence": 0.39645135402679443
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/valid/images/armas-348-_jpg.rf.9136b0485d33200cc4dad54ad5d526ea.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.22259189188480377,
+      0.6472215056419373,
+      0.12739230692386627,
+      0.10176217555999756
+    ],
+    "confidence": 0.544018566608429
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-1297-_jpg.rf.8503ed2b9908413d98d8c9d74769fe3b.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.5026881098747253,
+      0.6136799454689026,
+      0.9235219955444336,
+      0.7393353581428528
+    ],
+    "confidence": 0.7677501440048218
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-1684-_jpg.rf.c648e0a3b923efaafa05cbd83fe64ad3.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.705308198928833,
+      0.4272686839103699,
+      0.036889903247356415,
+      0.037322744727134705
+    ],
+    "confidence": 0.30337634682655334
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/valid/images/armas-175-_jpg.rf.a78d0399a6ad431486381cfc01749ebd.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.4910739064216614,
+      0.38029253482818604,
+      0.13315153121948242,
+      0.1901324987411499
+    ],
+    "confidence": 0.347896933555603
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-2885-_jpg.rf.855c78114eece1ab6cba44d877396f06.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.21680983901023865,
+      0.28936445713043213,
+      0.18394185602664948,
+      0.21675316989421844
+    ],
+    "confidence": 0.32632654905319214
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-304-_jpg.rf.be1192cf864adbd9de0c382c22d68f96.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.5124650597572327,
+      0.40811023116111755,
+      0.09993036091327667,
+      0.10359463840723038
+    ],
+    "confidence": 0.6782480478286743
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-304-_jpg.rf.be1192cf864adbd9de0c382c22d68f96.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.6146301627159119,
+      0.3658665418624878,
+      0.14088337123394012,
+      0.13509467244148254
+    ],
+    "confidence": 0.6338946223258972
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-262-_jpg.rf.d8858ccd6768eacf9e974762e2594635.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.5192143321037292,
+      0.5357548594474792,
+      0.6734281778335571,
+      0.8410319089889526
+    ],
+    "confidence": 0.877857506275177
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/valid/images/armas-336-_jpg.rf.8f47753dbf9e36d462736ce6e15c097c.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.6476943492889404,
+      0.3163563907146454,
+      0.12397684901952744,
+      0.569309413433075
+    ],
+    "confidence": 0.33052513003349304
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/valid/images/armas-213-_jpg.rf.47307275b87dd8863d7fd851664bd324.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.5632616877555847,
+      0.6476078629493713,
+      0.3522143065929413,
+      0.4368383586406708
+    ],
+    "confidence": 0.6199996471405029
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-2018-_jpg.rf.b1911adbe43ef42d9786be76939c57fa.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.7659676671028137,
+      0.5934529304504395,
+      0.46806469559669495,
+      0.7446249127388
+    ],
+    "confidence": 0.6995022892951965
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-2018-_jpg.rf.b1911adbe43ef42d9786be76939c57fa.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.6175719499588013,
+      0.15307149291038513,
+      0.3017788231372833,
+      0.28717565536499023
+    ],
+    "confidence": 0.36178457736968994
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-900-_jpg.rf.13fa7d7bf90d46394a5de554ef5741c3.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.38007447123527527,
+      0.333164244890213,
+      0.7205631136894226,
+      0.4973728358745575
+    ],
+    "confidence": 0.2745366096496582
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-1262-_jpg.rf.95eb9928caa440ff81d32dbf53daf974.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.17299571633338928,
+      0.6709840893745422,
+      0.34599143266677856,
+      0.6580318808555603
+    ],
+    "confidence": 0.43110746145248413
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/valid/images/armas-1951-_jpg.rf.ed78d50ef6b5bafbbf09c1966b1e39f8.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.39421093463897705,
+      0.725285530090332,
+      0.171109139919281,
+      0.10985282063484192
+    ],
+    "confidence": 0.2628077566623688
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-2992-_jpg.rf.2a526a4f9aed1a3fbeaffa25d9363c61.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.6528992652893066,
+      0.3216158151626587,
+      0.08929158747196198,
+      0.12718206644058228
+    ],
+    "confidence": 0.5485110282897949
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-475-_jpg.rf.f73b462ed58281d9f3dc6c9780ea7a5f.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.6384891867637634,
+      0.4210718870162964,
+      0.626470685005188,
+      0.6676783561706543
+    ],
+    "confidence": 0.47029101848602295
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-475-_jpg.rf.f73b462ed58281d9f3dc6c9780ea7a5f.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.6420990228652954,
+      0.424835205078125,
+      0.6277329921722412,
+      0.6641947031021118
+    ],
+    "confidence": 0.43968382477760315
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-1004-_jpg.rf.3f32c5608b57d0feaac5abe0f6f4ac7c.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.40675291419029236,
+      0.3593447506427765,
+      0.3846455514431,
+      0.1671905517578125
+    ],
+    "confidence": 0.48132747411727905
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-1681-_jpg.rf.c646ae78fffd3935d9d00a3df6b3451a.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.6777673959732056,
+      0.2894707918167114,
+      0.11492232233285904,
+      0.06760846078395844
+    ],
+    "confidence": 0.7181052565574646
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-740-_jpg.rf.a09ab81f90659fb86d9eb08802ac4df6.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.4593341648578644,
+      0.5685160160064697,
+      0.9186683297157288,
+      0.6985322833061218
+    ],
+    "confidence": 0.6479825377464294
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/valid/images/armas-233-_jpg.rf.8b30021f3273e248dd9d4f96242a6fe5.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.319876104593277,
+      0.7756170034408569,
+      0.086115263402462,
+      0.14156678318977356
+    ],
+    "confidence": 0.5364065766334534
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/valid/images/armas-1288-_jpg.rf.16154d6c4c774e9d3ac5fb82a3002f6b.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.2673390507698059,
+      0.38071295619010925,
+      0.048011597245931625,
+      0.05193103104829788
+    ],
+    "confidence": 0.3269558548927307
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-130-_jpg.rf.04aebd6fa21e6d97e138677f40903aa8.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.3289371430873871,
+      0.5984794497489929,
+      0.49291878938674927,
+      0.757160484790802
+    ],
+    "confidence": 0.6650012731552124
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-1062-_jpg.rf.5201d5a5c7f35982287257cde7bc60ab.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.3565709888935089,
+      0.4042966961860657,
+      0.10153263062238693,
+      0.08314602822065353
+    ],
+    "confidence": 0.3348343074321747
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-1062-_jpg.rf.5201d5a5c7f35982287257cde7bc60ab.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.6490311622619629,
+      0.6624022126197815,
+      0.22180554270744324,
+      0.13443858921527863
+    ],
+    "confidence": 0.32395118474960327
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/valid/images/armas-1866-_jpg.rf.aedc62ff32da46730be3cec6de82b9c3.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.9548611044883728,
+      0.6019318103790283,
+      0.09027784317731857,
+      0.27804747223854065
+    ],
+    "confidence": 0.545031726360321
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/valid/images/armas-1866-_jpg.rf.aedc62ff32da46730be3cec6de82b9c3.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.6173322796821594,
+      0.7255551218986511,
+      0.15869253873825073,
+      0.2735966742038727
+    ],
+    "confidence": 0.47776851058006287
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/valid/images/armas-2807-_jpg.rf.0146c70118e925848b7b32be022e1792.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.4898402988910675,
+      0.44506314396858215,
+      0.4341735541820526,
+      0.145115464925766
+    ],
+    "confidence": 0.3639945387840271
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-1714-_jpg.rf.d54017776a01a7e5ba6aafb51097c593.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.7386006116867065,
+      0.306986004114151,
+      0.11601294577121735,
+      0.17960496246814728
+    ],
+    "confidence": 0.8675881028175354
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-1760-_jpg.rf.5407585cb9e98901a06194b70354fa18.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.30515703558921814,
+      0.6212255954742432,
+      0.29469141364097595,
+      0.39780133962631226
+    ],
+    "confidence": 0.4449005126953125
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-141-_jpg.rf.f12a2d22dc7203558119a5aad4786fc0.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.44195547699928284,
+      0.6393156051635742,
+      0.10982740670442581,
+      0.13322044909000397
+    ],
+    "confidence": 0.26762399077415466
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/valid/images/armas-1153-_jpg.rf.021dfaa131a9238a87c7c4ef28e8e1c4.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.4055246412754059,
+      0.6967108249664307,
+      0.17301256954669952,
+      0.344495564699173
+    ],
+    "confidence": 0.5749072432518005
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/valid/images/armas-1153-_jpg.rf.021dfaa131a9238a87c7c4ef28e8e1c4.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.2758003771305084,
+      0.6309479475021362,
+      0.08163347095251083,
+      0.21692372858524323
+    ],
+    "confidence": 0.26372307538986206
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-1163-_jpg.rf.8b68c4eaa65aca9326a7c57b4cab80a1.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.5062376260757446,
+      0.08945773541927338,
+      0.08194009214639664,
+      0.111316978931427
+    ],
+    "confidence": 0.5166060924530029
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-1163-_jpg.rf.8b68c4eaa65aca9326a7c57b4cab80a1.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.952832818031311,
+      0.8604370951652527,
+      0.09125592559576035,
+      0.06855364143848419
+    ],
+    "confidence": 0.3111778199672699
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-571-_jpg.rf.01d417e93dc708260b237be008a9cfab.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.6036633849143982,
+      0.4604276120662689,
+      0.11490105837583542,
+      0.11661345511674881
+    ],
+    "confidence": 0.5434799790382385
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-2864-_jpg.rf.ef41aef834ba9fd09b1f0fcee5512b7f.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.37907010316848755,
+      0.31290414929389954,
+      0.7272348999977112,
+      0.5847166180610657
+    ],
+    "confidence": 0.3063754439353943
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-1534-_jpg.rf.f04dba8421583399375e972427be211b.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.6724769473075867,
+      0.5394467711448669,
+      0.6264904737472534,
+      0.664887011051178
+    ],
+    "confidence": 0.27963709831237793
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-697-_jpg.rf.fddbdd3db2e2a319cbc482343c52c962.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.5568668842315674,
+      0.6360825896263123,
+      0.626943051815033,
+      0.37543007731437683
+    ],
+    "confidence": 0.32310742139816284
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-195-_jpg.rf.f56b671b44ecc220ed851ea359f7a8cc.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.49357837438583374,
+      0.3449042737483978,
+      0.9871567487716675,
+      0.6898085474967957
+    ],
+    "confidence": 0.5777928233146667
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-195-_jpg.rf.f56b671b44ecc220ed851ea359f7a8cc.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.14110369980335236,
+      0.5078505873680115,
+      0.2822073996067047,
+      0.10813547670841217
+    ],
+    "confidence": 0.44990769028663635
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-930-_jpg.rf.93822af9b33efaa305a15a026820c458.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.48850011825561523,
+      0.5243724584579468,
+      0.9770002365112305,
+      0.8623281121253967
+    ],
+    "confidence": 0.7095349431037903
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-471-_jpg.rf.1474c24df3ae0bc8baf4a95ab8bdf4f5.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.18550191819667816,
+      0.953316867351532,
+      0.19588910043239594,
+      0.09336631000041962
+    ],
+    "confidence": 0.45866116881370544
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-471-_jpg.rf.1474c24df3ae0bc8baf4a95ab8bdf4f5.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.7915632724761963,
+      0.770134687423706,
+      0.3160412311553955,
+      0.2187509536743164
+    ],
+    "confidence": 0.307853639125824
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-1009-_jpg.rf.8b251e5d0db4af2670c21c47ddc0a6e6.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.7883192300796509,
+      0.36172208189964294,
+      0.20712554454803467,
+      0.36157795786857605
+    ],
+    "confidence": 0.6212152242660522
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/valid/images/armas-335-_jpg.rf.3efcb6672cb2a1400c8c9d3db4a7b768.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.8099265694618225,
+      0.22313165664672852,
+      0.11846859753131866,
+      0.19041815400123596
+    ],
+    "confidence": 0.7050777077674866
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-894-_jpg.rf.589346b8dddb80126829cf199d62194e.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.6462401747703552,
+      0.6102088689804077,
+      0.10543406754732132,
+      0.3450421988964081
+    ],
+    "confidence": 0.4914691746234894
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-485-_jpg.rf.29d8b6351432763ae6b7176a433e945d.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.3156206011772156,
+      0.6187405586242676,
+      0.1721518635749817,
+      0.6489543914794922
+    ],
+    "confidence": 0.6435645222663879
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-485-_jpg.rf.29d8b6351432763ae6b7176a433e945d.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.31768980622291565,
+      0.4241274893283844,
+      0.1661079376935959,
+      0.2580397129058838
+    ],
+    "confidence": 0.28175413608551025
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-2813-_jpg.rf.7324e4b0267f5938031859544159ec23.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.6813555955886841,
+      0.09745890647172928,
+      0.06308498978614807,
+      0.17584915459156036
+    ],
+    "confidence": 0.4131428599357605
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-2114-_jpg.rf.9716b5552dac037eee1003ff56b22d75.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.30102866888046265,
+      0.37506988644599915,
+      0.28705188632011414,
+      0.10321959108114243
+    ],
+    "confidence": 0.5670955777168274
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-1788-_jpg.rf.8a7334782de9297a101ad9de687441c0.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.5224178433418274,
+      0.6509242057800293,
+      0.6377679705619812,
+      0.5793014764785767
+    ],
+    "confidence": 0.5832321047782898
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-1508-_jpg.rf.d647c4639f090d0c9c0013ed40478934.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.6689525842666626,
+      0.3464171588420868,
+      0.653139054775238,
+      0.6928343176841736
+    ],
+    "confidence": 0.33485469222068787
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-1837-_jpg.rf.851f58acd04824debda921834deedabb.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.7555251717567444,
+      0.25777798891067505,
+      0.18250897526741028,
+      0.08158855140209198
+    ],
+    "confidence": 0.38359495997428894
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-1837-_jpg.rf.851f58acd04824debda921834deedabb.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.29048243165016174,
+      0.22121639549732208,
+      0.07369637489318848,
+      0.059879157692193985
+    ],
+    "confidence": 0.30187809467315674
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/valid/images/armas-157-_jpg.rf.dadb75f2fb7cec2a597a846ac4aa7b8a.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.3178198039531708,
+      0.6184507608413696,
+      0.1778399646282196,
+      0.6581002473831177
+    ],
+    "confidence": 0.6003702878952026
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/valid/images/armas-1665-_jpg.rf.9dd69c7546dbd8020d9a4450c5e5259e.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.6403583288192749,
+      0.521169126033783,
+      0.7192835211753845,
+      0.5945881009101868
+    ],
+    "confidence": 0.4230286478996277
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/valid/images/armas-2151-_jpg.rf.e9d8f8279e1b638fcd801ac3ef73a5b9.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.29692474007606506,
+      0.4294826090335846,
+      0.07748923450708389,
+      0.05051727592945099
+    ],
+    "confidence": 0.340203195810318
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-1816-_jpg.rf.283f2603792fb731e52dc942a091d6f0.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.5057526230812073,
+      0.5362157821655273,
+      0.9390264749526978,
+      0.8417750597000122
+    ],
+    "confidence": 0.7011464238166809
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-1816-_jpg.rf.283f2603792fb731e52dc942a091d6f0.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.25178948044776917,
+      0.5680004954338074,
+      0.4280521869659424,
+      0.6974665522575378
+    ],
+    "confidence": 0.42130613327026367
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-1816-_jpg.rf.283f2603792fb731e52dc942a091d6f0.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.2144518792629242,
+      0.40834829211235046,
+      0.3445659577846527,
+      0.3866596221923828
+    ],
+    "confidence": 0.3629342317581177
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-1027-_jpg.rf.d7b8f5b0ca3f8d5b1f98325553fdc765.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.47838154435157776,
+      0.5658543705940247,
+      0.11473508179187775,
+      0.21613997220993042
+    ],
+    "confidence": 0.2799956202507019
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/valid/images/armas-2860-_jpg.rf.48582656d602289526c82a84174c154c.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.4842471778392792,
+      0.5750001668930054,
+      0.08695411682128906,
+      0.3402412533760071
+    ],
+    "confidence": 0.45621609687805176
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-1579-_jpg.rf.80f1203111182a5cc5aba43b2ef36f34.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.351845383644104,
+      0.44745421409606934,
+      0.6958787441253662,
+      0.7974280118942261
+    ],
+    "confidence": 0.45604610443115234
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-434-_jpg.rf.71caa902ed30344ffed0ff17d493f84b.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.2729939818382263,
+      0.5787512063980103,
+      0.12005266547203064,
+      0.1066194698214531
+    ],
+    "confidence": 0.7138149738311768
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-2946-_jpg.rf.a94d88759d89a3ea8a7c286e65ecc4c4.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.8141893744468689,
+      0.1653360277414322,
+      0.03806958347558975,
+      0.15268631279468536
+    ],
+    "confidence": 0.3795166015625
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-327-_jpg.rf.298e31b067f1d8cdbf4b8f233e0a70b4.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.16678790748119354,
+      0.16607137024402618,
+      0.3335758149623871,
+      0.33214274048805237
+    ],
+    "confidence": 0.47267720103263855
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-346-_jpg.rf.321a1bef0f9ff89641590953fd77f25e.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.26683416962623596,
+      0.26636844873428345,
+      0.08444762229919434,
+      0.13083253800868988
+    ],
+    "confidence": 0.5634682774543762
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-601-_jpg.rf.1ac39b32b30b19d9ee528761fdbc8a98.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.6105335354804993,
+      0.46499496698379517,
+      0.15207654237747192,
+      0.19161677360534668
+    ],
+    "confidence": 0.34782078862190247
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-1551-_jpg.rf.219d5dbce0e73df8ba9ef86d05b09c29.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.7017362713813782,
+      0.4764953851699829,
+      0.10034367442131042,
+      0.06952808052301407
+    ],
+    "confidence": 0.534130334854126
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-987-_jpg.rf.9d55c08e6f4606e08d52140944e08725.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.3223678767681122,
+      0.3424983620643616,
+      0.05409470200538635,
+      0.04069804027676582
+    ],
+    "confidence": 0.4818176329135895
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-1355-_jpg.rf.31dd912745be6ddc972cc3d3c254eddd.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.5956776142120361,
+      0.2935461103916168,
+      0.07324273884296417,
+      0.07488352060317993
+    ],
+    "confidence": 0.5650695562362671
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-372-_jpg.rf.53603ad6f591d0a6be3819d5f8888111.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.7495589256286621,
+      0.24468767642974854,
+      0.11432994157075882,
+      0.12432196736335754
+    ],
+    "confidence": 0.3798558712005615
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-1834-_jpg.rf.73b02cc13e69a94e9ede24833135870c.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.7037364840507507,
+      0.7385275959968567,
+      0.18491265177726746,
+      0.2455071210861206
+    ],
+    "confidence": 0.7621743083000183
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/valid/images/armas-1786-_jpg.rf.78df23b69215ddd7b231dc06a991fcbf.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.4980352520942688,
+      0.6394007802009583,
+      0.9960705041885376,
+      0.6199522614479065
+    ],
+    "confidence": 0.401288241147995
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-2142-_jpg.rf.e11e77cacf1d3b3f4014c55ce9db7b33.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.5023979544639587,
+      0.4804221987724304,
+      0.9921356439590454,
+      0.5427047610282898
+    ],
+    "confidence": 0.3211124837398529
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-1144-_jpg.rf.a49d1f2a8037a4d45ca02747ba1fdc9e.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.833770751953125,
+      0.3939574062824249,
+      0.12608826160430908,
+      0.23084412515163422
+    ],
+    "confidence": 0.3651883602142334
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-1144-_jpg.rf.a49d1f2a8037a4d45ca02747ba1fdc9e.jpg",
+    "pred_class": 0,
+    "bbox": [
+      0.037271179258823395,
+      0.7168729305267334,
+      0.07415373623371124,
+      0.26881182193756104
+    ],
+    "confidence": 0.31835663318634033
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-1991-_jpg.rf.a59ae745460214a168d0b5fbba50d7fa.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.3682113289833069,
+      0.507318913936615,
+      0.08621519804000854,
+      0.16747307777404785
+    ],
+    "confidence": 0.3239894211292267
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-1043-_jpg.rf.5658277408fa7f81e12dd51e1c196d8f.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.4403424561023712,
+      0.2157951295375824,
+      0.08407524228096008,
+      0.12279607355594635
+    ],
+    "confidence": 0.588735818862915
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/valid/images/armas-2912-_jpg.rf.424f4d7ff4bcbb2042e75823111c0b6e.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.28348931670188904,
+      0.6537908911705017,
+      0.5635914206504822,
+      0.49624642729759216
+    ],
+    "confidence": 0.33702221512794495
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/valid/images/armas-30-_jpg.rf.ddd3820614e62c69616f2f95ff48db49.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.1884455382823944,
+      0.3711133897304535,
+      0.1673979014158249,
+      0.1598026007413864
+    ],
+    "confidence": 0.5408927202224731
+  },
+  {
+    "image_id": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/Weapon_Detection-1/train/images/armas-1022-_jpg.rf.1f1c3aecef8a4ade2e9d6510542d4e54.jpg",
+    "pred_class": 1,
+    "bbox": [
+      0.4574705958366394,
+      0.4222560524940491,
+      0.11915700137615204,
+      0.06587564945220947
+    ],
+    "confidence": 0.4664463698863983
+  }
+]

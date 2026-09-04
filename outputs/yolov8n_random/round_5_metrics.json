@@ -1,44 +1,59 @@
 {
   "round": 5,
-  "timestamp": "2026-05-09 17:39:14",
-  "checkpoint_path": "C:\\Users\\manig\\Downloads\\yolo-improvement-detection-moderation-paper\\runs\\yolov8n_random\\incremental_round_5\\weights\\best.pt",
-  "training_set_size": 2017,
-  "verified_samples_added": 276,
-  "training_time_seconds": 251.8166651725769,
-  "validation_time_seconds": 23.934564113616943,
+  "timestamp": "2026-09-04 09:16:16",
+  "checkpoint_path": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/runs/yolov8n_random/incremental_round_5/weights/best.pt",
+  "training_set_size": 1933,
+  "verified_samples_added": 307,
+  "training_time_seconds": 116.63591647148132,
+  "validation_time_seconds": 4.552233695983887,
   "metrics": {
-    "mAP50": 0.533963794732761,
-    "mAP50-95": 0.3423699254469479,
-    "precision": 0.7067932786086268,
-    "recall": 0.46316615365257047,
-    "f1_score": 0.5596138041264367
+    "mAP50": 0.527817222921757,
+    "mAP50-95": 0.329107269254303,
+    "precision": 0.6306326529515338,
+    "recall": 0.47837307938540335,
+    "f1_score": 0.5440507210322627
   },
-  "rejected_count": 304,
-  "undetected_count": 1285,
-  "remaining_pool_size": 1528,
-  "unlabeled_pool_size_at_round_start": 1528,
-  "total_detections": 587,
+  "rejected_count": 359,
+  "undetected_count": 1271,
+  "remaining_pool_size": 1612,
+  "unlabeled_pool_size_at_round_start": 1612,
+  "total_detections": 675,
   "actual_stopped_epoch": 10,
+  "class_distribution": {
+    "knife_boxes": 541,
+    "pistol_boxes": 1526,
+    "total_boxes": 2067,
+    "images_with_knife": 526,
+    "images_with_pistol": 1407,
+    "total_images": 1933
+  },
+  "optimizer_steps": 1210,
+  "cumulative_optimizer_steps": 4270,
+  "images_processed": 19330,
+  "cumulative_images_processed": 67860,
+  "gflops": 8.7,
+  "training_tflops": 504.5129999999999,
+  "cumulative_training_tflops": 1771.1459999999997,
   "per_class_metrics": {
     "mAP50_per_class": [
-      0.42090039641128246,
-      0.6470271930542395
+      0.4447084874691264,
+      0.6109259583743877
     ],
     "mAP50-95_per_class": [
-      0.21793567102073647,
-      0.46680417987315925
+      0.20852832691554082,
+      0.4496862115930654
     ],
     "precision_per_class": [
-      0.6299818009269528,
-      0.7836047562903008
+      0.5279270900914935,
+      0.733338215811574
     ],
     "recall_per_class": [
-      0.36597511608190747,
-      0.5603571912232335
+      0.4084507042253521,
+      0.5482954545454546
     ],
     "f1_score_per_class": [
-      0.46298722120663693,
-      0.6534389773108921
+      0.4605666495644111,
+      0.6274585627294722
     ]
   }
 }

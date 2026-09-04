@@ -3,22 +3,22 @@
   "model": "yolov8n",
   "weights": "yolov8n.yaml",
   "random_seed": 42,
-  "epochs": 50,
+  "epochs": 500,
   "training_set_size": 3545,
-  "training_time_seconds": 3821.7472558021545,
-  "training_time_minutes": 63.69578759670257,
+  "training_time_seconds": 4479.803056716919,
+  "training_time_minutes": 74.66338427861531,
   "iou_threshold": 0.5,
   "test_metrics": {
-    "mAP50": 0.8286396438141783,
-    "mAP50-95": 0.554100719198922,
-    "precision": 0.8345332517462154,
-    "recall": 0.7545408944506046,
-    "f1_score": 0.7925237066230245
+    "mAP50": 0.8981147394272779,
+    "mAP50-95": 0.6435325303804992,
+    "precision": 0.8961311821312701,
+    "recall": 0.8509755345585417,
+    "f1_score": 0.8729698128498786
   },
   "per_class_test_metrics": {
     "mAP50_per_class": [
-      0.8546120913598627,
-      0.802667196268494
+      0.9233583715900012,
+      0.8728711072645545
     ]
   }
 }

@@ -1,0 +1,36 @@
+{
+  "timestamp": "2026-09-04T09:36:15.743573",
+  "random_seed": 42,
+  "train_init_percentage": 0.2,
+  "data_yaml_path": "config/data/weapon_detection_data.yaml",
+  "splits": {
+    "train_init": {
+      "num_images": 709,
+      "class_distribution": [
+        306,
+        478
+      ]
+    },
+    "unlabeled_pool": {
+      "num_images": 2836,
+      "class_distribution": [
+        1207,
+        1926
+      ]
+    },
+    "val_fixed": {
+      "num_images": 1013,
+      "class_distribution": [
+        426,
+        704
+      ]
+    },
+    "test_fixed": {
+      "num_images": 506,
+      "class_distribution": [
+        216,
+        340
+      ]
+    }
+  }
+}
