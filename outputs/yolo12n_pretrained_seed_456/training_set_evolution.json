@@ -1,0 +1,34 @@
+{
+  "rounds": [
+    {
+      "round": 2,
+      "training_set_size": 2514,
+      "samples_added": 1805,
+      "unlabeled_remaining": 1031
+    },
+    {
+      "round": 3,
+      "training_set_size": 3038,
+      "samples_added": 524,
+      "unlabeled_remaining": 507
+    },
+    {
+      "round": 4,
+      "training_set_size": 3196,
+      "samples_added": 158,
+      "unlabeled_remaining": 349
+    },
+    {
+      "round": 5,
+      "training_set_size": 3267,
+      "samples_added": 71,
+      "unlabeled_remaining": 278
+    },
+    {
+      "round": 5,
+      "training_set_size": 3545,
+      "samples_added": 278,
+      "unlabeled_remaining": 0
+    }
+  ]
+}

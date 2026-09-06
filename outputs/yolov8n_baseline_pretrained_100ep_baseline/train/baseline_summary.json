@@ -5,7 +5,7 @@
   "training_set_size": 3545,
   "epochs": 1,
   "actual_stopped_epoch": 1,
-  "best_epoch": null,
+  "best_epoch": 91,
   "patience": 5,
   "total_optimizer_steps": 222,
   "total_images_processed": 3545,

@@ -258,13 +258,17 @@ outputs/**/train_init.txt
 outputs/**/unlabeled_pool.txt
 outputs/**/val_fixed.txt
 outputs/**/test_fixed.txt
-
 # Explicitly ensure all results, metrics, CSVs and JSONs are NEVER ignored
 !outputs/**/*.json
 !outputs/**/*.csv
 !outputs/*.json
 !outputs/*.csv
 !outputs/*.tex
+
+# Exclude heavy per-box detection dumps (stored on Google Drive)
+outputs/**/round_*_detections.json
+outputs/**/round_*_validations.json
+
 !runs/**/results.csv
 !runs/**/metrics.json
 

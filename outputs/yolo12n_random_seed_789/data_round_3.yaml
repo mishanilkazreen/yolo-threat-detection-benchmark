@@ -1,0 +1,9 @@
+fraction: 1.0
+names:
+- knife
+- pistol
+nc: 2
+path: ./Weapon_Detection-1
+test: /mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/outputs/yolo12n_random_seed_789/round_splits/data_round_3/test.txt
+train: /mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/outputs/yolo12n_random_seed_789/round_splits/data_round_3/train.txt
+val: /mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/outputs/yolo12n_random_seed_789/round_splits/data_round_3/val.txt

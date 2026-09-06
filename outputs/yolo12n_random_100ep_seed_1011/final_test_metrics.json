@@ -1,0 +1,46 @@
+{
+  "timestamp": "2026-09-05 05:41:49",
+  "config_name": "yolo12n_random_100ep_seed_1011",
+  "checkpoint_path": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/runs/yolo12n_random_100ep_seed_1011/incremental_round_5/weights/best.pt",
+  "random_seed": 1011,
+  "total_training_time_seconds": 5810.104528427124,
+  "total_training_time_minutes": 96.8350754737854,
+  "test_time_seconds": 4.039956092834473,
+  "cumulative_optimizer_steps": 46800,
+  "cumulative_images_processed": 745262,
+  "cumulative_training_tflops": 19451.3382,
+  "model_info": {
+    "parameters": 2557118,
+    "model_name": "best",
+    "inference_time_ms": null
+  },
+  "metrics": {
+    "mAP50": 0.8298839335179076,
+    "mAP50-95": 0.576311287707575,
+    "precision": 0.8870561132064356,
+    "recall": 0.7550125298619765,
+    "f1_score": 0.8157253145155151
+  },
+  "per_class_metrics": {
+    "mAP50_per_class": [
+      0.8257362132757077,
+      0.8340316537601075
+    ],
+    "mAP50-95_per_class": [
+      0.4993408032039075,
+      0.6532817722112425
+    ],
+    "precision_per_class": [
+      0.8938312364052537,
+      0.8802809900076174
+    ],
+    "recall_per_class": [
+      0.7314814814814815,
+      0.7785435782424716
+    ],
+    "f1_score_per_class": [
+      0.804547936904414,
+      0.8262924542314019
+    ]
+  }
+}

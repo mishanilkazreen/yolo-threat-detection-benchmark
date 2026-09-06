@@ -5,6 +5,30 @@
       "training_set_size": 2448,
       "samples_added": 1739,
       "unlabeled_remaining": 1097
+    },
+    {
+      "round": 3,
+      "training_set_size": 2891,
+      "samples_added": 443,
+      "unlabeled_remaining": 654
+    },
+    {
+      "round": 4,
+      "training_set_size": 3016,
+      "samples_added": 125,
+      "unlabeled_remaining": 529
+    },
+    {
+      "round": 5,
+      "training_set_size": 3120,
+      "samples_added": 104,
+      "unlabeled_remaining": 425
+    },
+    {
+      "round": 5,
+      "training_set_size": 3545,
+      "samples_added": 425,
+      "unlabeled_remaining": 0
     }
   ]
 }
