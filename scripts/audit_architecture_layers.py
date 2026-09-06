@@ -34,25 +34,25 @@ logger = logging.getLogger(__name__)
 ARCH_BOUNDARIES = {
     "yolov8n": {
         "model_file": "yolov8n.pt",
-        "backbone_indices": list(range(0, 10)),   # 0..9 (Conv, C2f, SPPF)
-        "neck_indices": list(range(10, 22)),       # 10..21
-        "head_indices": [22],                      # 22 (Detect)
+        "backbone_indices": list(range(0, 10)),  # 0..9 (Conv, C2f, SPPF)
+        "neck_indices": list(range(10, 22)),  # 10..21
+        "head_indices": [22],  # 22 (Detect)
         "freeze_backbone_val": 10,
         "freeze_headonly_val": 22,
     },
     "yolo11n": {
         "model_file": "yolo11n.pt",
-        "backbone_indices": list(range(0, 11)),   # 0..10 (Conv, C3k2, SPPF, C2PSA)
-        "neck_indices": list(range(11, 23)),       # 11..22
-        "head_indices": [23],                      # 23 (Detect)
+        "backbone_indices": list(range(0, 11)),  # 0..10 (Conv, C3k2, SPPF, C2PSA)
+        "neck_indices": list(range(11, 23)),  # 11..22
+        "head_indices": [23],  # 23 (Detect)
         "freeze_backbone_val": 11,
         "freeze_headonly_val": 23,
     },
     "yolo12n": {
         "model_file": "yolo12n.pt",
-        "backbone_indices": list(range(0, 9)),    # 0..8 (Conv, C3k2, A2C2f)
-        "neck_indices": list(range(9, 21)),        # 9..20
-        "head_indices": [21],                      # 21 (Detect)
+        "backbone_indices": list(range(0, 9)),  # 0..8 (Conv, C3k2, A2C2f)
+        "neck_indices": list(range(9, 21)),  # 9..20
+        "head_indices": [21],  # 21 (Detect)
         "freeze_backbone_val": 9,
         "freeze_headonly_val": 21,
     },
@@ -88,12 +88,14 @@ def audit_single_architecture(arch_name: str, meta: dict[str, Any]) -> dict[str,
         else:
             component = "Other"
 
-        layer_details.append({
-            "index": idx,
-            "type": l_type,
-            "component": component,
-            "parameters": l_params,
-        })
+        layer_details.append(
+            {
+                "index": idx,
+                "type": l_type,
+                "component": component,
+                "parameters": l_params,
+            }
+        )
 
     # Strategy 1: Full fine-tuning
     full_trainable = total_params
@@ -102,16 +104,12 @@ def audit_single_architecture(arch_name: str, meta: dict[str, Any]) -> dict[str,
     # Strategy 2: Frozen Backbone
     # When freeze=K is passed to Ultralytics, layers 0..(K-1) have requires_grad=False
     k_bb = meta["freeze_backbone_val"]
-    bb_frozen_params = sum(
-        sum(p.numel() for p in layers[i].parameters()) for i in range(k_bb)
-    )
+    bb_frozen_params = sum(sum(p.numel() for p in layers[i].parameters()) for i in range(k_bb))
     bb_trainable_params = total_params - bb_frozen_params
 
     # Strategy 3: Head-only
     k_ho = meta["freeze_headonly_val"]
-    ho_frozen_params = sum(
-        sum(p.numel() for p in layers[i].parameters()) for i in range(k_ho)
-    )
+    ho_frozen_params = sum(sum(p.numel() for p in layers[i].parameters()) for i in range(k_ho))
     ho_trainable_params = total_params - ho_frozen_params
 
     # Inspect 2-class head adaptation details (TASK-MIN-05)
@@ -194,18 +192,32 @@ def generate_latex_table(audits: list[dict[str, Any]]) -> str:
         c = a["components"]
         f = a["freeze_strategies"]
 
-        lines.append(f"{arch} & Total Architecture & 0--{a['total_layers']-1} & {tot:,} & {tot:,} & 0 & 100.0\\% \\\\")
-        lines.append(f" & Backbone & {c['backbone']['layer_indices']} & {c['backbone']['parameters']:,} & -- & -- & {c['backbone']['percentage']}\\% \\\\")
-        lines.append(f" & Neck & {c['neck']['layer_indices']} & {c['neck']['parameters']:,} & -- & -- & {c['neck']['percentage']}\\% \\\\")
-        lines.append(f" & Head & {c['head']['layer_indices']} & {c['head']['parameters']:,} & -- & -- & {c['head']['percentage']}\\% \\\\")
-        lines.append(f" & Strategy: Frozen Backbone & Freeze={f['frozen_backbone']['freeze_arg']} & {tot:,} & {f['frozen_backbone']['trainable_parameters']:,} & {f['frozen_backbone']['frozen_parameters']:,} & {f['frozen_backbone']['trainable_percentage']}\\% \\\\")
-        lines.append(f" & Strategy: Head-Only & Freeze={f['head_only']['freeze_arg']} & {tot:,} & {f['head_only']['trainable_parameters']:,} & {f['head_only']['frozen_parameters']:,} & {f['head_only']['trainable_percentage']}\\% \\\\")
+        lines.append(
+            f"{arch} & Total Architecture & 0--{a['total_layers'] - 1} & {tot:,} & {tot:,} & 0 & 100.0\\% \\\\"
+        )
+        lines.append(
+            f" & Backbone & {c['backbone']['layer_indices']} & {c['backbone']['parameters']:,} & -- & -- & {c['backbone']['percentage']}\\% \\\\"
+        )
+        lines.append(
+            f" & Neck & {c['neck']['layer_indices']} & {c['neck']['parameters']:,} & -- & -- & {c['neck']['percentage']}\\% \\\\"
+        )
+        lines.append(
+            f" & Head & {c['head']['layer_indices']} & {c['head']['parameters']:,} & -- & -- & {c['head']['percentage']}\\% \\\\"
+        )
+        lines.append(
+            f" & Strategy: Frozen Backbone & Freeze={f['frozen_backbone']['freeze_arg']} & {tot:,} & {f['frozen_backbone']['trainable_parameters']:,} & {f['frozen_backbone']['frozen_parameters']:,} & {f['frozen_backbone']['trainable_percentage']}\\% \\\\"
+        )
+        lines.append(
+            f" & Strategy: Head-Only & Freeze={f['head_only']['freeze_arg']} & {tot:,} & {f['head_only']['trainable_parameters']:,} & {f['head_only']['frozen_parameters']:,} & {f['head_only']['trainable_percentage']}\\% \\\\"
+        )
         lines.append(r"\hline")
 
-    lines.extend([
-        r"\end{tabular*}",
-        r"\end{table*}",
-    ])
+    lines.extend(
+        [
+            r"\end{tabular*}",
+            r"\end{table*}",
+        ]
+    )
     return "\n".join(lines)
 
 
@@ -227,13 +239,23 @@ def main() -> None:
         print(f"--- {arch_name.upper()} ---")
         print(f"Total Layers:     {res['total_layers']}")
         print(f"Total Parameters: {res['total_parameters']:,}")
-        print(f"  Backbone (layers {res['components']['backbone']['layer_indices']}): {res['components']['backbone']['parameters']:,} ({res['components']['backbone']['percentage']}%)")
-        print(f"  Neck     (layers {res['components']['neck']['layer_indices']}): {res['components']['neck']['parameters']:,} ({res['components']['neck']['percentage']}%)")
-        print(f"  Head     (layers {res['components']['head']['layer_indices']}): {res['components']['head']['parameters']:,} ({res['components']['head']['percentage']}%)")
+        print(
+            f"  Backbone (layers {res['components']['backbone']['layer_indices']}): {res['components']['backbone']['parameters']:,} ({res['components']['backbone']['percentage']}%)"
+        )
+        print(
+            f"  Neck     (layers {res['components']['neck']['layer_indices']}): {res['components']['neck']['parameters']:,} ({res['components']['neck']['percentage']}%)"
+        )
+        print(
+            f"  Head     (layers {res['components']['head']['layer_indices']}): {res['components']['head']['parameters']:,} ({res['components']['head']['percentage']}%)"
+        )
         fb = res["freeze_strategies"]["frozen_backbone"]
-        print(f"  [Strategy Frozen Backbone (freeze={fb['freeze_arg']})]: Trainable: {fb['trainable_parameters']:,} ({fb['trainable_percentage']}%), Frozen: {fb['frozen_parameters']:,} ({fb['frozen_percentage']}%)")
+        print(
+            f"  [Strategy Frozen Backbone (freeze={fb['freeze_arg']})]: Trainable: {fb['trainable_parameters']:,} ({fb['trainable_percentage']}%), Frozen: {fb['frozen_parameters']:,} ({fb['frozen_percentage']}%)"
+        )
         ho = res["freeze_strategies"]["head_only"]
-        print(f"  [Strategy Head-Only (freeze={ho['freeze_arg']})]: Trainable: {ho['trainable_parameters']:,} ({ho['trainable_percentage']}%), Frozen: {ho['frozen_parameters']:,} ({ho['frozen_percentage']}%)")
+        print(
+            f"  [Strategy Head-Only (freeze={ho['freeze_arg']})]: Trainable: {ho['trainable_parameters']:,} ({ho['trainable_percentage']}%), Frozen: {ho['frozen_parameters']:,} ({ho['frozen_percentage']}%)"
+        )
         print()
 
     # Save output JSON

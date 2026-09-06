@@ -15,13 +15,11 @@ Usage:
 
 import argparse
 from datetime import datetime, timedelta
-import json
 import subprocess
-import sys
 import time
 
 TOTAL_EXPECTED_JOBS = 68  # 1 coco + 1 latency + 6 baselines + 60 multiseed runs
-MAX_CONCURRENT_GPUS = 2   # SCIAMA QOSMaxJobsPerUserLimit for gpu.q
+MAX_CONCURRENT_GPUS = 2  # SCIAMA QOSMaxJobsPerUserLimit for gpu.q
 
 
 def run_ssh(cmd: str) -> str:
@@ -58,9 +56,9 @@ def get_queue_info() -> tuple[list[dict], list[dict]]:
 def get_completed_counts() -> tuple[int, int, int]:
     cmd = (
         "python3 -c 'import glob, json, os; "
-        "new_m = sum(1 for p in glob.glob(\"/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/outputs/**/final_test_metrics.json\", recursive=True) if json.load(open(p)).get(\"cumulative_optimizer_steps\", 0) > 0); "
-        "base_m = sum(1 for p in glob.glob(\"/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/outputs/**/baseline_summary.json\", recursive=True) if \"100ep\" not in p and json.load(open(p)).get(\"total_optimizer_steps\", 0) > 0); "
-        "fast_m = sum(1 for p in [\"/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/outputs/coco_knife_overlap_evaluation.json\", \"/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/outputs/decomposed_latency_benchmark.json\"] if os.path.exists(p)); "
+        'new_m = sum(1 for p in glob.glob("/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/outputs/**/final_test_metrics.json", recursive=True) if json.load(open(p)).get("cumulative_optimizer_steps", 0) > 0); '
+        'base_m = sum(1 for p in glob.glob("/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/outputs/**/baseline_summary.json", recursive=True) if "100ep" not in p and json.load(open(p)).get("total_optimizer_steps", 0) > 0); '
+        'fast_m = sum(1 for p in ["/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/outputs/coco_knife_overlap_evaluation.json", "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/outputs/decomposed_latency_benchmark.json"] if os.path.exists(p)); '
         "print(new_m, base_m, fast_m)'"
     )
     raw = run_ssh(cmd)
@@ -104,14 +102,20 @@ def display_dashboard():
     print("=" * 80)
     print(f"SCIAMA HPC LIVE DASHBOARD — {now.strftime('%Y-%m-%d %H:%M:%S')}")
     print("=" * 80)
-    print(f"Overall Progress:       {total_done}/{TOTAL_EXPECTED_JOBS} jobs completed ({total_done / TOTAL_EXPECTED_JOBS * 100:.1f}%)")
+    print(
+        f"Overall Progress:       {total_done}/{TOTAL_EXPECTED_JOBS} jobs completed ({total_done / TOTAL_EXPECTED_JOBS * 100:.1f}%)"
+    )
     print(f"  • Fast Benchmarks:    {fast_done}/2 completed")
     print(f"  • 500-Ep Baselines:   {baselines_done}/6 completed")
     print(f"  • Multi-Seed Sweeps:  {multiseed_done}/60 completed")
-    print(f"Active GPU Workers:     {len(running)} running (Max concurrency: {MAX_CONCURRENT_GPUS})")
+    print(
+        f"Active GPU Workers:     {len(running)} running (Max concurrency: {MAX_CONCURRENT_GPUS})"
+    )
     print(f"Pending SLURM Queue:    {len(pending)} jobs queued")
     print("-" * 80)
-    print(f"ESTIMATED COMPLETION:   {eta_time.strftime('%A, %d %b %Y at %H:%M:%S')} (~{est_remaining_minutes / 60:.1f} hours remaining)")
+    print(
+        f"ESTIMATED COMPLETION:   {eta_time.strftime('%A, %d %b %Y at %H:%M:%S')} (~{est_remaining_minutes / 60:.1f} hours remaining)"
+    )
     print("=" * 80)
 
     if running:
@@ -125,8 +129,8 @@ def display_dashboard():
     print("-" * 80)
     active_logs = get_active_job_progress()
     if active_logs:
-        for l in active_logs:
-            print(f"  {l[:78]}")
+        for line in active_logs:
+            print(f"  {line[:78]}")
     else:
         print("  Waiting for active logs...")
     print("=" * 80)
@@ -134,7 +138,9 @@ def display_dashboard():
 
 def main():
     parser = argparse.ArgumentParser(description="Live monitor for SCIAMA JRTIP jobs")
-    parser.add_argument("--watch", type=int, default=0, help="Refresh interval in seconds (0 for single run)")
+    parser.add_argument(
+        "--watch", type=int, default=0, help="Refresh interval in seconds (0 for single run)"
+    )
     args = parser.parse_args()
 
     if args.watch > 0:

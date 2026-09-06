@@ -27,7 +27,7 @@ def _safe_path_unlink(self, missing_ok: bool = True) -> None:
         pass
 
 
-Path.unlink = _safe_path_unlink  # type: ignore[assignment]
+Path.unlink = _safe_path_unlink  # type: ignore[method-assign]
 
 
 class Baseline_Trainer:  # pylint: disable=too-few-public-methods
@@ -107,9 +107,13 @@ class Baseline_Trainer:  # pylint: disable=too-few-public-methods
         if use_step_decay:
             step_decay_callback = create_step_decay_callback(lr0, lrf, step_interval=5)
             model.add_callback("on_train_epoch_start", step_decay_callback)
-            self.logger.info("Added step decay LR scheduler: lr0=%s, lrf=%s, step_interval=5", lr0, lrf)
+            self.logger.info(
+                "Added step decay LR scheduler: lr0=%s, lrf=%s, step_interval=5", lr0, lrf
+            )
         else:
-            self.logger.info("Using standard AdamW linear LR schedule: lr0=%s, lrf=%s (cos_lr=False)", lr0, lrf)
+            self.logger.info(
+                "Using standard AdamW linear LR schedule: lr0=%s, lrf=%s (cos_lr=False)", lr0, lrf
+            )
 
         device = select_device(config.training.device)
 
@@ -185,7 +189,9 @@ class Baseline_Trainer:  # pylint: disable=too-few-public-methods
         except Exception as exc:  # pylint: disable=broad-exception-caught
             self.logger.warning("Could not read stopping epoch from baseline trainer: %s", exc)
 
-        effective_epochs = actual_stopped_epoch if actual_stopped_epoch is not None else baseline_epochs
+        effective_epochs = (
+            actual_stopped_epoch if actual_stopped_epoch is not None else baseline_epochs
+        )
         steps_per_epoch = math.ceil(len(full_training_images) / batch_size)
         total_optimizer_steps = steps_per_epoch * effective_epochs
         total_images_processed = len(full_training_images) * effective_epochs

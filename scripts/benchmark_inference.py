@@ -128,7 +128,9 @@ def load_test_images(image_list_path: Path, limit: int = 50) -> list[np.ndarray]
                 images.append(im)
 
     if not images:
-        logger.warning("Could not read real images from %s. Using synthetic images.", image_list_path)
+        logger.warning(
+            "Could not read real images from %s. Using synthetic images.", image_list_path
+        )
         images = [np.random.randint(0, 256, (640, 640, 3), dtype=np.uint8) for _ in range(10)]
 
     logger.info("Loaded %d real test images for profiling cache", len(images))
@@ -160,7 +162,9 @@ def benchmark_single_model(
 ) -> dict[str, Any]:
     """Execute decomposed latency benchmarking for a single model and precision mode."""
     mode_name = "FP16" if half_precision else "FP32"
-    logger.info("Profiling %s [%s] on %s (%s)...", Path(model_path).name, mode_name, device, device.type)
+    logger.info(
+        "Profiling %s [%s] on %s (%s)...", Path(model_path).name, mode_name, device, device.type
+    )
 
     yolo_model = YOLO(model_path)
     net = yolo_model.model.to(device)
@@ -316,7 +320,9 @@ def main() -> None:
     print("\n" + "=" * 80)
     print("DECOMPOSED REAL-TIME INFERENCE BENCHMARK")
     print("=" * 80)
-    print(f"Device:               {device} ({torch.cuda.get_device_name(0) if device.type == 'cuda' else 'CPU'})")
+    print(
+        f"Device:               {device} ({torch.cuda.get_device_name(0) if device.type == 'cuda' else 'CPU'})"
+    )
     print(f"Warmup Cycles:        {args.warmup}")
     print(f"Measurement Cycles:   {args.iterations}")
     print(f"Input Resolution:     {args.imgsz}x{args.imgsz} (Batch size = 1)")
@@ -361,28 +367,30 @@ def main() -> None:
         prep = r["preprocess_ms"]
         post = r["postprocess_ms"]
         dl = r["deadline_compliance"]
-        csv_rows.append({
-            "model_name": r["model_name"],
-            "precision": r["precision"],
-            "device": r["device_name"],
-            "params": r["parameters"],
-            "gflops": r["gflops"],
-            "prep_mean_ms": round(prep["mean"], 3),
-            "fwd_mean_ms": round(fwd["mean"], 3),
-            "fwd_p50_ms": round(fwd["p50"], 3),
-            "fwd_p99_ms": round(fwd["p99"], 3),
-            "post_mean_ms": round(post["mean"], 3),
-            "total_mean_ms": round(e2e["mean"], 3),
-            "total_p50_ms": round(e2e["p50"], 3),
-            "total_p95_ms": round(e2e["p95"], 3),
-            "total_p99_ms": round(e2e["p99"], 3),
-            "fps_mean": r["fps_mean"],
-            "fps_median": r["fps_median"],
-            "slack_30fps_p99_ms": dl["Surveillance_30FPS"]["slack_margin_p99_ms"],
-            "meets_30fps_p99": dl["Surveillance_30FPS"]["meets_deadline_p99"],
-            "slack_60fps_p99_ms": dl["HighSpeed_60FPS"]["slack_margin_p99_ms"],
-            "meets_60fps_p99": dl["HighSpeed_60FPS"]["meets_deadline_p99"],
-        })
+        csv_rows.append(
+            {
+                "model_name": r["model_name"],
+                "precision": r["precision"],
+                "device": r["device_name"],
+                "params": r["parameters"],
+                "gflops": r["gflops"],
+                "prep_mean_ms": round(prep["mean"], 3),
+                "fwd_mean_ms": round(fwd["mean"], 3),
+                "fwd_p50_ms": round(fwd["p50"], 3),
+                "fwd_p99_ms": round(fwd["p99"], 3),
+                "post_mean_ms": round(post["mean"], 3),
+                "total_mean_ms": round(e2e["mean"], 3),
+                "total_p50_ms": round(e2e["p50"], 3),
+                "total_p95_ms": round(e2e["p95"], 3),
+                "total_p99_ms": round(e2e["p99"], 3),
+                "fps_mean": r["fps_mean"],
+                "fps_median": r["fps_median"],
+                "slack_30fps_p99_ms": dl["Surveillance_30FPS"]["slack_margin_p99_ms"],
+                "meets_30fps_p99": dl["Surveillance_30FPS"]["meets_deadline_p99"],
+                "slack_60fps_p99_ms": dl["HighSpeed_60FPS"]["slack_margin_p99_ms"],
+                "meets_60fps_p99": dl["HighSpeed_60FPS"]["meets_deadline_p99"],
+            }
+        )
 
     # Save outputs
     out_csv = PROJECT_ROOT / args.output_csv
@@ -402,7 +410,9 @@ def main() -> None:
 
     # Print summary table
     print("\n" + "=" * 110)
-    print(f"{'Model':<24} {'Mode':<6} {'Params':<10} {'Fwd P50':<10} {'Tot P50':<10} {'Tot P99':<10} {'FPS':<8} {'30FPS Slack':<12} {'60FPS Slack':<12}")
+    print(
+        f"{'Model':<24} {'Mode':<6} {'Params':<10} {'Fwd P50':<10} {'Tot P50':<10} {'Tot P99':<10} {'FPS':<8} {'30FPS Slack':<12} {'60FPS Slack':<12}"
+    )
     print("-" * 110)
     for row in csv_rows:
         s30 = f"{row['slack_30fps_p99_ms']:+.2f}ms"

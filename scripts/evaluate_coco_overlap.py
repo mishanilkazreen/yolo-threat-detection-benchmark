@@ -198,7 +198,9 @@ def evaluate_zero_shot(
 
         with torch.no_grad():
             preds = net(tensor)
-            results = nms.non_max_suppression(preds, conf_thres=conf_thres, iou_thres=0.45, max_det=300)
+            results = nms.non_max_suppression(
+                preds, conf_thres=conf_thres, iou_thres=0.45, max_det=300
+            )
 
         # Process detections on original image scale
         det = results[0]
@@ -291,7 +293,7 @@ def main() -> None:
         ln.strip() for ln in test_list_path.read_text(encoding="utf-8").splitlines() if ln.strip()
     ]
     if args.sample_limit:
-        image_paths = image_paths[:args.sample_limit]
+        image_paths = image_paths[: args.sample_limit]
 
     print("\n" + "=" * 80)
     print("COCO KNIFE SEMANTIC CLASS OVERLAP: ZERO-SHOT EVALUATION")
@@ -327,7 +329,9 @@ def main() -> None:
 
     # Print summary table
     print("\n" + "=" * 80)
-    print(f"{'Model':<20} {'Knife AP@0.5':<15} {'Knife Recall':<15} {'Pistol AP@0.5':<15} {'Overall mAP':<15}")
+    print(
+        f"{'Model':<20} {'Knife AP@0.5':<15} {'Knife Recall':<15} {'Pistol AP@0.5':<15} {'Overall mAP':<15}"
+    )
     print("-" * 80)
     for r in results:
         k = r["classes"]["knife"]

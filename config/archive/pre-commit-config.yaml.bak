@@ -4,12 +4,6 @@ ci:
   autofix_prs: true
   autoupdate_schedule: weekly
 
-# Never lint, reformat, or otherwise modify:
-#   outputs/  -> raw experiment result files (audit trail; must stay byte-for-byte reproducible)
-#   archive/  -> frozen legacy scripts and configs kept for provenance
-#   yolo_cam/ -> vendored third-party code
-exclude: ^(outputs/|archive/|yolo_cam/)
-
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: "v5.0.0"

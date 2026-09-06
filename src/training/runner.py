@@ -38,7 +38,7 @@ def _safe_path_unlink(self, missing_ok: bool = True) -> None:
         pass
 
 
-Path.unlink = _safe_path_unlink  # type: ignore[assignment]
+Path.unlink = _safe_path_unlink  # type: ignore[method-assign]
 
 
 def count_dataset_class_distribution(image_paths: list[str]) -> dict[str, Any]:
@@ -299,9 +299,13 @@ class Experiment_Runner:
         if use_step_decay:
             step_decay_callback = create_step_decay_callback(lr0, lrf, step_interval=5)
             model.add_callback("on_train_epoch_start", step_decay_callback)
-            self.logger.info("Added step decay LR scheduler: lr0=%s, lrf=%s, step_interval=5", lr0, lrf)
+            self.logger.info(
+                "Added step decay LR scheduler: lr0=%s, lrf=%s, step_interval=5", lr0, lrf
+            )
         else:
-            self.logger.info("Using standard AdamW linear LR schedule: lr0=%s, lrf=%s (cos_lr=False)", lr0, lrf)
+            self.logger.info(
+                "Using standard AdamW linear LR schedule: lr0=%s, lrf=%s (cos_lr=False)", lr0, lrf
+            )
 
         # Select device
         device = select_device(config.training.device)
@@ -590,11 +594,12 @@ class Experiment_Runner:
                     self.logger.info(
                         "Added step decay LR scheduler: lr0=%s, lrf=%s, step_interval=5", lr0, lrf
                     )
-            else:
-                if round_num == 1:
-                    self.logger.info(
-                        "Using standard AdamW linear LR schedule: lr0=%s, lrf=%s (cos_lr=False)", lr0, lrf
-                    )
+            elif round_num == 1:
+                self.logger.info(
+                    "Using standard AdamW linear LR schedule: lr0=%s, lrf=%s (cos_lr=False)",
+                    lr0,
+                    lrf,
+                )
 
             # Train model for this round
             self.logger.info(
@@ -735,7 +740,9 @@ class Experiment_Runner:
                     except OSError as exc:
                         self.logger.warning("Could not load previous validation results: %s", exc)
 
-            effective_epochs = actual_stopped_epoch if actual_stopped_epoch is not None else epochs_per_round
+            effective_epochs = (
+                actual_stopped_epoch if actual_stopped_epoch is not None else epochs_per_round
+            )
             steps_per_epoch = math.ceil(len(current_training_images) / batch_size)
             round_optimizer_steps = steps_per_epoch * effective_epochs
             round_images_processed = len(current_training_images) * effective_epochs

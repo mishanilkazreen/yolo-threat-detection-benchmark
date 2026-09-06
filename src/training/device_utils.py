@@ -91,7 +91,9 @@ def select_device(device_config: str = "auto") -> str:
         if torch.cuda.is_available() and int(device_config) < torch.cuda.device_count():
             return f"cuda:{device_config}"
         else:
-            logger.warning("CUDA device %s requested but not available. Falling back to CPU.", device_config)
+            logger.warning(
+                "CUDA device %s requested but not available. Falling back to CPU.", device_config
+            )
             return "cpu"
 
     if device_config.startswith("cuda"):

@@ -20,6 +20,7 @@ dependencies = [
     "tqdm>=4.65.0",
     "torch>=2.0.0",
     "torchvision>=0.15.0",
+    "ttach>=0.0.3",
 ]
 
 [tool.uv.sources]
@@ -65,8 +66,6 @@ packages = ["src"]
 [tool.ruff]
 target-version = "py310"
 line-length = 100
-# archive/ holds frozen legacy scripts kept as an audit trail; do not lint or reformat them.
-extend-exclude = ["archive"]
 
 [tool.ruff.lint]
 select = [
@@ -98,7 +97,6 @@ ignore = [
     "RUF043",  # regex metacharacters in match=
     "B904",    # raise from in except (too noisy for existing code)
     "PTH123",  # open() vs Path.open() (gradual migration)
-    "SIM105",  # contextlib.suppress vs try/except/pass (kept explicit in Path.unlink monkeypatch)
 ]
 
 [tool.ruff.lint.per-file-ignores]
@@ -114,13 +112,6 @@ ignore = [
     "T201",    # print statements allowed in scripts
     "E402",    # module level import not at top (sys.path manipulation)
     "F841",    # unused variables in scripts
-]
-"scripts/audit_architecture_layers.py" = [
-    "RUF001",  # en-dashes in layer-index strings are intentional and match the committed audit JSON
-]
-"scripts/monitor_sciama_progress.py" = [
-    "UP022",   # explicit stdout/stderr PIPE kept for clarity in this SSH helper
-    "PLW1510", # subprocess.run without check= is intentional (SSH may return non-zero)
 ]
 "src/training/runner.py" = [
     "F841",    # unused variables (YOLO API returns)

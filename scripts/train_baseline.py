@@ -28,10 +28,18 @@ def parse_args() -> argparse.Namespace:
         description="One-shot YOLO baseline training with compute and stopping epoch accounting."
     )
     parser.add_argument("config", type=str, help="Path to YAML baseline configuration file")
-    parser.add_argument("--seed", type=int, default=None, help="Random seed override (e.g. 42, 123, 456)")
-    parser.add_argument("--device", type=str, default=None, help="Device override (e.g. '0', 'cpu')")
-    parser.add_argument("--epochs", type=int, default=None, help="Baseline epochs override (e.g. 500)")
-    parser.add_argument("--patience", type=int, default=None, help="Early stopping patience override (e.g. 50)")
+    parser.add_argument(
+        "--seed", type=int, default=None, help="Random seed override (e.g. 42, 123, 456)"
+    )
+    parser.add_argument(
+        "--device", type=str, default=None, help="Device override (e.g. '0', 'cpu')"
+    )
+    parser.add_argument(
+        "--epochs", type=int, default=None, help="Baseline epochs override (e.g. 500)"
+    )
+    parser.add_argument(
+        "--patience", type=int, default=None, help="Early stopping patience override (e.g. 50)"
+    )
     parser.add_argument(
         "--no-validate-dataset", action="store_true", help="Skip dataset validation check"
     )
