@@ -20,7 +20,8 @@ This directory contains the experimental artifacts and verified metrics for the 
    - `coco_knife_overlap_evaluation.json`: Zero-shot Round-0 evaluation testing knife prior transfer from MS COCO.
 
 4. **Decomposed Inference Latency:**
-   - `decomposed_latency_benchmark.json` and `decomposed_latency_benchmark.csv`: Microsecond-precision benchmarking (preprocessing, forward inference, NMS postprocessing, percentiles) across FP32 and FP16 with warmup and CUDA synchronization.
+   - `decomposed_latency_benchmark.json` and `decomposed_latency_benchmark.csv`: GPU benchmarking on an NVIDIA A100 (MIG slice), microsecond-precision (preprocessing, forward inference, NMS postprocessing, percentiles) across FP32 and FP16 with warmup and CUDA synchronization.
+   - `decomposed_latency_benchmark_M1_edge.json` and `decomposed_latency_benchmark_M1_edge.csv`: CPU-only edge-device benchmarking on an Apple M1 (8-core CPU, 16 GB unified memory), FP32, batch size 1, 500 iterations after 100 warmup passes. **These are the figures reported in the paper's Table 6 and real-time analysis** (YOLOv8n 69.41 ms / 14.5 FPS; YOLO11n 73.33 ms / 13.8 FPS; YOLOv12n 128.70 ms / 7.8 FPS), reflecting the CPU-only deployment target distinct from the A100 training hardware.
 
 5. **Consolidated Results Matrix:**
    - `full_evaluation_results.csv`: Complete row-by-row accounting of all 476 evaluation steps across rounds, seeds, and baselines.

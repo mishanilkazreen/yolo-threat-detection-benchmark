@@ -1,0 +1,4 @@
+model_name,precision,device,params,gflops,prep_mean_ms,fwd_mean_ms,fwd_p50_ms,fwd_p99_ms,post_mean_ms,total_mean_ms,total_p50_ms,total_p95_ms,total_p99_ms,fps_mean,fps_median,slack_30fps_p99_ms,meets_30fps_p99,slack_60fps_p99_ms,meets_60fps_p99
+yolov8n,FP32,CPU,3157200,8.7,1.141,67.909,67.299,75.331,0.361,69.411,68.792,71.587,77.121,14.41,14.54,-43.788,False,-60.454,False
+yolo11n,FP32,CPU,2624080,6.5,1.146,71.817,71.001,82.554,0.37,73.333,72.492,77.822,83.997,13.64,13.79,-50.664,False,-67.33,False
+yolo12n,FP32,CPU,2603056,6.5,1.143,127.187,126.437,134.256,0.365,128.696,127.972,133.046,135.657,7.77,7.81,-102.324,False,-118.99,False
