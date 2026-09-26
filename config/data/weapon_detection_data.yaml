@@ -13,9 +13,9 @@ val: valid/images
 # Note: There is no pre-existing test directory in the Roboflow download.
 # Dataset_Splitter pools all 5,064 images from train/ + valid/ and creates
 # a fresh stratified 70/20/10 split:
-#   train  70% → 3,543 images  (further split into train_init 20% + unlabeled_pool 80%)
+#   train  70% → 3,545 images  (further split into train_init 20% + unlabeled_pool 80%)
 #   val    20% → 1,013 images  (val_fixed, unchanged across rounds)
-#   test   10% →   508 images  (test_fixed, unchanged across rounds)
+#   test   10% →   506 images  (test_fixed, unchanged across rounds)
 #   train_init 20% of train → 709 images
 
 # Number of classes

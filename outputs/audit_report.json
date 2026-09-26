@@ -1,0 +1,49 @@
+{
+  "file_existence": {
+    "total_runs": 60,
+    "expected_round_files": 300,
+    "found_round_files": 300,
+    "missing_files": []
+  },
+  "data_splits": {
+    "train_init.txt": {
+      "expected": 709,
+      "actual": 709,
+      "match": true
+    },
+    "unlabeled_pool.txt": {
+      "expected": 2836,
+      "actual": 2836,
+      "match": true
+    },
+    "val_fixed.txt": {
+      "expected": 1013,
+      "actual": 1013,
+      "match": true
+    },
+    "test_fixed.txt": {
+      "expected": 506,
+      "actual": 506,
+      "match": true
+    }
+  },
+  "evolution_layouts": {
+    "5_entries": 0,
+    "6_entries": 0,
+    "other": 60,
+    "files_audited": 60
+  },
+  "mathematical_consistency": {
+    "passed_runs": 60,
+    "failed_runs": 0,
+    "discrepancies": []
+  },
+  "seed_path_bindings": {
+    "seed_42_legacy_baseline_bindings": 12,
+    "seed_specific_bindings": 48
+  },
+  "yaml_comment_check": {
+    "has_stale_3543_comment": false,
+    "has_stale_508_comment": true
+  }
+}
