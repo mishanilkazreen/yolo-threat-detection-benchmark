@@ -65,6 +65,18 @@ def main():
 
                     assert os.path.exists(fpath), f"Missing run directory: {fpath}"
 
+                    # Load final_test_metrics.json for test evaluation
+                    tfpath = os.path.join(fpath, "final_test_metrics.json")
+                    assert os.path.exists(tfpath), f"Missing final test metric file: {tfpath}"
+                    with open(tfpath, "r", encoding="utf-8") as fp:
+                        tm = json.load(fp)
+
+                    test_m50_val = tm["metrics"]["mAP50"]
+                    test_m50_95_val = tm["metrics"]["mAP50-95"]
+                    # Index 0 is knife, index 1 is pistol
+                    test_knife_val = tm["per_class_metrics"]["mAP50_per_class"][0]
+                    test_pistol_val = tm["per_class_metrics"]["mAP50_per_class"][1]
+
                     cum_steps = 0
                     cum_images = 0
                     cum_tflops = 0.0
@@ -84,6 +96,9 @@ def main():
                         cum_images += imgs
                         cum_tflops += tflops
 
+                        val_m50 = m["metrics"]["mAP50"]
+                        val_m50_95 = m["metrics"].get("mAP50-95", 0.0)
+
                         row = {
                             "architecture": a,
                             "initialisation": i,
@@ -94,12 +109,12 @@ def main():
                             "undetected_pool_images": m.get("undetected_count", 0),
                             "verified_samples_added_images": m.get("verified_samples_added", 0),
                             "training_set_size_images": m.get("training_set_size", 709),
-                            "knife_boxes": m.get("knife_boxes", 0),
-                            "pistol_boxes": m.get("pistol_boxes", 0),
-                            "total_boxes": m.get("total_boxes", 0),
-                            "images_with_knife": m.get("images_with_knife", 0),
-                            "images_with_pistol": m.get("images_with_pistol", 0),
-                            "total_images": m.get("total_images", 0),
+                            "knife_boxes": m.get("class_distribution", {}).get("knife_boxes", 0),
+                            "pistol_boxes": m.get("class_distribution", {}).get("pistol_boxes", 0),
+                            "total_boxes": m.get("class_distribution", {}).get("total_boxes", 0),
+                            "images_with_knife": m.get("class_distribution", {}).get("images_with_knife", 0),
+                            "images_with_pistol": m.get("class_distribution", {}).get("images_with_pistol", 0),
+                            "total_images": m.get("class_distribution", {}).get("total_images", 0),
                             "stopped_epoch": m.get("actual_stopped_epoch", 10 if b == "10ep" else 100),
                             "optimizer_steps": steps,
                             "cum_optimizer_steps": cum_steps,
@@ -108,23 +123,23 @@ def main():
                             "gflops": m.get("gflops", 0.0),
                             "training_tflops": tflops,
                             "cum_training_tflops": cum_tflops,
-                            "val_map50": m.get("val_map50", m.get("map50", 0.0)),
-                            "val_map50_95": m.get("val_map50_95", m.get("map50_95", 0.0)),
-                            "test_map50": m.get("test_map50", m.get("map50", 0.0)),
-                            "test_map50_95": m.get("test_map50_95", m.get("map50_95", 0.0)),
-                            "test_pistol": m.get("test_pistol", m.get("pistol_map50", 0.0)),
-                            "test_knife": m.get("test_knife", m.get("knife_map50", 0.0))
+                            "val_map50": val_m50,
+                            "val_map50_95": val_m50_95,
+                            "test_map50": test_m50_val,
+                            "test_map50_95": test_m50_95_val,
+                            "test_pistol": test_pistol_val,
+                            "test_knife": test_knife_val
                         }
                         detailed_rows.append(row)
 
                         if r == 1:
-                            table5_data[cond_key]["r1_val_map"].append(row["val_map50"])
+                            table5_data[cond_key]["r1_val_map"].append(val_m50)
                         elif r == 5:
-                            table5_data[cond_key]["r5_val_map"].append(row["val_map50"])
-                            table5_data[cond_key]["test_map"].append(row["test_map50"])
-                            table5_data[cond_key]["test_map50_95"].append(row["test_map50_95"])
-                            table5_data[cond_key]["test_pistol"].append(row["test_pistol"])
-                            table5_data[cond_key]["test_knife"].append(row["test_knife"])
+                            table5_data[cond_key]["r5_val_map"].append(val_m50)
+                            table5_data[cond_key]["test_map"].append(test_m50_val)
+                            table5_data[cond_key]["test_map50_95"].append(test_m50_95_val)
+                            table5_data[cond_key]["test_pistol"].append(test_pistol_val)
+                            table5_data[cond_key]["test_knife"].append(test_knife_val)
 
     # Export CSV 1: multi_seed_detailed_accounting.csv
     csv_path = os.path.join(ledger_dir, "multi_seed_detailed_accounting.csv")
@@ -173,10 +188,13 @@ def main():
 
     print(f"Exported statistical summary CSV to {sum_path} ({len(summary_rows)} rows)")
 
-    # Copy script into companion repo's scripts directory
+    # Also copy script and ledgers to companion repo if available
     comp_script = os.path.join(comp_dir, "scripts", "generate_revision_ledgers.py")
-    if os.path.abspath(__file__) != os.path.abspath(comp_script):
-        shutil.copy2(__file__, comp_script)
+    if os.path.abspath(__file__) != os.path.abspath(comp_script) and os.path.exists(os.path.dirname(comp_script)):
+        try:
+            shutil.copy2(__file__, comp_script)
+        except Exception as e:
+            print(f"Note: Could not copy to companion repo script: {e}")
 
 if __name__ == "__main__":
     main()
