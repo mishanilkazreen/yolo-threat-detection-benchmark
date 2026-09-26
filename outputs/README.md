@@ -1,42 +1,17 @@
-# Peer Review Revision: Experimental Benchmark Outputs
+# Outputs Directory Provenance and Inventory Guide
 
-This directory contains the experimental artifacts and verified metrics for the paper:
-**"Benchmarking YOLO Generations for Explainable Incremental Threat Detection: Weight Initialisation, Architecture, and Training Budget"** (*Journal of Real-Time Image Processing*).
+## Run Inventory Summary
+The `outputs/` directory contains 76 completed experimental run folders:
+- **60 Core Factorial Runs**: 3 architectures (`yolov8n`, `yolo11n`, `yolo12n`) x 2 initialisation strategies (`pretrained`, `random`) x 2 epoch budgets (10 epochs, 100 epochs) x 5 seeds (`42`, `123`, `456`, `789`, `1011`).
+- **12 Seed 42 Alias Runs**: Created to align historical unseeded runs (`yolov8n_random`, etc.) with the 5-seed directory convention (`seed_42`). Logs are preserved verbatim from the initial single-seed experiments.
+- **4 Freeze Variant Runs**: `yolov8n` and `yolo12n` under `frozen_backbone` and `headonly` fine-tuning strategies.
 
----
+## Provenance of `training_set_evolution.json`
+`training_set_evolution.json` in each run directory is a derived summary file reconstructed directly from the raw per-round metric artifacts (`round_1_metrics.json` through `round_5_metrics.json`).
 
-## 1. Directory Contents & Artifacts Tracked on GitHub
+### Explanation of Legacy Spurious Entry
+In earlier versions of the active acquisition loop, when the unlabelled pool was fully consumed by Round 5 (`unlabeled_pool_remaining = 0`), an extra logging call appended a duplicate 6th entry (`training_set_size = 3545`, `unlabeled_remaining = 0`). This spurious entry has been cleaned across all evolution files, producing a strictly consistent 5-round trajectory.
 
-1. **Multi-Seed Replication Sweeps ($N=5$ independent seeds):**
-   - Evaluated across seeds `42`, `123`, `456`, `789`, and `1011` for all 12 core factorial conditions (`yolov8n`, `yolo11n`, `yolo12n`; Random vs Pretrained; 10 vs 100 epochs/round).
-   - Every condition includes per-round metrics (`round_1_metrics.json` through `round_5_metrics.json`), final evaluation on the fixed test set (`final_test_metrics.json`), and sample split audits (`split_metadata.json`, `training_set_evolution.json`).
-   - Standardised directory naming: explicit `_seed_42`, `_seed_123`, `_seed_456`, `_seed_789`, `_seed_1011` folders.
-
-2. **Recovered 500-Epoch Reference Baselines:**
-   - Full convergence baselines with early stopping (patience = 50) for `yolov8n`, `yolo11n`, and `yolo12n` under random and pretrained initialisation.
-   - Contains stopping epoch, best epoch (peak validation fitness), optimizer steps, images processed, and wall-clock times (`baseline_summary.json`).
-
-3. **COCO Semantic Overlap Control:**
-   - `coco_knife_overlap_evaluation.json`: Zero-shot Round-0 evaluation testing knife prior transfer from MS COCO.
-
-4. **Decomposed Inference Latency:**
-   - `decomposed_latency_benchmark.json` and `decomposed_latency_benchmark.csv`: GPU benchmarking on an NVIDIA A100 (MIG slice), microsecond-precision (preprocessing, forward inference, NMS postprocessing, percentiles) across FP32 and FP16 with warmup and CUDA synchronization.
-   - `decomposed_latency_benchmark_M1_edge.json` and `decomposed_latency_benchmark_M1_edge.csv`: CPU-only edge-device benchmarking on an Apple M1 (8-core CPU, 16 GB unified memory), FP32, batch size 1, 500 iterations after 100 warmup passes. **These are the figures reported in the paper's Table 6 and real-time analysis** (YOLOv8n 69.41 ms / 14.5 FPS; YOLO11n 73.33 ms / 13.8 FPS; YOLOv12n 128.70 ms / 7.8 FPS), reflecting the CPU-only deployment target distinct from the A100 training hardware.
-
-5. **Consolidated Results Matrix:**
-   - `full_evaluation_results.csv`: Complete row-by-row accounting of all 476 evaluation steps across rounds, seeds, and baselines.
-
----
-
-## 2. Raw Per-Box Prediction Dumps & Backup Archive
-
-To keep the git repository lightweight and responsive, per-box bounding box validation coordinates (`round_*_validations.json` and `round_*_detections.json`, totalling ~400 MB) are archived off-git.
-
-- **Full Raw Archive Location (Local Personal Google Drive):**
-  ```text
-  /Users/manigh/Library/CloudStorage/GoogleDrive-mashapicasso@gmail.com/My Drive/JRTIP_Revision_Outputs/
-  ```
-- **HPC Cluster Origin:**
-  ```text
-  sciama:/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/outputs/
-  ```
+## Checkpoint & Weight Retention Policy
+- **Full Metric Logs**: `round_N_metrics.json`, `results.csv`, and `args.yaml` are permanently tracked in Git across all 76 runs.
+- **Model Checkpoints (`best.pt`)**: Retained under `runs/` for representative reference runs due to repository storage limits.

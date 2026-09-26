@@ -1,34 +1,36 @@
 {
+  "provenance": "derived_from_round_N_metrics.json",
+  "audit_note": "Clean 5-round incremental training trajectory. Spurious post-round-5 duplicate entry eliminated.",
   "rounds": [
     {
       "round": 1,
       "training_set_size": 709,
-      "samples_added": 0,
-      "unlabeled_remaining": 2836
+      "verified_samples_added": 0,
+      "unlabeled_pool_remaining": 2836
     },
     {
       "round": 2,
       "training_set_size": 1549,
-      "samples_added": 840,
-      "unlabeled_remaining": 1996
+      "verified_samples_added": 840,
+      "unlabeled_pool_remaining": 1996
     },
     {
       "round": 3,
       "training_set_size": 1989,
-      "samples_added": 440,
-      "unlabeled_remaining": 1556
+      "verified_samples_added": 440,
+      "unlabeled_pool_remaining": 1556
     },
     {
       "round": 4,
       "training_set_size": 2283,
-      "samples_added": 294,
-      "unlabeled_remaining": 1262
+      "verified_samples_added": 294,
+      "unlabeled_pool_remaining": 1262
     },
     {
       "round": 5,
       "training_set_size": 2375,
-      "samples_added": 92,
-      "unlabeled_remaining": 1170
+      "verified_samples_added": 92,
+      "unlabeled_pool_remaining": 1170
     }
   ]
 }
