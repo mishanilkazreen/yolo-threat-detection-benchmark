@@ -9,9 +9,9 @@ The `outputs/` directory contains 76 completed experimental run folders:
 ## Provenance of `training_set_evolution.json`
 `training_set_evolution.json` in each run directory is a derived summary file reconstructed directly from the raw per-round metric artifacts (`round_1_metrics.json` through `round_5_metrics.json`).
 
-### Explanation of Legacy Spurious Entry
-In earlier versions of the active acquisition loop, when the unlabelled pool was fully consumed by Round 5 (`unlabeled_pool_remaining = 0`), an extra logging call appended a duplicate 6th entry (`training_set_size = 3545`, `unlabeled_remaining = 0`). This spurious entry has been cleaned across all evolution files, producing a strictly consistent 5-round trajectory.
+### Root Cause of Legacy Spurious 6th Entry
+In `src/training/runner.py` (lines 806–818), a Round 5 post-training cleanup step was executed: after completing Round 5 training, the runner unconditionally moved all remaining unlabelled pool images into the cumulative training set array for final accounting and logged an extra 6th trajectory entry (`training_set_size = 3545`, `unlabeled_remaining = 0`). Because this cleanup step ran after Round 5 training had finished, no model training, validation, or held-out test metric ever consumed or evaluated those post-Round 5 appended samples. All 76 `training_set_evolution.json` files have been standardized to represent the actual 5 training rounds.
 
-## Checkpoint & Weight Retention Policy
-- **Full Metric Logs**: `round_N_metrics.json`, `results.csv`, and `args.yaml` are permanently tracked in Git across all 76 runs.
-- **Model Checkpoints (`best.pt`)**: Retained under `runs/` for representative reference runs due to repository storage limits.
+## Checkpoint & Logging Retention Policy
+- **Run Metric Logs**: All 60 core factorial runs and 4 freeze variants preserve full step-by-step training and evaluation logs in `round_1_metrics.json` through `round_5_metrics.json` (containing optimizer steps, images processed, GFLOPs/TFLOPs, losses, mAP@0.5, and mAP@0.5:0.95). Historical unseeded legacy/baseline directories also include raw Ultralytics `results.csv` and `args.yaml`.
+- **Model Checkpoints (`best.pt`)**: Trained weights for all 300 round checkpoints are stored on the SCIAMA HPC cluster storage volume to comply with GitHub repository file size limits, and representative model checkpoints are archived in the Zenodo repository archive (`https://doi.org/10.5281/zenodo.22981420`).

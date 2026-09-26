@@ -1,116 +1,59 @@
 {
-  "audit_description": "Direct ground-truth recount of all bounding box annotations from individual YOLO .txt label files.",
-  "dataset_total": {
-    "total_images": 5064,
-    "total_bounding_boxes": 5603,
-    "knife_bounding_boxes": 2155,
-    "pistol_bounding_boxes": 3448,
-    "unique_images_with_knife": 2078,
-    "unique_images_with_pistol": 2986,
-    "unique_images_with_both": 0,
-    "unique_images_with_only_knife": 2078,
-    "unique_images_with_only_pistol": 2986
+  "provenance": "Direct audit of 5,064 YOLO .txt label files on disk",
+  "class_mapping": {
+    "0": "knife",
+    "1": "pistol"
   },
-  "split_details": {
+  "totals": {
+    "total_images": 5064,
+    "total_boxes": 5603,
+    "total_knife_boxes": 2155,
+    "total_pistol_boxes": 3448,
+    "unique_knife_images": 2078,
+    "unique_pistol_images": 2986,
+    "both_class_images": 0,
+    "multi_instance_images": 296
+  },
+  "per_split": {
     "train_init": {
-      "split_name": "train_init",
       "total_images": 709,
-      "missing_label_files": 0,
-      "empty_label_files": 0,
-      "total_bounding_boxes": 784,
-      "knife_bounding_boxes": 306,
-      "pistol_bounding_boxes": 478,
-      "unique_images_with_knife": 291,
-      "unique_images_with_pistol": 418,
-      "unique_images_with_both": 0,
-      "unique_images_with_only_knife": 291,
-      "unique_images_with_only_pistol": 418,
-      "box_count_per_image_distribution": {
-        "1": 671,
-        "3": 3,
-        "2": 29,
-        "4": 1,
-        "6": 1,
-        "5": 1,
-        "7": 1,
-        "10": 1,
-        "14": 1
-      }
+      "total_boxes": 784,
+      "knife_boxes": 306,
+      "pistol_boxes": 478,
+      "unique_knife_images": 291,
+      "unique_pistol_images": 418,
+      "both_class_images": 0,
+      "multi_instance_images": 38
     },
     "unlabeled_pool": {
-      "split_name": "unlabeled_pool",
       "total_images": 2836,
-      "missing_label_files": 0,
-      "empty_label_files": 0,
-      "total_bounding_boxes": 3133,
-      "knife_bounding_boxes": 1207,
-      "pistol_bounding_boxes": 1926,
-      "unique_images_with_knife": 1164,
-      "unique_images_with_pistol": 1672,
-      "unique_images_with_both": 0,
-      "unique_images_with_only_knife": 1164,
-      "unique_images_with_only_pistol": 1672,
-      "box_count_per_image_distribution": {
-        "3": 19,
-        "1": 2671,
-        "2": 117,
-        "6": 2,
-        "4": 9,
-        "11": 2,
-        "5": 11,
-        "8": 2,
-        "10": 1,
-        "7": 1,
-        "13": 1
-      }
+      "total_boxes": 3133,
+      "knife_boxes": 1207,
+      "pistol_boxes": 1926,
+      "unique_knife_images": 1164,
+      "unique_pistol_images": 1672,
+      "both_class_images": 0,
+      "multi_instance_images": 165
     },
     "val_fixed": {
-      "split_name": "val_fixed",
       "total_images": 1013,
-      "missing_label_files": 0,
-      "empty_label_files": 0,
-      "total_bounding_boxes": 1130,
-      "knife_bounding_boxes": 426,
-      "pistol_bounding_boxes": 704,
-      "unique_images_with_knife": 416,
-      "unique_images_with_pistol": 597,
-      "unique_images_with_both": 0,
-      "unique_images_with_only_knife": 416,
-      "unique_images_with_only_pistol": 597,
-      "box_count_per_image_distribution": {
-        "1": 950,
-        "2": 46,
-        "3": 7,
-        "5": 4,
-        "10": 1,
-        "4": 1,
-        "9": 1,
-        "6": 1,
-        "11": 1,
-        "7": 1
-      }
+      "total_boxes": 1130,
+      "knife_boxes": 426,
+      "pistol_boxes": 704,
+      "unique_knife_images": 416,
+      "unique_pistol_images": 597,
+      "both_class_images": 0,
+      "multi_instance_images": 63
     },
     "test_fixed": {
-      "split_name": "test_fixed",
       "total_images": 506,
-      "missing_label_files": 0,
-      "empty_label_files": 0,
-      "total_bounding_boxes": 556,
-      "knife_bounding_boxes": 216,
-      "pistol_bounding_boxes": 340,
-      "unique_images_with_knife": 207,
-      "unique_images_with_pistol": 299,
-      "unique_images_with_both": 0,
-      "unique_images_with_only_knife": 207,
-      "unique_images_with_only_pistol": 299,
-      "box_count_per_image_distribution": {
-        "1": 476,
-        "2": 22,
-        "3": 2,
-        "5": 2,
-        "4": 3,
-        "8": 1
-      }
+      "total_boxes": 556,
+      "knife_boxes": 216,
+      "pistol_boxes": 340,
+      "unique_knife_images": 207,
+      "unique_pistol_images": 299,
+      "both_class_images": 0,
+      "multi_instance_images": 30
     }
   }
 }
