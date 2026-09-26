@@ -1,6 +1,12 @@
 {
   "rounds": [
     {
+      "round": 1,
+      "training_set_size": 709,
+      "samples_added": 0,
+      "unlabeled_remaining": 2836
+    },
+    {
       "round": 2,
       "training_set_size": 2590,
       "samples_added": 1881,
@@ -23,12 +29,6 @@
       "training_set_size": 3310,
       "samples_added": 66,
       "unlabeled_remaining": 235
-    },
-    {
-      "round": 5,
-      "training_set_size": 3545,
-      "samples_added": 235,
-      "unlabeled_remaining": 0
     }
   ]
 }

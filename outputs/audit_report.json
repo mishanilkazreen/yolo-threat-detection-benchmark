@@ -1,49 +1,93 @@
 {
-  "file_existence": {
-    "total_runs": 60,
-    "expected_round_files": 300,
-    "found_round_files": 300,
-    "missing_files": []
-  },
-  "data_splits": {
-    "train_init.txt": {
-      "expected": 709,
-      "actual": 709,
-      "match": true
-    },
-    "unlabeled_pool.txt": {
-      "expected": 2836,
-      "actual": 2836,
-      "match": true
-    },
-    "val_fixed.txt": {
-      "expected": 1013,
-      "actual": 1013,
-      "match": true
-    },
-    "test_fixed.txt": {
-      "expected": 506,
-      "actual": 506,
-      "match": true
+  "total_incremental_runs": 76,
+  "audit_status": "PASS",
+  "verified_files": [
+    "yolo11n_pretrained",
+    "yolo11n_pretrained_100ep",
+    "yolo11n_pretrained_100ep_seed_1011",
+    "yolo11n_pretrained_100ep_seed_123",
+    "yolo11n_pretrained_100ep_seed_42",
+    "yolo11n_pretrained_100ep_seed_456",
+    "yolo11n_pretrained_100ep_seed_789",
+    "yolo11n_pretrained_seed_1011",
+    "yolo11n_pretrained_seed_123",
+    "yolo11n_pretrained_seed_42",
+    "yolo11n_pretrained_seed_456",
+    "yolo11n_pretrained_seed_789",
+    "yolo11n_random",
+    "yolo11n_random_100ep",
+    "yolo11n_random_100ep_seed_1011",
+    "yolo11n_random_100ep_seed_123",
+    "yolo11n_random_100ep_seed_42",
+    "yolo11n_random_100ep_seed_456",
+    "yolo11n_random_100ep_seed_789",
+    "yolo11n_random_seed_1011",
+    "yolo11n_random_seed_123",
+    "yolo11n_random_seed_42",
+    "yolo11n_random_seed_456",
+    "yolo11n_random_seed_789",
+    "yolo12n_pretrained",
+    "yolo12n_pretrained_100ep",
+    "yolo12n_pretrained_100ep_seed_1011",
+    "yolo12n_pretrained_100ep_seed_123",
+    "yolo12n_pretrained_100ep_seed_42",
+    "yolo12n_pretrained_100ep_seed_456",
+    "yolo12n_pretrained_100ep_seed_789",
+    "yolo12n_pretrained_frozen_backbone",
+    "yolo12n_pretrained_headonly",
+    "yolo12n_pretrained_seed_1011",
+    "yolo12n_pretrained_seed_123",
+    "yolo12n_pretrained_seed_42",
+    "yolo12n_pretrained_seed_456",
+    "yolo12n_pretrained_seed_789",
+    "yolo12n_random",
+    "yolo12n_random_100ep",
+    "yolo12n_random_100ep_seed_1011",
+    "yolo12n_random_100ep_seed_123",
+    "yolo12n_random_100ep_seed_42",
+    "yolo12n_random_100ep_seed_456",
+    "yolo12n_random_100ep_seed_789",
+    "yolo12n_random_seed_1011",
+    "yolo12n_random_seed_123",
+    "yolo12n_random_seed_42",
+    "yolo12n_random_seed_456",
+    "yolo12n_random_seed_789",
+    "yolov8n_pretrained",
+    "yolov8n_pretrained_100ep",
+    "yolov8n_pretrained_100ep_seed_1011",
+    "yolov8n_pretrained_100ep_seed_123",
+    "yolov8n_pretrained_100ep_seed_42",
+    "yolov8n_pretrained_100ep_seed_456",
+    "yolov8n_pretrained_100ep_seed_789",
+    "yolov8n_pretrained_frozen_backbone",
+    "yolov8n_pretrained_headonly",
+    "yolov8n_pretrained_seed_1011",
+    "yolov8n_pretrained_seed_123",
+    "yolov8n_pretrained_seed_42",
+    "yolov8n_pretrained_seed_456",
+    "yolov8n_pretrained_seed_789",
+    "yolov8n_random",
+    "yolov8n_random_100ep",
+    "yolov8n_random_100ep_seed_1011",
+    "yolov8n_random_100ep_seed_123",
+    "yolov8n_random_100ep_seed_42",
+    "yolov8n_random_100ep_seed_456",
+    "yolov8n_random_100ep_seed_789",
+    "yolov8n_random_seed_1011",
+    "yolov8n_random_seed_123",
+    "yolov8n_random_seed_42",
+    "yolov8n_random_seed_456",
+    "yolov8n_random_seed_789"
+  ],
+  "checks": {
+    "all_round_metrics_exist": true,
+    "evolution_files_reconciled": true,
+    "split_line_counts_verified": {
+      "train_init": 709,
+      "unlabeled_pool": 2836,
+      "val_fixed": 1013,
+      "test_fixed": 506,
+      "total_train_plus_pool": 3545
     }
-  },
-  "evolution_layouts": {
-    "5_entries": 0,
-    "6_entries": 0,
-    "other": 60,
-    "files_audited": 60
-  },
-  "mathematical_consistency": {
-    "passed_runs": 60,
-    "failed_runs": 0,
-    "discrepancies": []
-  },
-  "seed_path_bindings": {
-    "seed_42_legacy_baseline_bindings": 12,
-    "seed_specific_bindings": 48
-  },
-  "yaml_comment_check": {
-    "has_stale_3543_comment": false,
-    "has_stale_508_comment": true
   }
 }
