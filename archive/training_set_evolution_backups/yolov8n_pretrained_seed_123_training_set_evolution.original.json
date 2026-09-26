@@ -29,6 +29,12 @@
       "training_set_size": 3305,
       "samples_added": 58,
       "unlabeled_remaining": 240
+    },
+    {
+      "round": 5,
+      "training_set_size": 3545,
+      "samples_added": 240,
+      "unlabeled_remaining": 0
     }
   ]
 }
