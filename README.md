@@ -1,22 +1,9 @@
 # Benchmarking YOLO Generations for Explainable Incremental Threat Detection: Weight Initialisation, Architecture, and Training Budget
+[![DOI](https://zenodo.org/badge/1155478513.svg)](https://doi.org/10.5281/zenodo.22981420)
 
-## Abstract
+Incremental learning frameworks for real-time object detection have attracted growing interest in security-critical surveillance, yet empirical evaluations comparing modern You Only Look Once (YOLO) generations under controlled initialisation conditions remain scarce. Kutlu and Emiroğlu (2025) reported an mAP@0.5 of ~0.886 for YOLOv8-nano on a two-class weapon benchmark under reported random initialisation. However, our controlled multi-seed replication (N=5) reveals an empirical reproducibility discrepancy: strictly random initialisation yields only 0.538 ± 0.027 mAP@0.5 under the ten-epoch-per-round protocol, whereas COCO-pretrained initialisation reaches 0.911 ± 0.010, indicating substantial sensitivity to initial weight representations and uncontrolled implementation factors. To disentangle these factors, we conduct a full factorial benchmark across twelve conditions examining YOLOv8, YOLO11, and YOLOv12 nano variants under both random and COCO-pretrained initialisation with two epoch budgets (10 and 100 epochs/round) across five sequential data-incremental rounds (N=60 runs). Factorial analysis of variance indicates that weight initialisation accounts for the primary share of variance (F(1, 48) = 5141.1, p < 10⁻¹⁵, η² = 0.484, partial η²ₚ = 0.991, Cohen's d = 1.90), whereas architectural generation contributes marginally (η² = 0.011). Extended training reduces but does not eliminate this performance gap, while freeze-strategy ablations show that fine-tuning neck and head atop a frozen COCO backbone matches full fine-tuning within 0.025 mAP while reducing trainable parameters by 40.3%–53.4%. Control experiments demonstrate that pretraining provides an immediate zero-shot advantage on the knife category (which overlaps with COCO class 43) while pistol yields zero baseline detections. Decomposed inference latency profiling on an Apple M1 CPU edge device establishes end-to-end margins relative to operational deadlines (33.3 ms for 30 FPS surveillance, 16.7 ms for 60 FPS capture), with YOLOv8n reaching 14.5 FPS and YOLO11n reaching 13.8 FPS in FP32, indicating that real-time throughput on such CPU-only targets requires GPU acceleration or model optimisation. Finally, Eigen-CAM and Integrated Gradients analyses audit spatial attribution focus, verifying that incremental updates preserve model interpretability.
 
-Incremental learning frameworks for real-time object detection have attracted growing interest in security-critical
-applications, yet benchmarks comparing You Only Look Once (YOLO) generations under controlled initialisation conditions
-remain scarce.
-Kutlu and Emiroğlu (2025) report mAP@0.5 of 0.886 for YOLOv8-nano under reported random initialisation on a
-two-class (pistol and knife) weapon dataset; a direct replication yields only 0.54, a result more consistent with
-COCO-pretrained initialisation than with the random protocol reported by the authors.
-We evaluate YOLOv8, YOLOv11, and YOLOv12 nano variants under both random and COCO-pretrained initialisation with
-two epoch budgets (10 and 100 per round) across five data-incremental rounds, yielding twelve core conditions.
-For each condition we report mAP@0.5, mAP@0.5:0.95, F1-score, precision, recall, and per-class mAP@0.5.
-Weight initialisation emerges as the dominant factor: pretrained architectures reach Round-5 mAP@0.5 above 0.89 at
-10 epochs per round; random initialisation peaks at 0.534 under the same protocol.
-Extended training reduces but does not eliminate this gap, and freeze-strategy ablations confirm that backbone-only
-feature transfer reproduces the reference trajectory to within 0.002 mAP@0.5.
-Grad-CAM, LRP, and SHAP analyses assess how initialisation influences interpretability across architectures and rounds.
-All configurations, scripts, and metrics are made publicly available.
+Keywords: Object detection; YOLO; Incremental threat detection; Transfer learning; Explainable AI
 
 ---
 
