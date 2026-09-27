@@ -2,7 +2,7 @@ task: detect
 mode: train
 model: yolo11n.pt
 data: outputs\yolo11n_pretrained_100ep\data_round_1.yaml
-epochs: 10
+epochs: 100
 time: null
 patience: 10
 batch: 16
@@ -12,13 +12,13 @@ save_period: -1
 cache: false
 device: '0'
 workers: 0
-project: C:\Users\manig\Downloads\yolo-threat-detection-benchmark\runs
+project: C:\Users\manig\Downloads\yolo-improvement-detection-moderation-paper\runs
 name: incremental_round_1
 exist_ok: true
 pretrained: true
 optimizer: AdamW
 verbose: true
-seed: 42
+seed: 0
 deterministic: true
 single_cls: false
 rect: false
@@ -106,4 +106,4 @@ auto_augment: randaugment
 erasing: 0.4
 cfg: null
 tracker: botsort.yaml
-save_dir: C:\Users\manig\Downloads\yolo-threat-detection-benchmark\runs\yolo11n_pretrained_100ep\incremental_round_1
+save_dir: C:\Users\manig\Downloads\yolo-improvement-detection-moderation-paper\runs\yolo11n_pretrained_100ep\incremental_round_1
