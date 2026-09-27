@@ -12,12 +12,14 @@ Definitions & Operational Units (audited directly from src/training/detection_va
   An image is acquired if at least one candidate bounding box proposal on that image verifies.
 """
 
-import os
-import json
 import csv
+import json
+import os
 import shutil
+
 import numpy as np
 from scipy import stats
+
 
 def compute_ci95_halfwidth(arr):
     arr = np.array(arr, dtype=float)
@@ -25,8 +27,9 @@ def compute_ci95_halfwidth(arr):
     if n < 2:
         return 0.0
     sd = np.std(arr, ddof=1)
-    tcrit = stats.t.ppf(0.975, df=n-1)
+    tcrit = stats.t.ppf(0.975, df=n - 1)
     return tcrit * (sd / np.sqrt(n))
+
 
 def main():
     comp_dir = r"c:\Users\manig\Downloads\yolo-threat-detection-benchmark"
@@ -52,7 +55,7 @@ def main():
                     "test_map": [],
                     "test_map50_95": [],
                     "test_pistol": [],
-                    "test_knife": []
+                    "test_knife": [],
                 }
 
                 for s in seeds:
@@ -68,7 +71,7 @@ def main():
                     # Load final_test_metrics.json for test evaluation
                     tfpath = os.path.join(fpath, "final_test_metrics.json")
                     assert os.path.exists(tfpath), f"Missing final test metric file: {tfpath}"
-                    with open(tfpath, "r", encoding="utf-8") as fp:
+                    with open(tfpath, encoding="utf-8") as fp:
                         tm = json.load(fp)
 
                     test_m50_val = tm["metrics"]["mAP50"]
@@ -85,7 +88,7 @@ def main():
                         mf = os.path.join(fpath, f"round_{r}_metrics.json")
                         assert os.path.exists(mf), f"Missing metric file: {mf}"
 
-                        with open(mf, "r", encoding="utf-8") as fp:
+                        with open(mf, encoding="utf-8") as fp:
                             m = json.load(fp)
 
                         steps = m.get("optimizer_steps", 0)
@@ -112,10 +115,16 @@ def main():
                             "knife_boxes": m.get("class_distribution", {}).get("knife_boxes", 0),
                             "pistol_boxes": m.get("class_distribution", {}).get("pistol_boxes", 0),
                             "total_boxes": m.get("class_distribution", {}).get("total_boxes", 0),
-                            "images_with_knife": m.get("class_distribution", {}).get("images_with_knife", 0),
-                            "images_with_pistol": m.get("class_distribution", {}).get("images_with_pistol", 0),
+                            "images_with_knife": m.get("class_distribution", {}).get(
+                                "images_with_knife", 0
+                            ),
+                            "images_with_pistol": m.get("class_distribution", {}).get(
+                                "images_with_pistol", 0
+                            ),
                             "total_images": m.get("class_distribution", {}).get("total_images", 0),
-                            "stopped_epoch": m.get("actual_stopped_epoch", 10 if b == "10ep" else 100),
+                            "stopped_epoch": m.get(
+                                "actual_stopped_epoch", 10 if b == "10ep" else 100
+                            ),
                             "optimizer_steps": steps,
                             "cum_optimizer_steps": cum_steps,
                             "images_processed": imgs,
@@ -128,7 +137,7 @@ def main():
                             "test_map50": test_m50_val,
                             "test_map50_95": test_m50_95_val,
                             "test_pistol": test_pistol_val,
-                            "test_knife": test_knife_val
+                            "test_knife": test_knife_val,
                         }
                         detailed_rows.append(row)
 
@@ -176,7 +185,7 @@ def main():
             "test_pistol_ci95_halfwidth": compute_ci95_halfwidth(d["test_pistol"]),
             "test_knife_mean": np.mean(d["test_knife"]),
             "test_knife_sd": np.std(d["test_knife"], ddof=1),
-            "test_knife_ci95_halfwidth": compute_ci95_halfwidth(d["test_knife"])
+            "test_knife_ci95_halfwidth": compute_ci95_halfwidth(d["test_knife"]),
         }
         summary_rows.append(srow)
 
@@ -190,11 +199,14 @@ def main():
 
     # Also copy script and ledgers to companion repo if available
     comp_script = os.path.join(comp_dir, "scripts", "generate_revision_ledgers.py")
-    if os.path.abspath(__file__) != os.path.abspath(comp_script) and os.path.exists(os.path.dirname(comp_script)):
+    if os.path.abspath(__file__) != os.path.abspath(comp_script) and os.path.exists(
+        os.path.dirname(comp_script)
+    ):
         try:
             shutil.copy2(__file__, comp_script)
         except Exception as e:
             print(f"Note: Could not copy to companion repo script: {e}")
+
 
 if __name__ == "__main__":
     main()

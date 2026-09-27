@@ -5,18 +5,20 @@ Supports command-line argument --dataset-root or resolves relative paths automat
 Output artifact: outputs/split_annotation_counts.json (companion repo) and revision_evidence/split_annotation_counts.json (manuscript repo).
 """
 
-import os
-import json
 import argparse
+import json
+import os
+
 
 def get_repo_root():
     return os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 
 def recount_split(split_file_path, dataset_root):
     if not os.path.exists(split_file_path):
         raise FileNotFoundError(f"Split file not found: {split_file_path}")
 
-    with open(split_file_path, "r", encoding="utf-8") as f:
+    with open(split_file_path, encoding="utf-8") as f:
         image_paths = [line.strip() for line in f if line.strip()]
 
     total_images = len(image_paths)
@@ -33,9 +35,9 @@ def recount_split(split_file_path, dataset_root):
         # Convert image extension to .txt label path (mapping /images/ to /labels/)
         norm_path = rel_path.replace("\\", "/")
         if norm_path.startswith("./Weapon_Detection-1/"):
-            norm_path = norm_path[len("./Weapon_Detection-1/"):]
+            norm_path = norm_path[len("./Weapon_Detection-1/") :]
         elif norm_path.startswith("Weapon_Detection-1/"):
-            norm_path = norm_path[len("Weapon_Detection-1/"):]
+            norm_path = norm_path[len("Weapon_Detection-1/") :]
         elif norm_path.startswith("./"):
             norm_path = norm_path[2:]
 
@@ -50,7 +52,7 @@ def recount_split(split_file_path, dataset_root):
         has_pistol = False
         img_box_count = 0
 
-        with open(label_full, "r", encoding="utf-8") as lf:
+        with open(label_full, encoding="utf-8") as lf:
             for line in lf:
                 line_str = line.strip()
                 if not line_str:
@@ -83,22 +85,40 @@ def recount_split(split_file_path, dataset_root):
         "unique_knife_images": len(knife_images),
         "unique_pistol_images": len(pistol_images),
         "both_class_images": len(both_class_images),
-        "multi_instance_images": len(multi_instance_images)
+        "multi_instance_images": len(multi_instance_images),
     }
 
+
 def main():
-    parser = argparse.ArgumentParser(description="Recount YOLO label text file annotations across splits.")
-    parser.add_argument("--repo-root", type=str, default=None, help="Path to companion repository root")
-    parser.add_argument("--dataset-root", type=str, default=None, help="Path to dataset root containing images/ and labels/")
+    parser = argparse.ArgumentParser(
+        description="Recount YOLO label text file annotations across splits."
+    )
+    parser.add_argument(
+        "--repo-root", type=str, default=None, help="Path to companion repository root"
+    )
+    parser.add_argument(
+        "--dataset-root",
+        type=str,
+        default=None,
+        help="Path to dataset root containing images/ and labels/",
+    )
     args = parser.parse_args()
 
     # Default paths
     script_dir = os.path.dirname(os.path.abspath(__file__))
     ms_repo_root = os.path.dirname(script_dir)
-    comp_repo_root = args.repo_root if args.repo_root else os.path.abspath(os.path.join(ms_repo_root, "..", "yolo-threat-detection-benchmark"))
+    comp_repo_root = (
+        args.repo_root
+        if args.repo_root
+        else os.path.abspath(os.path.join(ms_repo_root, "..", "yolo-threat-detection-benchmark"))
+    )
 
     config_data_dir = os.path.join(comp_repo_root, "config", "data")
-    dataset_root = args.dataset_root if args.dataset_root else os.path.join(config_data_dir, "weapon_detection")
+    dataset_root = (
+        args.dataset_root
+        if args.dataset_root
+        else os.path.join(config_data_dir, "weapon_detection")
+    )
 
     splits = {
         "train_init": os.path.join(config_data_dir, "train_init.txt"),
@@ -134,9 +154,9 @@ def main():
             "unique_knife_images": 2078,
             "unique_pistol_images": 2986,
             "both_class_images": 0,
-            "multi_instance_images": tot_multi_inst
+            "multi_instance_images": tot_multi_inst,
         },
-        "per_split": results
+        "per_split": results,
     }
 
     # Save to manuscript repo evidence
@@ -157,14 +177,20 @@ def main():
     comp_script_dir = os.path.join(comp_repo_root, "scripts")
     os.makedirs(comp_script_dir, exist_ok=True)
     comp_script_path = os.path.join(comp_script_dir, "recount_dataset_annotations.py")
-    with open(__file__, "r", encoding="utf-8") as src, open(comp_script_path, "w", encoding="utf-8") as dst:
+    with (
+        open(__file__, encoding="utf-8") as src,
+        open(comp_script_path, "w", encoding="utf-8") as dst,
+    ):
         dst.write(src.read())
 
     print(f"Audited {tot_images} images across 4 splits.")
     print(f"Total boxes: {tot_boxes} ({tot_knife} knife, {tot_pistol} pistol).")
-    print(f"Multi-instance images (>=2 boxes): {tot_multi_inst} (train_init: {results['train_init']['multi_instance_images']}, pool: {results['unlabeled_pool']['multi_instance_images']}, val: {results['val_fixed']['multi_instance_images']}, test: {results['test_fixed']['multi_instance_images']}).")
+    print(
+        f"Multi-instance images (>=2 boxes): {tot_multi_inst} (train_init: {results['train_init']['multi_instance_images']}, pool: {results['unlabeled_pool']['multi_instance_images']}, val: {results['val_fixed']['multi_instance_images']}, test: {results['test_fixed']['multi_instance_images']})."
+    )
     print(f"Saved artifacts to {ms_out_path} and {comp_out_path}.")
     print(f"Copied script to companion repo at {comp_script_path}.")
+
 
 if __name__ == "__main__":
     main()

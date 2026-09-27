@@ -1,5 +1,7 @@
 """Deterministic XAI evaluation script for held-out test split (test_fixed.txt)."""
+
 from __future__ import annotations
+
 import json
 import logging
 from pathlib import Path
@@ -13,9 +15,9 @@ import cv2
 import numpy as np
 import torch
 from ultralytics import YOLO
+from yolo_cam.eigen_cam import EigenCAM
 
 from src.explainability.hfs_scorer import Heatmap_Focus_Scorer
-from yolo_cam.eigen_cam import EigenCAM
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("xai_eval")
@@ -24,13 +26,24 @@ TEST_LIST = PROJECT_ROOT / "config" / "data" / "test_fixed.txt"
 OUTPUT_JSON = PROJECT_ROOT / "outputs" / "xai_evaluation_results.json"
 PAPER_ROOT = Path("c:/Users/manig/Downloads/Journal-of-Real-Time-Image-Processing")
 
-BEST_INCREMENTAL = PROJECT_ROOT / "runs" / "yolo11n_pretrained" / "incremental_round_5" / "weights" / "best.pt"
-BEST_BASELINE = PROJECT_ROOT / "runs" / "yolo11n_baseline_pretrained_100ep" / "yolo11n_baseline_pretrained_100ep_baseline" / "weights" / "best.pt"
+BEST_INCREMENTAL = (
+    PROJECT_ROOT / "runs" / "yolo11n_pretrained" / "incremental_round_5" / "weights" / "best.pt"
+)
+BEST_BASELINE = (
+    PROJECT_ROOT
+    / "runs"
+    / "yolo11n_baseline_pretrained_100ep"
+    / "yolo11n_baseline_pretrained_100ep_baseline"
+    / "weights"
+    / "best.pt"
+)
 TARGET_LAYER = "model.22"
 
 
 def load_test_sample(n: int = 20) -> list[dict]:
-    lines = [line.strip() for line in TEST_LIST.read_text(encoding="utf-8").splitlines() if line.strip()]
+    lines = [
+        line.strip() for line in TEST_LIST.read_text(encoding="utf-8").splitlines() if line.strip()
+    ]
     sample_rel = lines[::25][:n]
     samples = []
     for rel in sample_rel:
@@ -42,20 +55,28 @@ def load_test_sample(n: int = 20) -> list[dict]:
             continue
         lbl_rel = clean_rel.replace("/images/", "/labels/").replace("\\images\\", "\\labels\\")
         lbl_rel = str(Path(lbl_rel).with_suffix(".txt"))
-        lbl_path = PAPER_ROOT / lbl_rel if (PAPER_ROOT / lbl_rel).exists() else PROJECT_ROOT / lbl_rel
+        lbl_path = (
+            PAPER_ROOT / lbl_rel if (PAPER_ROOT / lbl_rel).exists() else PROJECT_ROOT / lbl_rel
+        )
         gt_boxes = []
         if lbl_path.exists():
-            for l in lbl_path.read_text(encoding="utf-8").strip().splitlines():
-                parts = l.strip().split()
+            for line_str in lbl_path.read_text(encoding="utf-8").strip().splitlines():
+                parts = line_str.strip().split()
                 if len(parts) >= 5:
-                    gt_boxes.append({"class_id": int(parts[0]), "bbox": [float(p) for p in parts[1:5]]})
+                    gt_boxes.append(
+                        {"class_id": int(parts[0]), "bbox": [float(p) for p in parts[1:5]]}
+                    )
         samples.append({"rel_path": clean_rel, "abs_path": str(img_path), "gt_boxes": gt_boxes})
     return samples
 
 
-def compute_integrated_gradients(model: YOLO, img_tensor: torch.Tensor, steps: int = 20) -> np.ndarray:
+def compute_integrated_gradients(
+    model: YOLO, img_tensor: torch.Tensor, steps: int = 20
+) -> np.ndarray:
     baseline = torch.zeros_like(img_tensor)
-    scaled_inputs = [baseline + (float(i) / steps) * (img_tensor - baseline) for i in range(steps + 1)]
+    scaled_inputs = [
+        baseline + (float(i) / steps) * (img_tensor - baseline) for i in range(steps + 1)
+    ]
     grads = []
     torch_model = model.model if hasattr(model, "model") else model
     torch_model.eval()
@@ -183,10 +204,17 @@ def main():
             "test_split_file": "config/data/test_fixed.txt",
             "total_images_evaluated": 20,
             "total_boxes_evaluated": sum(len(s["gt_boxes"]) for s in samples),
-            "knife_boxes_evaluated": sum(sum(1 for b in s["gt_boxes"] if b["class_id"] == 0) for s in samples),
-            "pistol_boxes_evaluated": sum(sum(1 for b in s["gt_boxes"] if b["class_id"] == 1) for s in samples),
+            "knife_boxes_evaluated": sum(
+                sum(1 for b in s["gt_boxes"] if b["class_id"] == 0) for s in samples
+            ),
+            "pistol_boxes_evaluated": sum(
+                sum(1 for b in s["gt_boxes"] if b["class_id"] == 1) for s in samples
+            ),
         },
-        "results": {"incremental_yolo11n_pretrained_r5": inc, "oneshot_reference_baseline_500ep": base},
+        "results": {
+            "incremental_yolo11n_pretrained_r5": inc,
+            "oneshot_reference_baseline_500ep": base,
+        },
     }
     OUTPUT_JSON.parent.mkdir(parents=True, exist_ok=True)
     with open(OUTPUT_JSON, "w", encoding="utf-8") as f:

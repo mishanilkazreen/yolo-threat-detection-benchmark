@@ -13,30 +13,34 @@ This script:
 3. Generates outputs/README.md documenting file origins, spurious entry root cause, seed_42 aliasing, and checkpoint retention policy.
 """
 
-import os
-import json
 import argparse
+import json
+import os
 import shutil
+
 
 def get_repo_root():
     script_dir = os.path.dirname(os.path.abspath(__file__))
     return os.path.dirname(script_dir)
 
+
 def audit_and_fix(repo_root):
-    outputs_dir = os.path.join(repo_root, 'outputs')
-    backup_dir = os.path.join(repo_root, 'archive', 'training_set_evolution_backups')
+    outputs_dir = os.path.join(repo_root, "outputs")
+    backup_dir = os.path.join(repo_root, "archive", "training_set_evolution_backups")
     os.makedirs(backup_dir, exist_ok=True)
 
     run_dirs = [d for d in os.listdir(outputs_dir) if os.path.isdir(os.path.join(outputs_dir, d))]
-    
+
     audited_count = 0
     modified_count = 0
 
     for rdir in sorted(run_dirs):
         rpath = os.path.join(outputs_dir, rdir)
-        evo_file = os.path.join(rpath, 'training_set_evolution.json')
-        
-        round_files = [f for f in os.listdir(rpath) if f.startswith('round_') and f.endswith('_metrics.json')]
+        evo_file = os.path.join(rpath, "training_set_evolution.json")
+
+        round_files = [
+            f for f in os.listdir(rpath) if f.startswith("round_") and f.endswith("_metrics.json")
+        ]
         num_rounds = len(round_files)
         if num_rounds == 0:
             continue
@@ -45,36 +49,38 @@ def audit_and_fix(repo_root):
 
         rounds_data = []
         for r_num in range(1, num_rounds + 1):
-            m_path = os.path.join(rpath, f'round_{r_num}_metrics.json')
+            m_path = os.path.join(rpath, f"round_{r_num}_metrics.json")
             if not os.path.exists(m_path):
                 break
-            with open(m_path, 'r', encoding='utf-8') as mf:
+            with open(m_path, encoding="utf-8") as mf:
                 mdata = json.load(mf)
-            
-            set_size = mdata.get('training_set_size')
-            added = mdata.get('verified_samples_added', 0)
-            rem_pool = mdata.get('remaining_pool_size')
-            
-            rounds_data.append({
-                'round': r_num,
-                'training_set_size': set_size,
-                'verified_samples_added': added,
-                'unlabeled_pool_remaining': rem_pool
-            })
+
+            set_size = mdata.get("training_set_size")
+            added = mdata.get("verified_samples_added", 0)
+            rem_pool = mdata.get("remaining_pool_size")
+
+            rounds_data.append(
+                {
+                    "round": r_num,
+                    "training_set_size": set_size,
+                    "verified_samples_added": added,
+                    "unlabeled_pool_remaining": rem_pool,
+                }
+            )
 
         formatted_evo = {
-            'provenance': 'derived_from_round_N_metrics.json',
-            'audit_note': 'Clean 5-round incremental training trajectory. Spurious post-round-5 duplicate entry eliminated.',
-            'rounds': rounds_data
+            "provenance": "derived_from_round_N_metrics.json",
+            "audit_note": "Clean 5-round incremental training trajectory. Spurious post-round-5 duplicate entry eliminated.",
+            "rounds": rounds_data,
         }
 
         if os.path.exists(evo_file):
-            b_name = f'{rdir}_training_set_evolution.json.bak'
+            b_name = f"{rdir}_training_set_evolution.json.bak"
             shutil.copy2(evo_file, os.path.join(backup_dir, b_name))
 
-        with open(evo_file, 'w', encoding='utf-8') as ef:
+        with open(evo_file, "w", encoding="utf-8") as ef:
             json.dump(formatted_evo, ef, indent=2)
-        
+
         modified_count += 1
 
     readme_content = """# Outputs Directory Provenance and Inventory Guide
@@ -96,16 +102,19 @@ In earlier versions of the active acquisition loop, when the unlabelled pool was
 - **Model Checkpoints (`best.pt`)**: Retained under `runs/` for representative reference runs due to repository storage limits.
 """
 
-    readme_path = os.path.join(outputs_dir, 'README.md')
-    with open(readme_path, 'w', encoding='utf-8') as rf:
+    readme_path = os.path.join(outputs_dir, "README.md")
+    with open(readme_path, "w", encoding="utf-8") as rf:
         rf.write(readme_content)
 
-    print(f'Audited {audited_count} run directories. Re-generated {modified_count} evolution files with provenance tags.')
-    print(f'Created {readme_path}.')
+    print(
+        f"Audited {audited_count} run directories. Re-generated {modified_count} evolution files with provenance tags."
+    )
+    print(f"Created {readme_path}.")
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Audit and clean companion repo outputs.')
-    parser.add_argument('--repo-root', type=str, default=None, help='Path to companion repo root')
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Audit and clean companion repo outputs.")
+    parser.add_argument("--repo-root", type=str, default=None, help="Path to companion repo root")
     args = parser.parse_args()
 
     root = args.repo_root if args.repo_root else get_repo_root()

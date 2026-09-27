@@ -46,7 +46,7 @@ def audit():
 
     total_runs = 0
     found_round_files = 0
-    
+
     for m in MODELS:
         for init in INITS:
             for budget in BUDGETS:
@@ -54,7 +54,7 @@ def audit():
                     total_runs += 1
                     folder_name = f"{m}_{init}_seed_{s}" if budget == "10ep" else f"{m}_{init}_100ep_seed_{s}"
                     run_dir = BASE_DIR / "outputs" / folder_name
-                    
+
                     run_ok = True
                     run_discrepancies = []
                     prev_set_size = 709
@@ -65,7 +65,7 @@ def audit():
                             found_round_files += 1
                             with open(rf, "r", encoding="utf-8") as f:
                                 data = json.load(f)
-                            
+
                             added = data.get("verified_samples_added", 0)
                             current_size = data.get("training_set_size", 0)
                             if current_size != prev_set_size + added:
