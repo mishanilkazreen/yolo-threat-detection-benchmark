@@ -259,7 +259,7 @@ def evaluate_model(model_path: Path, samples: list[dict], label: str, device: to
         img_tensor = torch.from_numpy(img_resized).permute(2, 0, 1).unsqueeze(0).float() / 255.0
         img_tensor = img_tensor.to(device)
 
-        cam = cam_extractor(input_tensor=img_tensor)[0]
+        cam = cam_extractor(input_tensor=img_tensor, targets=[])[0]
         cam_orig = cv2.resize(cam, (w, h))
 
         e_scores, hit_e = [], False
