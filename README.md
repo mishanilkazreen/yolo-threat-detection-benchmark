@@ -15,14 +15,14 @@ epochs/round) across five sequential data-incremental rounds (N=60 runs). Factor
 that weight initialisation accounts for the primary share of variance (F(1, 48) = 5141.1, p < 10⁻¹⁵, η² = 0.484,
 partial η²ₚ = 0.991, Cohen's d = 1.90), whereas architectural generation contributes marginally (η² = 0.011).
 Extended training reduces but does not eliminate this performance gap, while freeze-strategy ablations show that
-fine-tuning neck and head atop a frozen COCO backbone matches full fine-tuning within 0.025 mAP while reducing
+fine-tuning neck and head atop a frozen COCO backbone matches full fine-tuning within 0.027 mAP on the held-out test set while reducing
 trainable parameters by 40.3%–53.4%. Control experiments demonstrate that pretraining provides an immediate zero-
 shot advantage on the knife category (which overlaps with COCO class 43) while pistol yields zero baseline
 detections. Decomposed inference latency profiling on an Apple M1 CPU edge device establishes end-to-end margins
 relative to operational deadlines (33.3 ms for 30 FPS surveillance, 16.7 ms for 60 FPS capture), with YOLOv8n
 reaching 14.4 FPS and YOLO11n reaching 13.6 FPS in FP32, indicating that real-time throughput on such CPU-only
 targets requires GPU acceleration or model optimisation. Finally, Eigen-CAM and Integrated Gradients analyses audit
-spatial attribution focus, verifying that incremental updates preserve model interpretability.
+spatial attribution focus, evaluating spatial attribution focus across test samples.
 
 Keywords: Object detection; YOLO; Incremental threat detection; Transfer learning; Explainable AI
 

@@ -3,7 +3,7 @@
 ## Run Inventory Summary
 The `outputs/` directory contains 76 completed experimental run folders:
 - **60 Core Factorial Runs**: 3 architectures (`yolov8n`, `yolo11n`, `yolo12n`) x 2 initialisation strategies (`pretrained`, `random`) x 2 epoch budgets (10 epochs, 100 epochs) x 5 seeds (`42`, `123`, `456`, `789`, `1011`).
-- **12 Seed 42 Alias Runs**: Created to align initial seed-42 runs (executed with runner-level random_seed=42) (`yolov8n_random`, etc.) with the 5-seed directory convention (`seed_42`). Logs are preserved verbatim from the initial single-seed experiments.
+- **12 Seed 42 Alias Runs**: Created to align initial seed-42 runs (executed with runner-level random_seed=42) (`yolov8n_random`, etc.) with the 5-seed directory convention (`seed_42`). Metric summaries in `round_N_metrics.json` reflect the completed 5-round experiments.
 - **4 Freeze Variant Runs**: `yolov8n` and `yolo12n` under `frozen_backbone` and `headonly` fine-tuning strategies.
 
 ## Provenance of `training_set_evolution.json`
@@ -14,4 +14,4 @@ In `src/training/runner.py` (lines 806–818), a Round 5 post-training cleanup s
 
 ## Checkpoint & Logging Retention Policy
 - **Run Metric Logs**: All 60 core factorial runs and 4 freeze variants preserve full step-by-step training and evaluation logs in `round_1_metrics.json` through `round_5_metrics.json` (containing optimizer steps, images processed, GFLOPs/TFLOPs, losses, mAP@0.5, and mAP@0.5:0.95). Initial seed-42 legacy and baseline directories also include raw Ultralytics `results.csv` and `args.yaml`.
-- **Model Checkpoints (`best.pt`)**: Trained weights for all 300 round checkpoints are stored on the SCIAMA HPC cluster storage volume to comply with GitHub repository file size limits, and representative model checkpoints are archived in the Zenodo repository archive (`https://doi.org/10.5281/zenodo.22981420`).
+- **Model Checkpoints (`best.pt`)**: Trained weights for all 300 round checkpoints are stored on the SCIAMA HPC cluster storage volume to comply with GitHub repository file size limits. A planned Zenodo release (v1.2) will archive representative checkpoints once minted; the current Zenodo deposit (v1.1) contains source code and split configurations only.

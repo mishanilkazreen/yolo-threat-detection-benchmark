@@ -1,8 +1,0 @@
-fraction: 1.0
-names:
-- knife
-- pistol
-nc: 2
-path: ./Weapon_Detection-1
-train: C:\Users\manig\Downloads\yolo-threat-detection-benchmark\outputs\yolo11n_baseline_pretrained_100ep\yolo11n_baseline_pretrained_100ep_baseline\baseline_splits\train.txt
-val: C:\Users\manig\Downloads\yolo-threat-detection-benchmark\outputs\yolo11n_baseline_pretrained_100ep\yolo11n_baseline_pretrained_100ep_baseline\baseline_splits\val.txt
