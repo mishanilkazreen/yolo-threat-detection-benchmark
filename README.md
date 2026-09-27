@@ -230,7 +230,21 @@ uv run python scripts/report_results.py --phase nano
 ```bash
 # Report all phases (baselines + nano incremental)
 uv run python scripts/report_results.py
-```
+`
+
+### Explainability (XAI) Attribution Evaluation (Table 8 & Section 5)
+
+Evaluates Pointing Game hit rates and Heatmap Focus Scores (HFS) using Eigen-CAM and Integrated Gradients:
+
+`ash
+# On SCIAMA HPC cluster (via SLURM):
+sbatch scripts/slurm/submit_xai_eval.slurm
+
+# Or interactively with GPU:
+uv run python scripts/evaluate_xai_test_set.py --device 0
+`
+
+See [docs/SCIAMA_XAI_GUIDE.md](docs/SCIAMA_XAI_GUIDE.md) for full cluster execution instructions and output format.``
 
 ## Development
 
