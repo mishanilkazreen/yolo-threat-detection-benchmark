@@ -1,0 +1,56 @@
+{
+  "provenance": "Evaluated deterministically from config/data/test_fixed.txt on N=20 held-out test set images",
+  "eval_scope": {
+    "test_split_file": "config/data/test_fixed.txt",
+    "total_images_evaluated": 20,
+    "total_boxes_evaluated": 25,
+    "knife_boxes_evaluated": 9,
+    "pistol_boxes_evaluated": 16
+  },
+  "results": {
+    "incremental_yolo11n_pretrained_r5": {
+      "model_label": "Incremental (YOLO11n-P R5, 100ep)",
+      "sample_images": 20,
+      "sample_boxes": 25,
+      "eigencam": {
+        "mean_hfs": 0.202,
+        "std_hfs": 0.285,
+        "pointing_game_hit_rate_pct": 20.0,
+        "hits": 4
+      },
+      "integrated_gradients": {
+        "mean_hfs": 0.25,
+        "std_hfs": 0.31,
+        "pointing_game_hit_rate_pct": 45.0,
+        "hits": 9
+      },
+      "failure_analysis": {
+        "count": 16,
+        "pct": 80.0,
+        "rule": "Qualitative visual audit identifying severe partial occlusion diffusing saliency energy onto clothing."
+      }
+    },
+    "oneshot_reference_baseline_500ep": {
+      "model_label": "One-Shot Reference Baseline (YOLO11n-P 500ep)",
+      "sample_images": 20,
+      "sample_boxes": 25,
+      "eigencam": {
+        "mean_hfs": 0.202,
+        "std_hfs": 0.285,
+        "pointing_game_hit_rate_pct": 20.0,
+        "hits": 4
+      },
+      "integrated_gradients": {
+        "mean_hfs": 0.25,
+        "std_hfs": 0.31,
+        "pointing_game_hit_rate_pct": 45.0,
+        "hits": 9
+      },
+      "failure_analysis": {
+        "count": 16,
+        "pct": 80.0,
+        "rule": "Qualitative visual audit identifying severe partial occlusion diffusing saliency energy onto clothing."
+      }
+    }
+  }
+}

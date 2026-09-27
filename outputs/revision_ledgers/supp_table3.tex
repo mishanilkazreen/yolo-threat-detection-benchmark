@@ -1,0 +1,30 @@
+\begin{table*}[hbt!]
+\caption{Actual cumulative training set sizes across incremental rounds (mean $\pm$ std over $N=15$ runs per condition group, pooled across three architectures and 5 seeds) and ground-truth split accounting for both 10-epoch and 100-epoch budgets. Round~1 is fixed at 709 images for all conditions. Bounding-box instances exceed unique image counts because 296 images across the dataset contain multiple instances of the same class (38 in train\_init, 165 in pool, 63 in val, and 30 in test); zero images contain both classes simultaneously.}%
+\label{tab:supp_dataset}
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{l c c c c c}
+\toprule
+\textbf{Condition} & \textbf{Round 1} & \textbf{Round 2} & \textbf{Round 3} & \textbf{Round 4} & \textbf{Round 5} \\
+\midrule
+\multicolumn{6}{l}{\textit{10 Epochs / Round Budget}} \\
+COCO-Pretrained (10 ep) & 709 & 2,600 $\pm$ 97 & 3,075 $\pm$ 43 & 3,218 $\pm$ 27 & 3,286 $\pm$ 25 \\
+(new per round) & {--} & $+$1,891 $\pm$ 97 & $+$474 $\pm$ 72 & $+$143 $\pm$ 24 & $+$69 $\pm$ 10 \\
+Random Init (10 ep) & 709 & 944 $\pm$ 142 & 1,241 $\pm$ 130 & 1,513 $\pm$ 143 & 1,772 $\pm$ 178 \\
+(new per round) & {--} & $+$235 $\pm$ 142 & $+$297 $\pm$ 102 & $+$272 $\pm$ 82 & $+$259 $\pm$ 72 \\
+\midrule
+\multicolumn{6}{l}{\textit{100 Epochs / Round Budget}} \\
+COCO-Pretrained (100 ep) & 709 & 2,905 $\pm$ 52 & 3,213 $\pm$ 26 & 3,291 $\pm$ 22 & 3,330 $\pm$ 19 \\
+(new per round) & {--} & $+$2,196 $\pm$ 52 & $+$308 $\pm$ 49 & $+$78 $\pm$ 18 & $+$39 $\pm$ 11 \\
+Random Init (100 ep) & 709 & 2,309 $\pm$ 126 & 2,796 $\pm$ 96 & 2,969 $\pm$ 70 & 3,063 $\pm$ 60 \\
+(new per round) & {--} & $+$1,600 $\pm$ 126 & $+$487 $\pm$ 68 & $+$173 $\pm$ 43 & $+$94 $\pm$ 18 \\
+\midrule
+\multicolumn{6}{l}{\textit{Fixed Ground-Truth Dataset Partition Accounting}} \\
+Train Initial ($\mathcal{D}_{\text{init}}$) & \multicolumn{5}{l}{709 images (291 knife, 418 pistol), 784 boxes (306 knife [39.0\%], 478 pistol [61.0\%])} \\
+Unlabelled Pool ($\mathcal{U}$) & \multicolumn{5}{l}{2,836 images (1,164 knife, 1,672 pistol), 3,133 boxes (1,207 knife [38.5\%], 1,926 pistol [61.5\%])} \\
+Validation ($\mathcal{D}_{\text{val}}$) & \multicolumn{5}{l}{1,013 images (416 knife, 597 pistol), 1,130 boxes (426 knife [37.7\%], 704 pistol [62.3\%])} \\
+Test Held-Out ($\mathcal{D}_{\text{test}}$) & \multicolumn{5}{l}{506 images (207 knife, 299 pistol), 556 boxes (216 knife [38.8\%], 340 pistol [61.2\%])} \\
+\bottomrule
+\end{tabular}
+\end{table*}

@@ -1,0 +1,30 @@
+\begin{table*}[hbt!]
+\caption{Exact 95\% Student-$t$ confidence interval half-widths ($\pm$, $N=5$ independent seeds per condition, $t_{0.975,4} = 2.7764$) corresponding to the multi-seed threat detection benchmark in Table~5. All values computed directly from \texttt{table\_5\_statistical\_summary.csv}.}%
+\label{tab:supp_ci95}
+\centering
+\scriptsize
+\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{lllcccccc}
+\toprule
+\textbf{Model} & \textbf{Init.} & \textbf{Budget} & \textbf{Val.\ R1 95\% CI} & \textbf{Val.\ R5 95\% CI} & \textbf{Held-Out Test 95\% CI} & \textbf{mAP}$_{50:95}$ \textbf{95\% CI} & \textbf{Pistol 95\% CI} & \textbf{Knife 95\% CI} \\
+\midrule
+YOLOv8n & COCO & 10 ep & $\pm$0.019 & $\pm$0.002 & $\pm$0.013 & $\pm$0.008 & $\pm$0.011 & $\pm$0.021 \\
+YOLOv8n & COCO & 100 ep & $\pm$0.033 & $\pm$0.013 & $\pm$0.010 & $\pm$0.016 & $\pm$0.020 & $\pm$0.006 \\
+\midrule
+YOLOv8n & Rand. & 10 ep & $\pm$0.022 & $\pm$0.035 & $\pm$0.033 & $\pm$0.014 & $\pm$0.013 & $\pm$0.064 \\
+YOLOv8n & Rand. & 100 ep & $\pm$0.013 & $\pm$0.006 & $\pm$0.011 & $\pm$0.018 & $\pm$0.016 & $\pm$0.016 \\
+\midrule
+YOLO11n & COCO & 10 ep & $\pm$0.018 & $\pm$0.008 & $\pm$0.007 & $\pm$0.013 & $\pm$0.009 & $\pm$0.007 \\
+YOLO11n & COCO & 100 ep & $\pm$0.030 & $\pm$0.006 & $\pm$0.007 & $\pm$0.018 & $\pm$0.010 & $\pm$0.007 \\
+\midrule
+YOLO11n & Rand. & 10 ep & $\pm$0.022 & $\pm$0.019 & $\pm$0.014 & $\pm$0.008 & $\pm$0.013 & $\pm$0.020 \\
+YOLO11n & Rand. & 100 ep & $\pm$0.010 & $\pm$0.021 & $\pm$0.020 & $\pm$0.025 & $\pm$0.008 & $\pm$0.032 \\
+\midrule
+YOLO12n & COCO & 10 ep & $\pm$0.021 & $\pm$0.005 & $\pm$0.011 & $\pm$0.013 & $\pm$0.011 & $\pm$0.014 \\
+YOLO12n & COCO & 100 ep & $\pm$0.012 & $\pm$0.011 & $\pm$0.015 & $\pm$0.014 & $\pm$0.021 & $\pm$0.019 \\
+\midrule
+YOLO12n & Rand. & 10 ep & $\pm$0.023 & $\pm$0.036 & $\pm$0.023 & $\pm$0.014 & $\pm$0.014 & $\pm$0.039 \\
+YOLO12n & Rand. & 100 ep & $\pm$0.024 & $\pm$0.019 & $\pm$0.014 & $\pm$0.004 & $\pm$0.011 & $\pm$0.027 \\
+\bottomrule
+\end{tabular}
+\end{table*}
