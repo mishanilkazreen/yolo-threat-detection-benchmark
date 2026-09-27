@@ -31,36 +31,6 @@
       "training_set_size": 3323,
       "verified_samples_added": 74,
       "unlabeled_pool_remaining": 222
-    },
-    {
-      "round": 2,
-      "training_set_size": 913,
-      "samples_added": 204,
-      "unlabeled_remaining": 2632
-    },
-    {
-      "round": 3,
-      "training_set_size": 1767,
-      "samples_added": 854,
-      "unlabeled_remaining": 1778
-    },
-    {
-      "round": 4,
-      "training_set_size": 2456,
-      "samples_added": 689,
-      "unlabeled_remaining": 1089
-    },
-    {
-      "round": 5,
-      "training_set_size": 2646,
-      "samples_added": 190,
-      "unlabeled_remaining": 899
-    },
-    {
-      "round": 5,
-      "training_set_size": 3545,
-      "samples_added": 899,
-      "unlabeled_remaining": 0
     }
   ]
 }

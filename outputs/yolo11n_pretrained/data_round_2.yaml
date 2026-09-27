@@ -4,6 +4,6 @@ names:
 - pistol
 nc: 2
 path: ./Weapon_Detection-1
-test: C:\Users\manig\Downloads\yolo-threat-detection-benchmark\outputs\yolo11n_pretrained\round_splits\data_round_2\test.txt
-train: C:\Users\manig\Downloads\yolo-threat-detection-benchmark\outputs\yolo11n_pretrained\round_splits\data_round_2\train.txt
-val: C:\Users\manig\Downloads\yolo-threat-detection-benchmark\outputs\yolo11n_pretrained\round_splits\data_round_2\val.txt
+test: /mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/outputs/yolo11n_pretrained/round_splits/data_round_2/test.txt
+train: /mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/outputs/yolo11n_pretrained/round_splits/data_round_2/train.txt
+val: /mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/outputs/yolo11n_pretrained/round_splits/data_round_2/val.txt

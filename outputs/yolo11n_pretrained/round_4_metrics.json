@@ -1,59 +1,59 @@
 {
   "round": 4,
-  "timestamp": "2026-09-27 16:04:13",
-  "checkpoint_path": "C:\\Users\\manig\\Downloads\\yolo-threat-detection-benchmark\\runs\\yolo11n_pretrained\\incremental_round_4\\weights\\best.pt",
-  "training_set_size": 2456,
-  "verified_samples_added": 689,
-  "training_time_seconds": 146.39553093910217,
-  "validation_time_seconds": 10.317389011383057,
+  "timestamp": "2026-09-04 16:42:38",
+  "checkpoint_path": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/runs/yolo11n_pretrained/incremental_round_4/weights/best.pt",
+  "training_set_size": 3249,
+  "verified_samples_added": 140,
+  "training_time_seconds": 196.8512921333313,
+  "validation_time_seconds": 4.666458606719971,
   "metrics": {
-    "mAP50": 0.6516766607787188,
-    "mAP50-95": 0.37766250598769135,
-    "precision": 0.6533173914790834,
-    "recall": 0.5825430804524114,
-    "f1_score": 0.6159037114449527
+    "mAP50": 0.8950824734909686,
+    "mAP50-95": 0.6433587359003623,
+    "precision": 0.9104568414985094,
+    "recall": 0.8181684805804523,
+    "f1_score": 0.8618491018597801
   },
-  "rejected_count": 847,
-  "undetected_count": 535,
-  "remaining_pool_size": 1089,
-  "unlabeled_pool_size_at_round_start": 1089,
-  "total_detections": 1560,
-  "actual_stopped_epoch": 2,
+  "rejected_count": 225,
+  "undetected_count": 143,
+  "remaining_pool_size": 296,
+  "unlabeled_pool_size_at_round_start": 296,
+  "total_detections": 366,
+  "actual_stopped_epoch": 10,
   "class_distribution": {
-    "knife_boxes": 908,
-    "pistol_boxes": 1779,
-    "total_boxes": 2687,
-    "images_with_knife": 882,
-    "images_with_pistol": 1574,
-    "total_images": 2456
+    "knife_boxes": 1435,
+    "pistol_boxes": 2135,
+    "total_boxes": 3570,
+    "images_with_knife": 1383,
+    "images_with_pistol": 1866,
+    "total_images": 3249
   },
-  "optimizer_steps": 308,
-  "cumulative_optimizer_steps": 736,
-  "images_processed": 4912,
-  "cumulative_images_processed": 11690,
+  "optimizer_steps": 2040,
+  "cumulative_optimizer_steps": 6070,
+  "images_processed": 32490,
+  "cumulative_images_processed": 96600,
   "gflops": 6.5,
-  "training_tflops": 95.784,
-  "cumulative_training_tflops": 227.95499999999998,
+  "training_tflops": 633.555,
+  "cumulative_training_tflops": 1883.6999999999998,
   "per_class_metrics": {
     "mAP50_per_class": [
-      0.6114009074064356,
-      0.6919524141510021
+      0.9267280574946826,
+      0.8634368894872547
     ],
     "mAP50-95_per_class": [
-      0.2905462931210978,
-      0.4647787188542849
+      0.6150269852875613,
+      0.6716904865131633
     ],
     "precision_per_class": [
-      0.6571179549124558,
-      0.649516828045711
+      0.8973342818478923,
+      0.9235794011491264
     ],
     "recall_per_class": [
-      0.5187793427230047,
-      0.6463068181818182
+      0.892018779342723,
+      0.7443181818181818
     ],
     "f1_score_per_class": [
-      0.5798112155312579,
-      0.6479078472010869
+      0.894668635404723,
+      0.8243155306994856
     ]
   }
 }
