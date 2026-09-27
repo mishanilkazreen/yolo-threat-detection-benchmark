@@ -1,21 +1,21 @@
 {
   "round": 1,
-  "timestamp": "2026-09-04 16:32:25",
-  "checkpoint_path": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/runs/yolo11n_pretrained/incremental_round_1/weights/best.pt",
+  "timestamp": "2026-09-27 15:54:16",
+  "checkpoint_path": "C:\\Users\\manig\\Downloads\\yolo-threat-detection-benchmark\\runs\\yolo11n_pretrained\\incremental_round_1\\weights\\best.pt",
   "training_set_size": 709,
   "verified_samples_added": 0,
-  "training_time_seconds": 100.35723662376404,
-  "validation_time_seconds": 4.780081272125244,
+  "training_time_seconds": 140.7904713153839,
+  "validation_time_seconds": 11.901723623275757,
   "metrics": {
-    "mAP50": 0.7023997999381828,
-    "mAP50-95": 0.44279381500823617,
-    "precision": 0.7044629556087068,
-    "recall": 0.6517018779342723,
-    "f1_score": 0.6770560919293627
+    "mAP50": 0.3044444365756333,
+    "mAP50-95": 0.1397910119268437,
+    "precision": 0.6327926232384953,
+    "recall": 0.225179316333319,
+    "f1_score": 0.33215960501627795
   },
   "remaining_pool_size": 2836,
   "unlabeled_pool_size_at_round_start": 2836,
-  "actual_stopped_epoch": 10,
+  "actual_stopped_epoch": 2,
   "class_distribution": {
     "knife_boxes": 306,
     "pistol_boxes": 478,
@@ -24,33 +24,33 @@
     "images_with_pistol": 418,
     "total_images": 709
   },
-  "optimizer_steps": 450,
-  "cumulative_optimizer_steps": 450,
-  "images_processed": 7090,
-  "cumulative_images_processed": 7090,
+  "optimizer_steps": 90,
+  "cumulative_optimizer_steps": 90,
+  "images_processed": 1418,
+  "cumulative_images_processed": 1418,
   "gflops": 6.5,
-  "training_tflops": 138.255,
-  "cumulative_training_tflops": 138.255,
+  "training_tflops": 27.651,
+  "cumulative_training_tflops": 27.651,
   "per_class_metrics": {
     "mAP50_per_class": [
-      0.6734490309237591,
-      0.7313505689526065
+      0.13424535992099193,
+      0.4746435132302747
     ],
     "mAP50-95_per_class": [
-      0.37270101267020034,
-      0.512886617346272
+      0.043613413582006946,
+      0.23596861027168053
     ],
     "precision_per_class": [
-      0.6162950516320279,
-      0.7926308595853856
+      0.6644257322530256,
+      0.6011595142239649
     ],
     "recall_per_class": [
-      0.6784037558685446,
-      0.625
+      0.009310765220176959,
+      0.441047867446461
     ],
     "f1_score_per_class": [
-      0.6458596784490843,
-      0.6989044910968628
+      0.01836418844000101,
+      0.5088049200316922
     ]
   }
 }

@@ -64,6 +64,14 @@
         "slack_margin_p99_ms": -68.788,
         "meets_deadline_p99": false
       }
+    },
+    "hardware_environment": {
+      "platform": "macOS",
+      "processor": "Apple M1 (8-core CPU: 4 performance + 4 efficiency cores)",
+      "memory": "16 GB unified memory",
+      "python_version": "3.11",
+      "torch_device": "cpu",
+      "timer": "time.perf_counter"
     }
   },
   {
@@ -131,6 +139,14 @@
         "slack_margin_p99_ms": -75.664,
         "meets_deadline_p99": false
       }
+    },
+    "hardware_environment": {
+      "platform": "macOS",
+      "processor": "Apple M1 (8-core CPU: 4 performance + 4 efficiency cores)",
+      "memory": "16 GB unified memory",
+      "python_version": "3.11",
+      "torch_device": "cpu",
+      "timer": "time.perf_counter"
     }
   },
   {
@@ -198,6 +214,14 @@
         "slack_margin_p99_ms": -127.324,
         "meets_deadline_p99": false
       }
+    },
+    "hardware_environment": {
+      "platform": "macOS",
+      "processor": "Apple M1 (8-core CPU: 4 performance + 4 efficiency cores)",
+      "memory": "16 GB unified memory",
+      "python_version": "3.11",
+      "torch_device": "cpu",
+      "timer": "time.perf_counter"
     }
   }
 ]

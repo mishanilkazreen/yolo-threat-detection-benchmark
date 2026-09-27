@@ -1,46 +1,46 @@
 {
-  "timestamp": "2026-09-04 16:46:19",
+  "timestamp": "2026-09-27 16:08:50",
   "config_name": "yolo11n_pretrained",
-  "checkpoint_path": "/mnt/lustre2/mres/ghahrem/yolo-threat-detection-benchmark/runs/yolo11n_pretrained/incremental_round_5/weights/best.pt",
+  "checkpoint_path": "C:\\Users\\manig\\Downloads\\yolo-threat-detection-benchmark\\runs\\yolo11n_pretrained\\incremental_round_5\\weights\\best.pt",
   "random_seed": 42,
-  "total_training_time_seconds": 850.1275906562805,
-  "total_training_time_minutes": 14.168793177604675,
-  "test_time_seconds": 3.8628547191619873,
-  "cumulative_optimizer_steps": 8150,
-  "cumulative_images_processed": 129830,
-  "cumulative_training_tflops": 2531.685,
+  "total_training_time_seconds": 772.1916089057922,
+  "total_training_time_minutes": 12.86986014842987,
+  "test_time_seconds": 7.7960569858551025,
+  "cumulative_optimizer_steps": 1068,
+  "cumulative_images_processed": 16982,
+  "cumulative_training_tflops": 331.149,
   "model_info": {
     "parameters": 2582542,
     "model_name": "best",
     "inference_time_ms": null
   },
   "metrics": {
-    "mAP50": 0.9047885298549563,
-    "mAP50-95": 0.6543394375208307,
-    "precision": 0.8777738632970308,
-    "recall": 0.8221030805671672,
-    "f1_score": 0.8490268659299872
+    "mAP50": 0.6781562246225545,
+    "mAP50-95": 0.4335561337112466,
+    "precision": 0.7556907162277565,
+    "recall": 0.5675574168467996,
+    "f1_score": 0.6482501053536991
   },
   "per_class_metrics": {
     "mAP50_per_class": [
-      0.9266930067759191,
-      0.8828840529339933
+      0.5967070095875756,
+      0.7596054396575336
     ],
     "mAP50-95_per_class": [
-      0.6128179418919137,
-      0.6958609331497475
+      0.3371235916312793,
+      0.5299886757912139
     ],
     "precision_per_class": [
-      0.8832450988576495,
-      0.8723026277364121
+      0.6962061919218964,
+      0.8151752405336167
     ],
     "recall_per_class": [
-      0.8405556567821248,
-      0.8036505043522096
+      0.4880560101641875,
+      0.6470588235294118
     ],
     "f1_score_per_class": [
-      0.8613717817919653,
-      0.8365704664479319
+      0.5738384889468999,
+      0.7214526662637661
     ]
   }
 }

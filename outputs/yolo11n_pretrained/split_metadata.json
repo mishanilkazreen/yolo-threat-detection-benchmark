@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-04T16:30:39.936494",
+  "timestamp": "2026-09-27T15:51:42.248352",
   "random_seed": 42,
   "train_init_percentage": 0.2,
   "data_yaml_path": "config/data/weapon_detection_data.yaml",

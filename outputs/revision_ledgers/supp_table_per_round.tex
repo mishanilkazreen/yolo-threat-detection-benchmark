@@ -1,72 +1,84 @@
 \begin{table*}[hbt!]
-\caption{Granular per-round active data acquisition, class distribution, and training execution metrics across all 12 experimental conditions (mean $\pm$ std over $N=5$ seeds per condition). Verified (Img), Rej.\ Boxes, Undet.\ Pool (Img), Knife Boxes, and Pistol Boxes report per-round counts; Stop Ep reports mean executed epochs per round.}%
+\caption{Granular per-round active data acquisition, class distribution, and training execution metrics across all 12 experimental conditions (mean $\pm$ std over $N=5$ seeds per condition). Verified (Img), Rej.\ Boxes, and Undet.\ Pool (Img) report per-round active acquisition; Cum.\ Knife Boxes and Cum.\ Pistol Boxes report cumulative training set ground-truth box counts; Steps and Images report per-round executed optimizer steps and images processed; Stop Ep reports mean $\pm$ std executed epochs per round.}%
 \label{tab:supp_per_round}
 \centering
 \tiny
-\setlength{\tabcolsep}{2.5pt}
-\begin{tabular}{lllccccccc}
+\setlength{\tabcolsep}{1.8pt}
+\begin{tabular}{lllccccccccc}
 \toprule
-\textbf{Model} & \textbf{Init.} & \textbf{Budget} & \textbf{Rnd} & \textbf{Verified (Img)} & \textbf{Rej.\ Boxes} & \textbf{Undet.\ Pool (Img)} & \textbf{Knife Boxes} & \textbf{Pistol Boxes} & \textbf{Stop Ep} \\
+\textbf{Model} & \textbf{Init.} & \textbf{Budget} & \textbf{Rnd} & \textbf{Verified (Img)} & \textbf{Rej.\ Boxes} & \textbf{Undet.\ Pool (Img)} & \textbf{Cum.\ Knife} & \textbf{Cum.\ Pistol} & \textbf{Steps} & \textbf{Images} & \textbf{Stop Ep} \\
 \midrule
-YOLOv8n & COCO & 10 ep & R2 & 1,984 $\pm$ 30 & 604 $\pm$ 54 & 564 $\pm$ 42 & 1,092 $\pm$ 51 & 1,853 $\pm$ 49 & 10.0 \\
-YOLOv8n & COCO & 10 ep & R3 & 426 $\pm$ 39 & 314 $\pm$ 49 & 252 $\pm$ 18 & 1,343 $\pm$ 10 & 2,079 $\pm$ 27 & 10.0 \\
-YOLOv8n & COCO & 10 ep & R4 & 118 $\pm$ 8 & 152 $\pm$ 29 & 197 $\pm$ 28 & 1,410 $\pm$ 9 & 2,153 $\pm$ 22 & 10.0 \\
-YOLOv8n & COCO & 10 ep & R5 & 62 $\pm$ 10 & 112 $\pm$ 10 & 160 $\pm$ 17 & 1,440 $\pm$ 5 & 2,195 $\pm$ 24 & 10.0 \\
+YOLOv8n & COCO & 10 ep & R1 & {--} & {--} & {--} & 306 $\pm$ 0 & 478 $\pm$ 0 & 450 $\pm$ 0 & 7,090 $\pm$ 0 & 10.0 $\pm$ 0.0 \\
+YOLOv8n & COCO & 10 ep & R2 & 1,984 $\pm$ 30 & 604 $\pm$ 54 & 564 $\pm$ 42 & 1,092 $\pm$ 51 & 1,853 $\pm$ 49 & 1,688 $\pm$ 18 & 26,926 $\pm$ 299 & 10.0 $\pm$ 0.0 \\
+YOLOv8n & COCO & 10 ep & R3 & 426 $\pm$ 39 & 314 $\pm$ 49 & 252 $\pm$ 18 & 1,343 $\pm$ 10 & 2,079 $\pm$ 27 & 1,954 $\pm$ 15 & 31,186 $\pm$ 209 & 10.0 $\pm$ 0.0 \\
+YOLOv8n & COCO & 10 ep & R4 & 118 $\pm$ 8 & 152 $\pm$ 29 & 197 $\pm$ 28 & 1,410 $\pm$ 9 & 2,153 $\pm$ 22 & 2,026 $\pm$ 11 & 32,368 $\pm$ 175 & 10.0 $\pm$ 0.0 \\
+YOLOv8n & COCO & 10 ep & R5 & 62 $\pm$ 10 & 112 $\pm$ 10 & 160 $\pm$ 17 & 1,440 $\pm$ 5 & 2,195 $\pm$ 24 & 2,066 $\pm$ 15 & 32,988 $\pm$ 233 & 10.0 $\pm$ 0.0 \\
 \midrule
-YOLOv8n & COCO & 100 ep & R2 & 2,193 $\pm$ 44 & 603 $\pm$ 196 & 381 $\pm$ 30 & 1,244 $\pm$ 31 & 1,940 $\pm$ 18 & 86.8 \\
-YOLOv8n & COCO & 100 ep & R3 & 318 $\pm$ 39 & 173 $\pm$ 40 & 220 $\pm$ 25 & 1,409 $\pm$ 13 & 2,140 $\pm$ 26 & 45.6 \\
-YOLOv8n & COCO & 100 ep & R4 & 81 $\pm$ 14 & 107 $\pm$ 11 & 164 $\pm$ 20 & 1,442 $\pm$ 12 & 2,201 $\pm$ 18 & 54.6 \\
-YOLOv8n & COCO & 100 ep & R5 & 41 $\pm$ 11 & 91 $\pm$ 22 & 138 $\pm$ 14 & 1,460 $\pm$ 7 & 2,231 $\pm$ 6 & 33.6 \\
+YOLOv8n & COCO & 100 ep & R1 & {--} & {--} & {--} & 306 $\pm$ 0 & 478 $\pm$ 0 & 3,123 $\pm$ 1287 & 49,205 $\pm$ 20282 & 69.4 $\pm$ 28.6 \\
+YOLOv8n & COCO & 100 ep & R2 & 2,193 $\pm$ 44 & 603 $\pm$ 196 & 381 $\pm$ 30 & 1,244 $\pm$ 31 & 1,940 $\pm$ 18 & 15,800 $\pm$ 3624 & 252,268 $\pm$ 58153 & 86.8 $\pm$ 19.5 \\
+YOLOv8n & COCO & 100 ep & R3 & 318 $\pm$ 39 & 173 $\pm$ 40 & 220 $\pm$ 25 & 1,409 $\pm$ 13 & 2,140 $\pm$ 26 & 9,182 $\pm$ 5218 & 146,638 $\pm$ 83309 & 45.6 $\pm$ 26.2 \\
+YOLOv8n & COCO & 100 ep & R4 & 81 $\pm$ 14 & 107 $\pm$ 11 & 164 $\pm$ 20 & 1,442 $\pm$ 12 & 2,201 $\pm$ 18 & 11,301 $\pm$ 3433 & 180,359 $\pm$ 54792 & 54.6 $\pm$ 16.3 \\
+YOLOv8n & COCO & 100 ep & R5 & 41 $\pm$ 11 & 91 $\pm$ 22 & 138 $\pm$ 14 & 1,460 $\pm$ 7 & 2,231 $\pm$ 6 & 7,027 $\pm$ 5060 & 112,078 $\pm$ 80640 & 33.6 $\pm$ 24.2 \\
 \midrule
-YOLOv8n & Rand. & 10 ep & R2 & 211 $\pm$ 161 & 34 $\pm$ 41 & 2,591 $\pm$ 195 & 306 $\pm$ 0 & 690 $\pm$ 162 & 10.0 \\
-YOLOv8n & Rand. & 10 ep & R3 & 382 $\pm$ 109 & 136 $\pm$ 59 & 2,113 $\pm$ 147 & 322 $\pm$ 9 & 1,062 $\pm$ 94 & 10.0 \\
-YOLOv8n & Rand. & 10 ep & R4 & 317 $\pm$ 72 & 264 $\pm$ 73 & 1,686 $\pm$ 153 & 433 $\pm$ 74 & 1,286 $\pm$ 92 & 10.0 \\
-YOLOv8n & Rand. & 10 ep & R5 & 273 $\pm$ 94 & 328 $\pm$ 55 & 1,355 $\pm$ 144 & 555 $\pm$ 96 & 1,472 $\pm$ 49 & 10.0 \\
+YOLOv8n & Rand. & 10 ep & R1 & {--} & {--} & {--} & 306 $\pm$ 0 & 478 $\pm$ 0 & 450 $\pm$ 0 & 7,090 $\pm$ 0 & 10.0 $\pm$ 0.0 \\
+YOLOv8n & Rand. & 10 ep & R2 & 211 $\pm$ 161 & 34 $\pm$ 41 & 2,591 $\pm$ 195 & 306 $\pm$ 0 & 690 $\pm$ 162 & 580 $\pm$ 103 & 9,204 $\pm$ 1613 & 10.0 $\pm$ 0.0 \\
+YOLOv8n & Rand. & 10 ep & R3 & 382 $\pm$ 109 & 136 $\pm$ 59 & 2,113 $\pm$ 147 & 322 $\pm$ 9 & 1,062 $\pm$ 94 & 820 $\pm$ 57 & 13,020 $\pm$ 899 & 10.0 $\pm$ 0.0 \\
+YOLOv8n & Rand. & 10 ep & R4 & 317 $\pm$ 72 & 264 $\pm$ 73 & 1,686 $\pm$ 153 & 433 $\pm$ 74 & 1,286 $\pm$ 92 & 1,016 $\pm$ 63 & 16,188 $\pm$ 996 & 10.0 $\pm$ 0.0 \\
+YOLOv8n & Rand. & 10 ep & R5 & 273 $\pm$ 94 & 328 $\pm$ 55 & 1,355 $\pm$ 144 & 555 $\pm$ 96 & 1,472 $\pm$ 49 & 1,184 $\pm$ 62 & 18,914 $\pm$ 1005 & 10.0 $\pm$ 0.0 \\
 \midrule
-YOLOv8n & Rand. & 100 ep & R2 & 1,731 $\pm$ 47 & 763 $\pm$ 131 & 679 $\pm$ 85 & 936 $\pm$ 35 & 1,727 $\pm$ 21 & 83.2 \\
-YOLOv8n & Rand. & 100 ep & R3 & 426 $\pm$ 68 & 415 $\pm$ 88 & 406 $\pm$ 22 & 1,182 $\pm$ 22 & 1,963 $\pm$ 33 & 51.6 \\
-YOLOv8n & Rand. & 100 ep & R4 & 159 $\pm$ 38 & 293 $\pm$ 37 & 320 $\pm$ 19 & 1,286 $\pm$ 14 & 2,044 $\pm$ 8 & 61.6 \\
-YOLOv8n & Rand. & 100 ep & R5 & 90 $\pm$ 9 & 227 $\pm$ 45 & 266 $\pm$ 18 & 1,336 $\pm$ 24 & 2,098 $\pm$ 11 & 46.4 \\
+YOLOv8n & Rand. & 100 ep & R1 & {--} & {--} & {--} & 306 $\pm$ 0 & 478 $\pm$ 0 & 4,464 $\pm$ 49 & 70,333 $\pm$ 777 & 99.2 $\pm$ 1.1 \\
+YOLOv8n & Rand. & 100 ep & R2 & 1,731 $\pm$ 47 & 763 $\pm$ 131 & 679 $\pm$ 85 & 936 $\pm$ 35 & 1,727 $\pm$ 21 & 12,704 $\pm$ 4079 & 202,641 $\pm$ 65093 & 83.2 $\pm$ 27.0 \\
+YOLOv8n & Rand. & 100 ep & R3 & 426 $\pm$ 68 & 415 $\pm$ 88 & 406 $\pm$ 22 & 1,182 $\pm$ 22 & 1,963 $\pm$ 33 & 9,254 $\pm$ 2736 & 147,674 $\pm$ 43644 & 51.6 $\pm$ 15.5 \\
+YOLOv8n & Rand. & 100 ep & R4 & 159 $\pm$ 38 & 293 $\pm$ 37 & 320 $\pm$ 19 & 1,286 $\pm$ 14 & 2,044 $\pm$ 8 & 11,683 $\pm$ 4968 & 186,423 $\pm$ 79269 & 61.6 $\pm$ 26.2 \\
+YOLOv8n & Rand. & 100 ep & R5 & 90 $\pm$ 9 & 227 $\pm$ 45 & 266 $\pm$ 18 & 1,336 $\pm$ 24 & 2,098 $\pm$ 11 & 9,050 $\pm$ 3706 & 144,375 $\pm$ 58859 & 46.4 $\pm$ 19.2 \\
 \midrule
-YOLO11n & COCO & 10 ep & R2 & 1,847 $\pm$ 107 & 559 $\pm$ 123 & 712 $\pm$ 140 & 1,025 $\pm$ 48 & 1,779 $\pm$ 90 & 10.0 \\
-YOLO11n & COCO & 10 ep & R3 & 512 $\pm$ 95 & 334 $\pm$ 67 & 274 $\pm$ 48 & 1,334 $\pm$ 24 & 2,041 $\pm$ 29 & 10.0 \\
-YOLO11n & COCO & 10 ep & R4 & 155 $\pm$ 22 & 214 $\pm$ 47 & 178 $\pm$ 42 & 1,413 $\pm$ 13 & 2,136 $\pm$ 29 & 10.0 \\
-YOLO11n & COCO & 10 ep & R5 & 73 $\pm$ 9 & 175 $\pm$ 29 & 134 $\pm$ 36 & 1,444 $\pm$ 9 & 2,189 $\pm$ 25 & 10.0 \\
+YOLO11n & COCO & 10 ep & R1 & {--} & {--} & {--} & 306 $\pm$ 0 & 478 $\pm$ 0 & 450 $\pm$ 0 & 7,090 $\pm$ 0 & 10.0 $\pm$ 0.0 \\
+YOLO11n & COCO & 10 ep & R2 & 1,847 $\pm$ 107 & 559 $\pm$ 123 & 712 $\pm$ 140 & 1,025 $\pm$ 48 & 1,779 $\pm$ 90 & 1,600 $\pm$ 68 & 25,556 $\pm$ 1065 & 10.0 $\pm$ 0.0 \\
+YOLO11n & COCO & 10 ep & R3 & 512 $\pm$ 95 & 334 $\pm$ 67 & 274 $\pm$ 48 & 1,334 $\pm$ 24 & 2,041 $\pm$ 29 & 1,924 $\pm$ 21 & 30,680 $\pm$ 336 & 10.0 $\pm$ 0.0 \\
+YOLO11n & COCO & 10 ep & R4 & 155 $\pm$ 22 & 214 $\pm$ 47 & 178 $\pm$ 42 & 1,413 $\pm$ 13 & 2,136 $\pm$ 29 & 2,022 $\pm$ 16 & 32,234 $\pm$ 283 & 10.0 $\pm$ 0.0 \\
+YOLO11n & COCO & 10 ep & R5 & 73 $\pm$ 9 & 175 $\pm$ 29 & 134 $\pm$ 36 & 1,444 $\pm$ 9 & 2,189 $\pm$ 25 & 2,064 $\pm$ 15 & 32,964 $\pm$ 268 & 10.0 $\pm$ 0.0 \\
 \midrule
-YOLO11n & COCO & 100 ep & R2 & 2,235 $\pm$ 58 & 657 $\pm$ 209 & 332 $\pm$ 65 & 1,279 $\pm$ 29 & 1,955 $\pm$ 46 & 71.2 \\
-YOLO11n & COCO & 100 ep & R3 & 279 $\pm$ 68 & 176 $\pm$ 31 & 208 $\pm$ 40 & 1,412 $\pm$ 18 & 2,147 $\pm$ 20 & 52.6 \\
-YOLO11n & COCO & 100 ep & R4 & 69 $\pm$ 28 & 104 $\pm$ 23 & 172 $\pm$ 34 & 1,442 $\pm$ 8 & 2,193 $\pm$ 31 & 31.6 \\
-YOLO11n & COCO & 100 ep & R5 & 31 $\pm$ 8 & 94 $\pm$ 12 & 145 $\pm$ 29 & 1,454 $\pm$ 8 & 2,215 $\pm$ 29 & 31.8 \\
+YOLO11n & COCO & 100 ep & R1 & {--} & {--} & {--} & 306 $\pm$ 0 & 478 $\pm$ 0 & 3,438 $\pm$ 959 & 54,168 $\pm$ 15112 & 76.4 $\pm$ 21.3 \\
+YOLO11n & COCO & 100 ep & R2 & 2,235 $\pm$ 58 & 657 $\pm$ 209 & 332 $\pm$ 65 & 1,279 $\pm$ 29 & 1,955 $\pm$ 46 & 13,108 $\pm$ 5303 & 209,070 $\pm$ 84492 & 71.2 $\pm$ 28.9 \\
+YOLO11n & COCO & 100 ep & R3 & 279 $\pm$ 68 & 176 $\pm$ 31 & 208 $\pm$ 40 & 1,412 $\pm$ 18 & 2,147 $\pm$ 20 & 10,618 $\pm$ 5833 & 169,675 $\pm$ 93391 & 52.6 $\pm$ 28.7 \\
+YOLO11n & COCO & 100 ep & R4 & 69 $\pm$ 28 & 104 $\pm$ 23 & 172 $\pm$ 34 & 1,442 $\pm$ 8 & 2,193 $\pm$ 31 & 6,536 $\pm$ 3691 & 104,406 $\pm$ 58841 & 31.6 $\pm$ 17.6 \\
+YOLO11n & COCO & 100 ep & R5 & 31 $\pm$ 8 & 94 $\pm$ 12 & 145 $\pm$ 29 & 1,454 $\pm$ 8 & 2,215 $\pm$ 29 & 6,626 $\pm$ 2315 & 105,764 $\pm$ 36848 & 31.8 $\pm$ 11.0 \\
 \midrule
-YOLO11n & Rand. & 10 ep & R2 & 337 $\pm$ 107 & 67 $\pm$ 34 & 2,434 $\pm$ 138 & 308 $\pm$ 1 & 815 $\pm$ 107 & 10.0 \\
-YOLO11n & Rand. & 10 ep & R3 & 269 $\pm$ 83 & 165 $\pm$ 51 & 2,074 $\pm$ 110 & 327 $\pm$ 11 & 1,071 $\pm$ 71 & 10.0 \\
-YOLO11n & Rand. & 10 ep & R4 & 265 $\pm$ 53 & 248 $\pm$ 50 & 1,746 $\pm$ 86 & 416 $\pm$ 51 & 1,268 $\pm$ 87 & 10.0 \\
-YOLO11n & Rand. & 10 ep & R5 & 292 $\pm$ 43 & 345 $\pm$ 63 & 1,383 $\pm$ 53 & 576 $\pm$ 23 & 1,428 $\pm$ 48 & 10.0 \\
+YOLO11n & Rand. & 10 ep & R1 & {--} & {--} & {--} & 306 $\pm$ 0 & 478 $\pm$ 0 & 450 $\pm$ 0 & 7,090 $\pm$ 0 & 10.0 $\pm$ 0.0 \\
+YOLO11n & Rand. & 10 ep & R2 & 337 $\pm$ 107 & 67 $\pm$ 34 & 2,434 $\pm$ 138 & 308 $\pm$ 1 & 815 $\pm$ 107 & 658 $\pm$ 65 & 10,456 $\pm$ 1069 & 10.0 $\pm$ 0.0 \\
+YOLO11n & Rand. & 10 ep & R3 & 269 $\pm$ 83 & 165 $\pm$ 51 & 2,074 $\pm$ 110 & 327 $\pm$ 11 & 1,071 $\pm$ 71 & 826 $\pm$ 38 & 13,150 $\pm$ 662 & 10.0 $\pm$ 0.0 \\
+YOLO11n & Rand. & 10 ep & R4 & 265 $\pm$ 53 & 248 $\pm$ 50 & 1,746 $\pm$ 86 & 416 $\pm$ 51 & 1,268 $\pm$ 87 & 992 $\pm$ 32 & 15,796 $\pm$ 511 & 10.0 $\pm$ 0.0 \\
+YOLO11n & Rand. & 10 ep & R5 & 292 $\pm$ 43 & 345 $\pm$ 63 & 1,383 $\pm$ 53 & 576 $\pm$ 23 & 1,428 $\pm$ 48 & 1,176 $\pm$ 9 & 18,716 $\pm$ 144 & 10.0 $\pm$ 0.0 \\
 \midrule
-YOLO11n & Rand. & 100 ep & R2 & 1,621 $\pm$ 26 & 647 $\pm$ 31 & 790 $\pm$ 34 & 857 $\pm$ 15 & 1,664 $\pm$ 18 & 93.4 \\
-YOLO11n & Rand. & 100 ep & R3 & 513 $\pm$ 28 & 472 $\pm$ 49 & 405 $\pm$ 15 & 1,159 $\pm$ 29 & 1,956 $\pm$ 17 & 66.2 \\
-YOLO11n & Rand. & 100 ep & R4 & 151 $\pm$ 26 & 284 $\pm$ 24 & 339 $\pm$ 22 & 1,257 $\pm$ 37 & 2,029 $\pm$ 15 & 51.2 \\
-YOLO11n & Rand. & 100 ep & R5 & 89 $\pm$ 23 & 223 $\pm$ 32 & 295 $\pm$ 22 & 1,311 $\pm$ 22 & 2,081 $\pm$ 3 & 52.8 \\
+YOLO11n & Rand. & 100 ep & R1 & {--} & {--} & {--} & 306 $\pm$ 0 & 478 $\pm$ 0 & 4,500 $\pm$ 0 & 70,900 $\pm$ 0 & 100.0 $\pm$ 0.0 \\
+YOLO11n & Rand. & 100 ep & R2 & 1,621 $\pm$ 26 & 647 $\pm$ 31 & 790 $\pm$ 34 & 857 $\pm$ 15 & 1,664 $\pm$ 18 & 13,633 $\pm$ 1111 & 217,537 $\pm$ 17906 & 93.4 $\pm$ 7.9 \\
+YOLO11n & Rand. & 100 ep & R3 & 513 $\pm$ 28 & 472 $\pm$ 49 & 405 $\pm$ 15 & 1,159 $\pm$ 29 & 1,956 $\pm$ 17 & 11,813 $\pm$ 4267 & 188,346 $\pm$ 67866 & 66.2 $\pm$ 23.7 \\
+YOLO11n & Rand. & 100 ep & R4 & 151 $\pm$ 26 & 284 $\pm$ 24 & 339 $\pm$ 22 & 1,257 $\pm$ 37 & 2,029 $\pm$ 15 & 9,597 $\pm$ 3892 & 153,068 $\pm$ 61876 & 51.2 $\pm$ 21.0 \\
+YOLO11n & Rand. & 100 ep & R5 & 89 $\pm$ 23 & 223 $\pm$ 32 & 295 $\pm$ 22 & 1,311 $\pm$ 22 & 2,081 $\pm$ 3 & 10,191 $\pm$ 7673 & 162,689 $\pm$ 122546 & 52.8 $\pm$ 39.7 \\
 \midrule
-YOLO12n & COCO & 10 ep & R2 & 1,844 $\pm$ 67 & 674 $\pm$ 136 & 637 $\pm$ 104 & 992 $\pm$ 45 & 1,802 $\pm$ 47 & 10.0 \\
-YOLO12n & COCO & 10 ep & R3 & 484 $\pm$ 52 & 352 $\pm$ 33 & 294 $\pm$ 12 & 1,313 $\pm$ 11 & 2,022 $\pm$ 22 & 10.0 \\
-YOLO12n & COCO & 10 ep & R4 & 155 $\pm$ 16 & 253 $\pm$ 35 & 178 $\pm$ 14 & 1,398 $\pm$ 13 & 2,115 $\pm$ 16 & 10.0 \\
-YOLO12n & COCO & 10 ep & R5 & 71 $\pm$ 10 & 172 $\pm$ 13 & 157 $\pm$ 16 & 1,433 $\pm$ 12 & 2,168 $\pm$ 13 & 10.0 \\
+YOLO12n & COCO & 10 ep & R1 & {--} & {--} & {--} & 306 $\pm$ 0 & 478 $\pm$ 0 & 450 $\pm$ 0 & 7,090 $\pm$ 0 & 10.0 $\pm$ 0.0 \\
+YOLO12n & COCO & 10 ep & R2 & 1,844 $\pm$ 67 & 674 $\pm$ 136 & 637 $\pm$ 104 & 992 $\pm$ 45 & 1,802 $\pm$ 47 & 1,602 $\pm$ 42 & 25,532 $\pm$ 672 & 10.0 $\pm$ 0.0 \\
+YOLO12n & COCO & 10 ep & R3 & 484 $\pm$ 52 & 352 $\pm$ 33 & 294 $\pm$ 12 & 1,313 $\pm$ 11 & 2,022 $\pm$ 22 & 1,902 $\pm$ 16 & 30,376 $\pm$ 278 & 10.0 $\pm$ 0.0 \\
+YOLO12n & COCO & 10 ep & R4 & 155 $\pm$ 16 & 253 $\pm$ 35 & 178 $\pm$ 14 & 1,398 $\pm$ 13 & 2,115 $\pm$ 16 & 1,998 $\pm$ 8 & 31,930 $\pm$ 121 & 10.0 $\pm$ 0.0 \\
+YOLO12n & COCO & 10 ep & R5 & 71 $\pm$ 10 & 172 $\pm$ 13 & 157 $\pm$ 16 & 1,433 $\pm$ 12 & 2,168 $\pm$ 13 & 2,044 $\pm$ 5 & 32,636 $\pm$ 57 & 10.0 $\pm$ 0.0 \\
 \midrule
-YOLO12n & COCO & 100 ep & R2 & 2,160 $\pm$ 24 & 545 $\pm$ 42 & 414 $\pm$ 32 & 1,244 $\pm$ 16 & 1,897 $\pm$ 22 & 75.2 \\
-YOLO12n & COCO & 100 ep & R3 & 327 $\pm$ 27 & 217 $\pm$ 13 & 213 $\pm$ 21 & 1,397 $\pm$ 11 & 2,124 $\pm$ 23 & 35.8 \\
-YOLO12n & COCO & 100 ep & R4 & 84 $\pm$ 5 & 133 $\pm$ 16 & 161 $\pm$ 12 & 1,431 $\pm$ 6 & 2,186 $\pm$ 13 & 41.2 \\
-YOLO12n & COCO & 100 ep & R5 & 44 $\pm$ 13 & 92 $\pm$ 17 & 144 $\pm$ 16 & 1,448 $\pm$ 11 & 2,219 $\pm$ 6 & 41.4 \\
+YOLO12n & COCO & 100 ep & R1 & {--} & {--} & {--} & 306 $\pm$ 0 & 478 $\pm$ 0 & 3,870 $\pm$ 561 & 60,974 $\pm$ 8841 & 86.0 $\pm$ 12.5 \\
+YOLO12n & COCO & 100 ep & R2 & 2,160 $\pm$ 24 & 545 $\pm$ 42 & 414 $\pm$ 32 & 1,244 $\pm$ 16 & 1,897 $\pm$ 22 & 13,513 $\pm$ 2490 & 215,637 $\pm$ 39723 & 75.2 $\pm$ 14.0 \\
+YOLO12n & COCO & 100 ep & R3 & 327 $\pm$ 27 & 217 $\pm$ 13 & 213 $\pm$ 21 & 1,397 $\pm$ 11 & 2,124 $\pm$ 23 & 7,168 $\pm$ 1614 & 114,432 $\pm$ 25691 & 35.8 $\pm$ 8.0 \\
+YOLO12n & COCO & 100 ep & R4 & 84 $\pm$ 5 & 133 $\pm$ 16 & 161 $\pm$ 12 & 1,431 $\pm$ 6 & 2,186 $\pm$ 13 & 8,460 $\pm$ 5384 & 135,039 $\pm$ 86043 & 41.2 $\pm$ 26.3 \\
+YOLO12n & COCO & 100 ep & R5 & 44 $\pm$ 13 & 92 $\pm$ 17 & 144 $\pm$ 16 & 1,448 $\pm$ 11 & 2,219 $\pm$ 6 & 8,631 $\pm$ 4186 & 137,804 $\pm$ 66725 & 41.4 $\pm$ 20.0 \\
 \midrule
-YOLO12n & Rand. & 10 ep & R2 & 157 $\pm$ 110 & 50 $\pm$ 11 & 2,630 $\pm$ 120 & 307 $\pm$ 2 & 635 $\pm$ 112 & 10.0 \\
-YOLO12n & Rand. & 10 ep & R3 & 239 $\pm$ 56 & 96 $\pm$ 39 & 2,347 $\pm$ 147 & 313 $\pm$ 7 & 871 $\pm$ 114 & 10.0 \\
-YOLO12n & Rand. & 10 ep & R4 & 236 $\pm$ 108 & 129 $\pm$ 18 & 2,086 $\pm$ 56 & 330 $\pm$ 13 & 1,098 $\pm$ 49 & 10.0 \\
-YOLO12n & Rand. & 10 ep & R5 & 211 $\pm$ 55 & 195 $\pm$ 70 & 1,821 $\pm$ 146 & 406 $\pm$ 64 & 1,248 $\pm$ 62 & 10.0 \\
+YOLO12n & Rand. & 10 ep & R1 & {--} & {--} & {--} & 306 $\pm$ 0 & 478 $\pm$ 0 & 450 $\pm$ 0 & 7,090 $\pm$ 0 & 10.0 $\pm$ 0.0 \\
+YOLO12n & Rand. & 10 ep & R2 & 157 $\pm$ 110 & 50 $\pm$ 11 & 2,630 $\pm$ 120 & 307 $\pm$ 2 & 635 $\pm$ 112 & 546 $\pm$ 69 & 8,656 $\pm$ 1102 & 10.0 $\pm$ 0.0 \\
+YOLO12n & Rand. & 10 ep & R3 & 239 $\pm$ 56 & 96 $\pm$ 39 & 2,347 $\pm$ 147 & 313 $\pm$ 7 & 871 $\pm$ 114 & 694 $\pm$ 67 & 11,050 $\pm$ 1110 & 10.0 $\pm$ 0.0 \\
+YOLO12n & Rand. & 10 ep & R4 & 236 $\pm$ 108 & 129 $\pm$ 18 & 2,086 $\pm$ 56 & 330 $\pm$ 13 & 1,098 $\pm$ 49 & 844 $\pm$ 26 & 13,410 $\pm$ 451 & 10.0 $\pm$ 0.0 \\
+YOLO12n & Rand. & 10 ep & R5 & 211 $\pm$ 55 & 195 $\pm$ 70 & 1,821 $\pm$ 146 & 406 $\pm$ 64 & 1,248 $\pm$ 62 & 974 $\pm$ 61 & 15,520 $\pm$ 967 & 10.0 $\pm$ 0.0 \\
 \midrule
-YOLO12n & Rand. & 100 ep & R2 & 1,448 $\pm$ 43 & 693 $\pm$ 31 & 946 $\pm$ 36 & 747 $\pm$ 35 & 1,576 $\pm$ 32 & 88.8 \\
-YOLO12n & Rand. & 100 ep & R3 & 522 $\pm$ 62 & 539 $\pm$ 32 & 529 $\pm$ 51 & 1,058 $\pm$ 31 & 1,870 $\pm$ 53 & 68.2 \\
-YOLO12n & Rand. & 100 ep & R4 & 209 $\pm$ 45 & 362 $\pm$ 56 & 404 $\pm$ 54 & 1,184 $\pm$ 33 & 1,984 $\pm$ 31 & 53.8 \\
-YOLO12n & Rand. & 100 ep & R5 & 104 $\pm$ 17 & 249 $\pm$ 35 & 365 $\pm$ 50 & 1,255 $\pm$ 22 & 2,030 $\pm$ 29 & 40.2 \\
+YOLO12n & Rand. & 100 ep & R1 & {--} & {--} & {--} & 306 $\pm$ 0 & 478 $\pm$ 0 & 4,500 $\pm$ 0 & 70,900 $\pm$ 0 & 100.0 $\pm$ 0.0 \\
+YOLO12n & Rand. & 100 ep & R2 & 1,448 $\pm$ 43 & 693 $\pm$ 31 & 946 $\pm$ 36 & 747 $\pm$ 35 & 1,576 $\pm$ 32 & 12,035 $\pm$ 2299 & 191,696 $\pm$ 36396 & 88.8 $\pm$ 16.4 \\
+YOLO12n & Rand. & 100 ep & R3 & 522 $\pm$ 62 & 539 $\pm$ 32 & 529 $\pm$ 51 & 1,058 $\pm$ 31 & 1,870 $\pm$ 53 & 11,415 $\pm$ 3936 & 182,265 $\pm$ 63034 & 68.2 $\pm$ 23.9 \\
+YOLO12n & Rand. & 100 ep & R4 & 209 $\pm$ 45 & 362 $\pm$ 56 & 404 $\pm$ 54 & 1,184 $\pm$ 33 & 1,984 $\pm$ 31 & 9,728 $\pm$ 3689 & 155,239 $\pm$ 59024 & 53.8 $\pm$ 20.7 \\
+YOLO12n & Rand. & 100 ep & R5 & 104 $\pm$ 17 & 249 $\pm$ 35 & 365 $\pm$ 50 & 1,255 $\pm$ 22 & 2,030 $\pm$ 29 & 7,559 $\pm$ 2959 & 120,640 $\pm$ 47253 & 40.2 $\pm$ 15.4 \\
 \bottomrule
 \end{tabular}
 \end{table*}

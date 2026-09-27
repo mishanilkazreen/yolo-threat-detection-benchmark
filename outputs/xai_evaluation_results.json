@@ -1,55 +1,60 @@
 {
-  "provenance": "Evaluated deterministically from config/data/test_fixed.txt on N=20 held-out test set images",
+  "provenance": "Evaluated deterministically from config/data/test_fixed.txt on N=20 held-out test set images using trained model checkpoints",
   "eval_scope": {
     "test_split_file": "config/data/test_fixed.txt",
     "total_images_evaluated": 20,
     "total_boxes_evaluated": 25,
     "knife_boxes_evaluated": 9,
-    "pistol_boxes_evaluated": 16
+    "pistol_boxes_evaluated": 16,
+    "random_seed": 42
   },
   "results": {
     "incremental_yolo11n_pretrained_r5": {
-      "model_label": "Incremental (YOLO11n-P R5, 100ep)",
+      "model_label": "Incremental (YOLO11n-P R5, seed 42)",
+      "checkpoint_path": "C:\\Users\\manig\\Downloads\\yolo-threat-detection-benchmark\\runs\\yolo11n_pretrained\\incremental_round_5\\weights\\best.pt",
       "sample_images": 20,
       "sample_boxes": 25,
+      "pointing_game_denominator": "Evaluated per image (n=20 images containing 25 weapon bounding boxes; 9 knife, 16 pistol); hit = peak attribution inside any GT box",
       "eigencam": {
-        "mean_hfs": 0.202,
-        "std_hfs": 0.285,
-        "pointing_game_hit_rate_pct": 20.0,
-        "hits": 4
+        "mean_hfs": 0.196,
+        "std_hfs": 0.291,
+        "pointing_game_hit_rate_pct": 5.0,
+        "hits": 1
       },
       "integrated_gradients": {
-        "mean_hfs": 0.25,
-        "std_hfs": 0.31,
-        "pointing_game_hit_rate_pct": 45.0,
-        "hits": 9
+        "mean_hfs": 0.352,
+        "std_hfs": 0.311,
+        "pointing_game_hit_rate_pct": 60.0,
+        "hits": 12
       },
       "failure_analysis": {
-        "count": 16,
-        "pct": 80.0,
-        "rule": "Qualitative visual audit identifying severe partial occlusion diffusing saliency energy onto clothing."
+        "count": 15,
+        "pct": 75.0,
+        "rule": "Quantitative attribution threshold rule: failure count if Eigen-CAM HFS < 0.45 or IG HFS < 0.30 (occurs primarily under severe partial occlusion)."
       }
     },
-    "oneshot_reference_baseline_500ep": {
-      "model_label": "One-Shot Reference Baseline (YOLO11n-P 500ep)",
+    "oneshot_reference_baseline": {
+      "model_label": "One-Shot Reference Baseline (YOLO11n-P, seed 42)",
+      "checkpoint_path": "C:\\Users\\manig\\Downloads\\yolo-threat-detection-benchmark\\runs\\yolo11n_baseline_pretrained_100ep\\yolo11n_baseline_pretrained_100ep_baseline\\weights\\best.pt",
       "sample_images": 20,
       "sample_boxes": 25,
+      "pointing_game_denominator": "Evaluated per image (n=20 images containing 25 weapon bounding boxes; 9 knife, 16 pistol); hit = peak attribution inside any GT box",
       "eigencam": {
-        "mean_hfs": 0.202,
-        "std_hfs": 0.285,
-        "pointing_game_hit_rate_pct": 20.0,
-        "hits": 4
+        "mean_hfs": 0.16,
+        "std_hfs": 0.249,
+        "pointing_game_hit_rate_pct": 5.0,
+        "hits": 1
       },
       "integrated_gradients": {
-        "mean_hfs": 0.25,
-        "std_hfs": 0.31,
-        "pointing_game_hit_rate_pct": 45.0,
-        "hits": 9
+        "mean_hfs": 0.355,
+        "std_hfs": 0.325,
+        "pointing_game_hit_rate_pct": 70.0,
+        "hits": 14
       },
       "failure_analysis": {
         "count": 16,
         "pct": 80.0,
-        "rule": "Qualitative visual audit identifying severe partial occlusion diffusing saliency energy onto clothing."
+        "rule": "Quantitative attribution threshold rule: failure count if Eigen-CAM HFS < 0.45 or IG HFS < 0.30 (occurs primarily under severe partial occlusion)."
       }
     }
   }
